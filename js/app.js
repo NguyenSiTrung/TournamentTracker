@@ -142,6 +142,7 @@ const App = (() => {
         }
 
         await renderLeaderboard();
+        await renderWinChart();
         await renderRecentResults();
     }
 
@@ -238,6 +239,44 @@ const App = (() => {
         }
 
         container.innerHTML = podiumHtml + restHtml;
+    }
+
+    async function renderWinChart() {
+        const leaderboard = await Store.getAllTimeLeaderboard();
+        const container = document.getElementById('chart-content');
+
+        if (leaderboard.length === 0) {
+            container.innerHTML = '<p class="empty-state">No completed sessions yet.</p>';
+            return;
+        }
+
+        const maxWins = Math.max(...leaderboard.map(e => e.wins), 1);
+        const barColors = ['var(--gold)', 'var(--silver)', 'var(--bronze)', 'var(--accent-start)', 'var(--accent-history)'];
+
+        container.innerHTML = '<div class="bar-chart">' +
+            leaderboard.slice(0, 8).map((entry, idx) => {
+                const team = Store.getTeamFromCache(entry.teamId);
+                const teamName = team ? team.name : 'Unknown';
+                const pct = Math.round((entry.wins / maxWins) * 100);
+                const color = barColors[idx] || 'var(--accent-start)';
+                return `
+                    <div class="bar-chart-row">
+                        <span class="bar-chart-label">${escapeHtml(teamName)}</span>
+                        <div class="bar-chart-track">
+                            <div class="bar-chart-fill" style="--bar-width: ${pct}%; --bar-color: ${color}; animation-delay: ${idx * 0.1}s;"></div>
+                        </div>
+                        <span class="bar-chart-value">${entry.wins}</span>
+                    </div>
+                `;
+            }).join('') +
+            '</div>';
+
+        // Trigger bar animation after render
+        requestAnimationFrame(() => {
+            container.querySelectorAll('.bar-chart-fill').forEach(bar => {
+                bar.style.width = bar.style.getPropertyValue('--bar-width');
+            });
+        });
     }
 
     async function renderRecentResults() {
