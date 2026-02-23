@@ -1972,6 +1972,46 @@ body::before {
     }
 }
 
+/* --- Section-Specific Accents --- */
+#view-teams .section-header h2 {
+    color: var(--accent-teams);
+}
+
+#view-teams .glass-card:hover {
+    border-color: rgba(46, 213, 115, 0.25);
+    box-shadow: 0 0 30px rgba(46, 213, 115, 0.1);
+}
+
+#view-teams .team-card:hover {
+    border-color: rgba(46, 213, 115, 0.3);
+    box-shadow: 0 0 30px rgba(46, 213, 115, 0.12);
+}
+
+#view-session .section-header h2 {
+    color: var(--accent-session);
+}
+
+#view-session .glass-card:hover {
+    border-color: rgba(108, 99, 255, 0.3);
+    box-shadow: 0 0 30px rgba(108, 99, 255, 0.12);
+}
+
+#view-history .section-header h2 {
+    color: var(--accent-history);
+}
+
+#view-history .glass-card:hover {
+    border-color: rgba(168, 85, 247, 0.25);
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.1);
+}
+
+#view-dashboard .section-header h2 {
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
 /* --- Reduced Motion --- */
 @media (prefers-reduced-motion: reduce) {
     *,
