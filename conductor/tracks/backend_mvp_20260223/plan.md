@@ -4,14 +4,14 @@
 - [x] Task: Initialize Python project structure (`backend/`, `requirements.txt`, `main.py`)
 - [x] Task: Set up SQLite database with SQLAlchemy ORM models (Team, Session, Game, Penalty)
 - [x] Task: Create Pydantic request/response schemas
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Backend Project Setup' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Backend Project Setup' (Protocol in workflow.md)
 
 ## Phase 2: Teams API
-- [ ] Task: Implement `GET /api/teams` and `GET /api/teams/{id}` endpoints
-- [ ] Task: Implement `POST /api/teams` endpoint with validation
-- [ ] Task: Implement `PUT /api/teams/{id}` endpoint
-- [ ] Task: Implement `DELETE /api/teams/{id}` endpoint
-- [ ] Task: Write tests for Teams API
+- [x] Task: Implement `GET /api/teams` and `GET /api/teams/{id}` endpoints
+- [x] Task: Implement `POST /api/teams` endpoint with validation
+- [x] Task: Implement `PUT /api/teams/{id}` endpoint
+- [x] Task: Implement `DELETE /api/teams/{id}` endpoint
+- [x] Task: Write tests for Teams API
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: Teams API' (Protocol in workflow.md)
 
 ## Phase 3: Sessions API
