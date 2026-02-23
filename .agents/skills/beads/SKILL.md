@@ -5,7 +5,7 @@ description: >
   memory across conversation compaction. Use when work spans sessions, has blockers,
   or needs context recovery after compaction.
 allowed-tools: "Read,Bash(bd:*)"
-version: "0.43.0"
+version: "0.56.1"
 author: "Steve Yegge <https://github.com/steveyegge>"
 license: "MIT"
 ---
@@ -41,7 +41,7 @@ Graph-based issue tracker that survives conversation compaction. Provides persis
 ## Prerequisites
 
 ```bash
-bd --version  # Requires v0.34.0+
+bd --version  # Requires v0.56.0+
 ```
 
 - **bd CLI** installed and in PATH
@@ -53,16 +53,18 @@ bd --version  # Requires v0.34.0+
 **Run `bd prime`** for AI-optimized workflow context (auto-loaded by hooks).
 **Run `bd <command> --help`** for specific command usage.
 
-Essential commands: `bd ready`, `bd create`, `bd show`, `bd update`, `bd close`, `bd sync`
+Essential commands: `bd ready`, `bd create`, `bd show`, `bd update`, `bd close`, `bd dolt push`
+
+> **v0.56+:** Beads now requires a running Dolt SQL server. Start with `bd dolt start` before using bd commands.
 
 ## Session Protocol
 
 1. `bd ready` — Find unblocked work
 2. `bd show <id>` — Get full context
-3. `bd update <id> --status in_progress` — Start work
+3. `bd update <id> --claim` — Claim and start work atomically
 4. Add notes as you work (critical for compaction survival)
 5. `bd close <id> --reason "..."` — Complete task
-6. `bd sync` — Persist to git (always run at session end)
+6. `bd dolt push` — Push to Dolt remote (if configured)
 
 ## Advanced Features
 
@@ -73,6 +75,11 @@ Essential commands: `bd ready`, `bd create`, `bd show`, `bd update`, `bd close`,
 | Agent beads | `bd agent --help` | [AGENTS.md](resources/AGENTS.md) |
 | Async gates | `bd gate --help` | [ASYNC_GATES.md](resources/ASYNC_GATES.md) |
 | Worktrees | `bd worktree --help` | [WORKTREES.md](resources/WORKTREES.md) |
+| Messaging | `bd mail --help` | [MESSAGING.md](resources/MESSAGING.md) |
+| Graph links | `bd relate --help` | [GRAPH_LINKS.md](resources/GRAPH_LINKS.md) |
+| Dolt management | `bd dolt --help` | — |
+| SQL access | `bd sql --help` | — |
+| Graph visualization | `bd graph --help` | — |
 
 ## Resources
 
@@ -93,6 +100,8 @@ Essential commands: `bd ready`, `bd create`, `bd show`, `bd update`, `bd close`,
 | [ASYNC_GATES.md](resources/ASYNC_GATES.md) | Human-in-the-loop gates |
 | [CHEMISTRY_PATTERNS.md](resources/CHEMISTRY_PATTERNS.md) | Mol vs Wisp decision tree |
 | [WORKTREES.md](resources/WORKTREES.md) | Parallel development patterns |
+| [MESSAGING.md](resources/MESSAGING.md) | Inter-agent messaging and mail system |
+| [GRAPH_LINKS.md](resources/GRAPH_LINKS.md) | Graph links: relate, supersede, duplicate |
 
 ## Full Documentation
 

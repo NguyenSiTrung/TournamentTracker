@@ -1,7 +1,3 @@
----
-description: Archive completed tracks
----
-
 # Conductor Archive
 
 Archive completed tracks to clean up the project.

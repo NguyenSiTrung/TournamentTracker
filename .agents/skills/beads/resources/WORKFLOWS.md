@@ -2,6 +2,8 @@
 
 Detailed step-by-step workflows for common bd usage patterns with checklists.
 
+> **v0.56+:** Beads requires a running Dolt SQL server. Start with `bd dolt start` or `dolt sql-server` before using bd commands.
+
 ## Contents
 
 - [Session Start Workflow](#session-start) - Check bd ready, establish context
@@ -99,7 +101,7 @@ Discovery Workflow:
 - [ ] Notice bug, improvement, or follow-up work
 - [ ] Assess: Can defer or is blocker?
 - [ ] Create issue with bd create "Issue title"
-- [ ] Add discovered-from dependency: bd dep add current-id new-id --type discovered-from
+- [ ] Add discovered-from dependency: bd dep add new-id current-id --type discovered-from
 - [ ] If blocker: pause and switch; if not: continue current work
 - [ ] Issue persists for future sessions
 ```
