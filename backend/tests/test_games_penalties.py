@@ -60,6 +60,63 @@ def test_remove_game_not_found(client, session_id):
     assert resp.status_code == 404
 
 
+# --- Duplicate Player Names (Composite Keys) ---
+
+
+COMPOSITE_KEY_BODY = {
+    "name": "Game Dup",
+    "player_placements": {
+        "t1::Alex": 1,
+        "t1::Sam": 3,
+        "t2::Alex": 2,
+        "t2::Pat": 4,
+    },
+    "team_player_map": {"t1": ["Alex", "Sam"], "t2": ["Alex", "Pat"]},
+}
+
+
+def test_add_game_duplicate_names_succeeds(client, session_id):
+    """Game creation succeeds when two teams share a player named 'Alex'."""
+    resp = client.post(f"/api/sessions/{session_id}/games", json=COMPOSITE_KEY_BODY)
+    assert resp.status_code == 201
+    data = resp.json()
+    assert data["name"] == "Game Dup"
+    # All four composite keys should be present
+    assert len(data["player_placements"]) == 4
+
+
+def test_add_game_duplicate_names_correct_points(client, session_id):
+    """Points are calculated correctly for each composite key."""
+    resp = client.post(f"/api/sessions/{session_id}/games", json=COMPOSITE_KEY_BODY)
+    data = resp.json()
+    # 4 players: 1st=4, 2nd=3, 3rd=2, 4th=1
+    assert data["player_points"]["t1::Alex"] == 4
+    assert data["player_points"]["t2::Alex"] == 3
+    assert data["player_points"]["t1::Sam"] == 2
+    assert data["player_points"]["t2::Pat"] == 1
+
+
+def test_add_game_duplicate_names_correct_team_scores(client, session_id):
+    """Team aggregations are correct with duplicate player names."""
+    resp = client.post(f"/api/sessions/{session_id}/games", json=COMPOSITE_KEY_BODY)
+    data = resp.json()
+    # t1: Alex(4) + Sam(2) = 6, best pos = 1
+    assert data["points"]["t1"] == 6
+    assert data["placements"]["t1"] == 1
+    # t2: Alex(3) + Pat(1) = 4, best pos = 2
+    assert data["points"]["t2"] == 4
+    assert data["placements"]["t2"] == 2
+
+
+def test_add_game_legacy_flat_keys_still_work(client, session_id):
+    """Legacy flat keys (no ::) still work for backward compatibility."""
+    resp = client.post(f"/api/sessions/{session_id}/games", json=GAME_BODY)
+    assert resp.status_code == 201
+    data = resp.json()
+    assert data["points"]["t1"] == 7
+    assert data["points"]["t2"] == 3
+
+
 # --- Penalties ---
 
 
