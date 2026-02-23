@@ -548,6 +548,48 @@ body::before {
     width: 0;
 }
 
+/* --- Quick Actions --- */
+.dashboard-quick-actions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.quick-action-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 24px;
+    border: none;
+    border-radius: var(--border-radius-sm);
+    font-family: var(--font-family);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    transition: all var(--transition-med);
+}
+
+.quick-action-start,
+.quick-action-resume {
+    background: var(--accent-gradient);
+    box-shadow: 0 4px 16px rgba(108, 99, 255, 0.3);
+}
+
+.quick-action-team {
+    background: linear-gradient(135deg, var(--accent-teams), #1db954);
+    box-shadow: 0 4px 16px rgba(46, 213, 115, 0.25);
+}
+
+.quick-action-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(108, 99, 255, 0.4);
+}
+
+.quick-action-icon {
+    font-size: 1.3rem;
+}
+
 /* Dashboard Columns */
 .dashboard-columns {
     display: grid;

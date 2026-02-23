@@ -122,6 +122,9 @@ const App = (() => {
         animateCounter(document.getElementById('total-games'), totalGames);
         animateCounter(document.getElementById('active-sessions'), totalActive);
 
+        // Quick actions
+        renderQuickActions(teams, activeSessions);
+
         // Active session preview
         const activeCard = document.getElementById('active-session-card');
         const activePreview = document.getElementById('active-session-preview');
@@ -140,6 +143,38 @@ const App = (() => {
 
         await renderLeaderboard();
         await renderRecentResults();
+    }
+
+    function renderQuickActions(teams, activeSessions) {
+        const container = document.getElementById('dashboard-quick-actions');
+        const actions = [];
+
+        if (activeSessions.length > 0) {
+            actions.push(`
+                <button class="quick-action-card quick-action-resume" onclick="App.switchTab('session')">
+                    <span class="quick-action-icon">⚡</span>
+                    <span class="quick-action-text">Resume Session</span>
+                </button>
+            `);
+        } else {
+            actions.push(`
+                <button class="quick-action-card quick-action-start" onclick="App.switchTab('session'); setTimeout(() => Session.showNewSessionModal(), 100);">
+                    <span class="quick-action-icon">🎮</span>
+                    <span class="quick-action-text">Start Session</span>
+                </button>
+            `);
+        }
+
+        if (teams.length < 2) {
+            actions.push(`
+                <button class="quick-action-card quick-action-team" onclick="App.switchTab('teams'); setTimeout(() => Teams.showCreateModal(), 100);">
+                    <span class="quick-action-icon">➕</span>
+                    <span class="quick-action-text">Create Team</span>
+                </button>
+            `);
+        }
+
+        container.innerHTML = actions.join('');
     }
 
     async function renderLeaderboard() {
