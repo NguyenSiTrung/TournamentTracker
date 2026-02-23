@@ -291,20 +291,28 @@ const App = (() => {
             return;
         }
 
+        function getInitials(name) {
+            return name.split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 2);
+        }
+
         const entries = [];
-        for (const session of recent) {
+        for (let i = 0; i < recent.length; i++) {
+            const session = recent[i];
             const full = await Store.getSession(session.id);
             const scores = await Store.getSessionScores(session.id);
             const sorted = Object.entries(scores).sort((a, b) => b[1].total - a[1].total);
             const winnerTeam = Store.getTeamFromCache(sorted[0]?.[0]);
             const winnerName = winnerTeam ? winnerTeam.name : 'Unknown';
+            const initials = getInitials(winnerName);
 
             entries.push(`
-                <div class="recent-result" onclick="App.switchTab('history')">
+                <div class="recent-result" onclick="App.switchTab('history')" style="animation-delay: ${i * 0.08}s;">
+                    <div class="recent-result-avatar">${escapeHtml(initials)}</div>
                     <div class="recent-result-info">
                         <span class="recent-result-name">${escapeHtml(full.name)}</span>
-                        <span class="recent-result-date">${new Date(full.date).toLocaleDateString()} • ${full.games.length} games</span>
+                        <span class="recent-result-date">${new Date(full.date).toLocaleDateString()}</span>
                     </div>
+                    <span class="recent-result-games">${full.games.length} games</span>
                     <span class="recent-result-winner">🏆 ${escapeHtml(winnerName)}</span>
                 </div>
             `);

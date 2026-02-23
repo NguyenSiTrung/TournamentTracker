@@ -1712,16 +1712,16 @@ body::before {
 .recent-result {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 12px;
     padding: 16px;
     border-radius: 12px;
     margin-bottom: 8px;
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid var(--glass-border);
+    animation: staggerFadeSlide var(--anim-entrance) ease both;
     cursor: pointer;
     transition: all var(--transition-med);
     flex-wrap: wrap;
-    gap: 8px;
 }
 
 .recent-result:hover {
@@ -1731,9 +1731,35 @@ body::before {
     box-shadow: -4px 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+.recent-result-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--accent-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.8rem;
+    color: white;
+    flex-shrink: 0;
+}
+
 .recent-result-info {
     display: flex;
     flex-direction: column;
+    flex: 1;
+}
+
+.recent-result-games {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding: 3px 8px;
+    background: rgba(108, 99, 255, 0.08);
+    border-radius: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .recent-result-name {
