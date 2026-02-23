@@ -28,12 +28,12 @@
 - [x] Task: Implement `POST /api/sessions/{id}/penalties` and `DELETE /api/sessions/{id}/penalties/{penalty_id}`
 - [x] Task: Implement `GET /api/sessions/{id}/scores` (session scoreboard)
 - [x] Task: Write tests for Games & Penalties API
-- [ ] Task: Conductor - User Manual Verification 'Phase 4: Games & Penalties API' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 4: Games & Penalties API' (Protocol in workflow.md)
 
 ## Phase 5: Stats & Data APIs
-- [ ] Task: Implement `GET /api/stats/leaderboard` (all-time leaderboard)
-- [ ] Task: Implement `POST /api/import` and `GET /api/export` endpoints
-- [ ] Task: Write tests for Stats & Data APIs
+- [x] Task: Implement `GET /api/stats/leaderboard` (all-time leaderboard)
+- [x] Task: Implement `POST /api/import` and `GET /api/export` endpoints
+- [x] Task: Write tests for Stats & Data APIs
 - [ ] Task: Conductor - User Manual Verification 'Phase 5: Stats & Data APIs' (Protocol in workflow.md)
 
 ## Phase 6: Frontend Integration
