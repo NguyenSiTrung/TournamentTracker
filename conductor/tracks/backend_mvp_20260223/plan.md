@@ -20,14 +20,14 @@
 - [x] Task: Implement `PUT /api/sessions/{id}` (update/complete session)
 - [x] Task: Implement `DELETE /api/sessions/{id}` endpoint
 - [x] Task: Write tests for Sessions API
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Sessions API' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Sessions API' (Protocol in workflow.md)
 
 ## Phase 4: Games & Penalties API
-- [ ] Task: Implement `POST /api/sessions/{id}/games` with points calculation logic
-- [ ] Task: Implement `DELETE /api/sessions/{id}/games/{game_id}`
-- [ ] Task: Implement `POST /api/sessions/{id}/penalties` and `DELETE /api/sessions/{id}/penalties/{penalty_id}`
-- [ ] Task: Implement `GET /api/sessions/{id}/scores` (session scoreboard)
-- [ ] Task: Write tests for Games & Penalties API
+- [x] Task: Implement `POST /api/sessions/{id}/games` with points calculation logic
+- [x] Task: Implement `DELETE /api/sessions/{id}/games/{game_id}`
+- [x] Task: Implement `POST /api/sessions/{id}/penalties` and `DELETE /api/sessions/{id}/penalties/{penalty_id}`
+- [x] Task: Implement `GET /api/sessions/{id}/scores` (session scoreboard)
+- [x] Task: Write tests for Games & Penalties API
 - [ ] Task: Conductor - User Manual Verification 'Phase 4: Games & Penalties API' (Protocol in workflow.md)
 
 ## Phase 5: Stats & Data APIs
