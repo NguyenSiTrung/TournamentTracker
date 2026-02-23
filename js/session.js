@@ -239,10 +239,13 @@ const Session = (() => {
         const points = game.points[teamId] ?? 0;
         const players = (game.team_player_map && game.team_player_map[teamId]) ? game.team_player_map[teamId] : [];
         const playerBreakdown = players
-            .map(playerName => ({
-                placement: game.player_placements[playerName],
-                points: game.player_points[playerName],
-            }))
+            .map(playerName => {
+                const compositeKey = `${teamId}::${playerName}`;
+                return {
+                    placement: game.player_placements[compositeKey] ?? game.player_placements[playerName],
+                    points: game.player_points[compositeKey] ?? game.player_points[playerName],
+                };
+            })
             .filter(item => item.placement !== undefined)
             .sort((a, b) => a.placement - b.placement)
             .slice(0, 2)
@@ -288,8 +291,9 @@ const Session = (() => {
                 const teamTotal = game.points[teamId] || 0;
                 teamSections[teamId] = { teamName, teamTotal, players: [] };
                 for (const pName of players) {
-                    const pos = game.player_placements[pName];
-                    const pts = game.player_points[pName];
+                    const compositeKey = `${teamId}::${pName}`;
+                    const pos = game.player_placements[compositeKey] ?? game.player_placements[pName];
+                    const pts = game.player_points[compositeKey] ?? game.player_points[pName];
                     if (pos !== undefined) {
                         teamSections[teamId].players.push({ name: pName, position: pos, points: pts });
                     }
