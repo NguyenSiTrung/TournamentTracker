@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from database.connection import create_tables
-from routers import teams
+from routers import sessions, teams
 
 app = FastAPI(title="Tournament Tracker API", version="1.0.0")
 
@@ -21,6 +21,7 @@ def on_startup():
 
 
 app.include_router(teams.router)
+app.include_router(sessions.router)
 
 
 @app.get("/")

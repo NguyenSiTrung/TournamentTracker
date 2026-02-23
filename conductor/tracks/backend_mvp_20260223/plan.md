@@ -12,14 +12,14 @@
 - [x] Task: Implement `PUT /api/teams/{id}` endpoint
 - [x] Task: Implement `DELETE /api/teams/{id}` endpoint
 - [x] Task: Write tests for Teams API
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Teams API' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Teams API' (Protocol in workflow.md)
 
 ## Phase 3: Sessions API
-- [ ] Task: Implement `GET /api/sessions` with status filter and `GET /api/sessions/{id}`
-- [ ] Task: Implement `POST /api/sessions` endpoint
-- [ ] Task: Implement `PUT /api/sessions/{id}` (update/complete session)
-- [ ] Task: Implement `DELETE /api/sessions/{id}` endpoint
-- [ ] Task: Write tests for Sessions API
+- [x] Task: Implement `GET /api/sessions` with status filter and `GET /api/sessions/{id}`
+- [x] Task: Implement `POST /api/sessions` endpoint
+- [x] Task: Implement `PUT /api/sessions/{id}` (update/complete session)
+- [x] Task: Implement `DELETE /api/sessions/{id}` endpoint
+- [x] Task: Write tests for Sessions API
 - [ ] Task: Conductor - User Manual Verification 'Phase 3: Sessions API' (Protocol in workflow.md)
 
 ## Phase 4: Games & Penalties API
