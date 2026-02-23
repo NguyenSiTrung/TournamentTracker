@@ -780,7 +780,7 @@ const Session = (() => {
                     allFilled = false;
                 }
                 usedPositions.add(pos);
-                playerPlacements[playerName] = pos;
+                playerPlacements[`${teamId}::${playerName}`] = pos;
             }
         });
 
