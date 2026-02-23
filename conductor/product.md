@@ -1,3 +1,5 @@
+> **Last Refreshed:** 2026-02-24 — Context synced with codebase
+
 # Product Guide: Tournament Tracker
 
 ## Vision
@@ -13,10 +15,18 @@ Tournament Tracker is a web application for friend groups to track casual game n
 4. **Penalties System** — Apply point penalties with reasons during active sessions
 5. **Data Import/Export** — JSON-based backup and restore of all tournament data
 
+## Shipped Features (Post-MVP)
+6. **Backend API & Persistence** — Full RESTful API (FastAPI) replacing localStorage with SQLite database; endpoints for teams, sessions, games, stats, and data import/export
+7. **Dashboard Redesign** — Rich dashboard with animated stat counters, leaderboard podium (top-3 visual), CSS bar chart for win distribution, quick action buttons, illustrated empty states, and skeleton loading placeholders
+8. **Game Result Modal Redesign** — Card-based game result entry with live winner/score preview, optional inline penalty application, and scoped modal variant styling
+9. **Live Session Dashboard** — Redesigned sessions tab with live dashboard view
+10. **UI/UX Polish** — Tab crossfade transitions, navigation badges (pulsing active session dot, history count), section-specific color accents, responsive layout (768px/480px breakpoints), `prefers-reduced-motion` accessibility support
+
 ## Platform & Architecture
 - **Frontend:** Web browser — vanilla HTML/CSS/JavaScript (single-page app)
-- **Backend:** Python (FastAPI) — to be added, replacing localStorage with server-side persistence
-- **Deployment:** Web frontend and FastAPI backend deployed on a server
+- **Backend:** Python (FastAPI) with SQLAlchemy ORM and SQLite database
+- **Serving:** FastAPI serves both the REST API and the frontend static files
+- **Deployment:** Single FastAPI server handles everything (API + frontend)
 
 ## Non-Goals (Current Scope)
 - Real-time multiplayer / WebSocket sync

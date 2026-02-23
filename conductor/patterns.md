@@ -17,6 +17,16 @@ Reusable patterns discovered during development. Read this before starting new w
 - Use `db.merge()` for import/upsert operations (from: backend_mvp_20260223, 2026-02-23)
 - For high-fidelity single-modal redesigns, use an optional `modalClass` in `App.openModal()` and scope styles to `.modal.<variant>` to avoid cross-modal regressions (from: session_game_result_modal_redesign_20260223, 2026-02-23)
 - For live modal previews (scores/winner state), derive render state directly from current form control values instead of duplicating transient state objects (from: session_game_result_modal_redesign_20260223, 2026-02-23)
+- Dashboard rendering order: showSkeletons → fetch data → animateCounters + renderQuickActions → renderLeaderboard → renderWinChart → renderRecentResults (from: ui_ux_redesign_20260223, 2026-02-23)
+
+## CSS & Animation Patterns
+
+- Use `void el.offsetWidth` to force reflow and re-trigger CSS animations on class toggle (from: ui_ux_redesign_20260223, 2026-02-23)
+- CSS custom properties for animation timing centralize control: `--anim-counter`, `--anim-stagger`, `--anim-entrance` (from: ui_ux_redesign_20260223, 2026-02-23)
+- Global `prefers-reduced-motion` blanket (0.01ms duration on all) is simplest accessibility approach (from: ui_ux_redesign_20260223, 2026-02-23)
+- Skeleton shimmer uses `background-size: 200%` with `background-position` animation (from: ui_ux_redesign_20260223, 2026-02-23)
+- Podium layout uses `align-items: flex-end` on flex container with CSS variable `--podium-height` per place (from: ui_ux_redesign_20260223, 2026-02-23)
+- Performance: animations should use `transform`/`opacity` only (GPU-composited properties) (from: ui_ux_redesign_20260223, 2026-02-23)
 
 ## Gotchas
 
@@ -25,6 +35,9 @@ Reusable patterns discovered during development. Read this before starting new w
 - SQLite DateTime column rejects ISO strings — parse with `datetime.fromisoformat()` on import (from: backend_mvp_20260223, 2026-02-23)
 - `ASGITransport` is async-only; use `starlette.testclient.TestClient` for sync FastAPI tests (from: backend_mvp_20260223, 2026-02-23)
 - All module functions calling async Store must themselves be async — cascading change (from: backend_mvp_20260223, 2026-02-23)
+- Removing a `@keyframes` rule that other components reference breaks those components silently — always grep for usages before removing (from: ui_ux_redesign_20260223, 2026-02-23)
+- `display: none/block` can't be animated; use `animation` on `.active` class instead (from: ui_ux_redesign_20260223, 2026-02-23)
+- Parallel worker output can diverge on CSS/JS selector naming; coordinator integration pass is required before final validation (from: session_game_result_modal_redesign_20260223, 2026-02-23)
 
 ## Testing
 
@@ -34,4 +47,4 @@ Reusable patterns discovered during development. Read this before starting new w
 - Points calculation: 1st=4, 2nd=3, 3rd=2, 4th+=1; 2 players: 1st=4, 2nd=1 (from: backend_mvp_20260223, 2026-02-23)
 
 ---
-Last refreshed: 2026-02-23
+Last refreshed: 2026-02-24

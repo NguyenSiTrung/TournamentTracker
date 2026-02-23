@@ -1,0 +1,39 @@
+{
+  "last_refresh": "2026-02-24T00:44:51+07:00",
+  "scope": "all",
+  "changes_applied": [
+    {
+      "file": "tech-stack.md",
+      "changes": [
+        "Backend marked as implemented (was 'Planned')",
+        "Storage updated to SQLite (was 'localStorage / Planned')",
+        "All Python dependencies documented from requirements.txt",
+        "Added Space Grotesk font",
+        "Added frontend serving via FastAPI",
+        "Added venv requirement note"
+      ]
+    },
+    {
+      "file": "product.md",
+      "changes": [
+        "Added 'Shipped Features' section with 5 post-MVP features",
+        "Backend API & Persistence marked as shipped",
+        "Dashboard Redesign marked as shipped",
+        "Game Result Modal Redesign marked as shipped",
+        "Live Session Dashboard marked as shipped",
+        "UI/UX Polish marked as shipped",
+        "Updated Platform & Architecture to reflect actual state"
+      ]
+    },
+    {
+      "file": "patterns.md",
+      "changes": [
+        "Elevated CSS animation patterns from ui_ux_redesign track",
+        "Added CSS & Animation Patterns section (6 patterns)",
+        "Elevated 3 gotchas from ui_ux_redesign and session_game_result_modal tracks",
+        "Added dashboard rendering order pattern"
+      ]
+    }
+  ],
+  "next_refresh_hint": "2026-02-26T00:44:51+07:00"
+}
