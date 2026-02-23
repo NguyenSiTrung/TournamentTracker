@@ -345,11 +345,11 @@ body::before {
 /* --- Tab Content --- */
 .tab-content {
     display: none;
-    animation: fadeSlideUp 0.4s ease;
 }
 
 .tab-content.active {
     display: block;
+    animation: tabCrossfade 0.35s ease both;
 }
 
 @keyframes fadeSlideUp {

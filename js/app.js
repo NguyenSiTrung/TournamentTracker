@@ -23,8 +23,15 @@ const App = (() => {
             btn.classList.toggle('active', btn.getAttribute('data-tab') === tabName);
         });
 
+        const target = document.getElementById(`view-${tabName}`);
         document.querySelectorAll('.tab-content').forEach(content => {
-            content.classList.toggle('active', content.id === `view-${tabName}`);
+            if (content === target) {
+                content.classList.remove('active');
+                void content.offsetWidth; // force reflow to re-trigger animation
+                content.classList.add('active');
+            } else {
+                content.classList.remove('active');
+            }
         });
 
         switch (tabName) {
