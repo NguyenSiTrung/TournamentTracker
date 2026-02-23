@@ -1,0 +1,17 @@
+{
+    "track_id": "duplicate_player_name_bug_20260224",
+    "type": "bug",
+    "status": "new",
+    "created_at": "2026-02-24T00:52:00+07:00",
+    "description": "Game result save fails with 'Please assign a unique placement for each player' when players across different teams share the same name",
+    "beads_epic": "TournamentTracker-66a",
+    "beads_tasks": {
+        "phase1_task1": "TournamentTracker-66a.1",
+        "phase1_task2": "TournamentTracker-66a.2",
+        "phase2_task1": "TournamentTracker-66a.3",
+        "phase2_task2": "TournamentTracker-66a.4",
+        "phase2_task3": "TournamentTracker-66a.5",
+        "phase3_task1": "TournamentTracker-66a.6",
+        "phase3_task2": "TournamentTracker-66a.7"
+    }
+}
