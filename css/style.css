@@ -1956,6 +1956,35 @@ body::before {
     .scoreboard-table td {
         padding: 8px 8px;
     }
+
+    .podium {
+        gap: 8px;
+    }
+
+    .podium-avatar {
+        width: 44px;
+        height: 44px;
+        font-size: 0.9rem;
+    }
+
+    .podium-avatar-1 {
+        width: 52px;
+        height: 52px;
+        font-size: 1.1rem;
+    }
+
+    .podium-name {
+        font-size: 0.8rem;
+    }
+
+    .dashboard-quick-actions {
+        flex-wrap: wrap;
+    }
+
+    .bar-chart-label {
+        width: 70px;
+        font-size: 0.75rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1969,6 +1998,19 @@ body::before {
 
     .stat-value {
         font-size: 1.4rem;
+    }
+
+    .podium-bar {
+        height: calc(var(--podium-height, 120px) * 0.7);
+    }
+
+    .podium-trophy {
+        font-size: 1.5rem;
+    }
+
+    .quick-action-card {
+        width: 100%;
+        justify-content: center;
     }
 }
 
