@@ -45,4 +45,4 @@
 - [x] Task: Enable CORS in FastAPI and test end-to-end
 - [x] Task: Add localStorage JSON migration tool (one-time import via UI)
 - [x] Task: Write integration tests for frontend-backend flow
-- [ ] Task: Conductor - User Manual Verification 'Phase 6: Frontend Integration' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 6: Frontend Integration' (Protocol in workflow.md)

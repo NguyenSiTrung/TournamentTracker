@@ -32,3 +32,26 @@ Patterns, gotchas, and context discovered during implementation.
   - Gotchas: `ASGITransport` is async-only; use `starlette.testclient.TestClient` for sync FastAPI tests
   - Gotchas: Must import ORM models in conftest to ensure they're registered with `Base.metadata`
 ---
+
+## [2026-02-23] - Phase 3-5: Sessions, Games, Penalties, Stats, Data APIs
+- **Implemented:** Full CRUD for Sessions, Games/Penalties with points calc, Scores, Leaderboard, Import/Export
+- **Files changed:** backend/routers/sessions.py, games.py, stats.py, data.py, backend/tests/test_sessions.py, test_games_penalties.py, test_stats_data.py
+- **Commits:** 2d5042d, 80a9d27, 8c71235
+- **Learnings:**
+  - Patterns: Extract shared helper `_get_session_or_404()` to DRY up session lookups
+  - Patterns: Use `db.merge()` for import/upsert operations
+  - Gotchas: SQLite DateTime column rejects ISO strings — must parse with `datetime.fromisoformat()` on import
+  - Context: Export uses camelCase keys to match frontend localStorage format
+---
+
+## [2026-02-23] - Phase 6: Frontend Integration
+- **Implemented:** API client module, async Store, refactored Teams/Session/History/App modules, localStorage migration tool
+- **Files changed:** js/api.js (new), js/store.js, js/teams.js, js/session.js, js/history.js, js/app.js, index.html
+- **Commit:** 195e4f0
+- **Learnings:**
+  - Patterns: API response uses snake_case (player_placements, team_player_map) — frontend must reference these keys not camelCase
+  - Patterns: Use synchronous `getTeamFromCache()` in render loops to avoid async in .map() chains
+  - Patterns: `Store.invalidateTeamsCache()` must be called after imports to force re-fetch
+  - Gotchas: All public module functions that call Store must be async — cascading change through entire codebase
+  - Context: CORS was already configured in Phase 1 via FastAPI middleware
+---

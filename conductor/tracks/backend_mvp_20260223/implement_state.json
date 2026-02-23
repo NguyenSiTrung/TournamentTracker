@@ -1,8 +1,0 @@
-{
-  "current_phase": "Phase 6: Frontend Integration",
-  "current_phase_index": 5,
-  "current_task_index": 0,
-  "completed_phases": ["Phase 1: Backend Project Setup", "Phase 2: Teams API", "Phase 3: Sessions API", "Phase 4: Games & Penalties API", "Phase 5: Stats & Data APIs"],
-  "last_updated": "2026-02-23T00:00:00Z",
-  "status": "in_progress"
-}
