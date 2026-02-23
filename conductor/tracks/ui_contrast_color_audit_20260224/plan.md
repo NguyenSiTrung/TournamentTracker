@@ -39,26 +39,26 @@
 
 ## Phase 3: Dashboard Section
 
-- [ ] Task 1: Audit and fix dashboard stat cards & leaderboard
+- [x] Task 1: Audit and fix dashboard stat cards & leaderboard
   - Review `.stat-card-label` (uppercase labels) contrast — uses `--text-muted`
   - Review `.stat-card-trend-neutral` contrast
   - Review `.lb-rank` contrast for non-podium positions
   - Review `.lb-team-players-count` contrast
   - Review `.panel-action-link` and `.game-count` contrast
   - Sub-tasks:
-    - [ ] Fix stat card label contrast
-    - [ ] Fix leaderboard secondary text contrast
-    - [ ] Fix panel action link and game count contrast
+    - [x] Fix stat card label contrast
+    - [x] Fix leaderboard secondary text contrast
+    - [x] Fix panel action link and game count contrast
 
-- [ ] Task 2: Audit and fix dashboard sessions table
+- [x] Task 2: Audit and fix dashboard sessions table
   - Review `.sessions-table th` header contrast
   - Review `.session-cell-date` contrast
   - Review `.points-pending` and `.points-neutral` contrast
   - Sub-tasks:
-    - [ ] Fix table header text contrast
-    - [ ] Fix secondary table cell text contrast
+    - [x] Fix table header text contrast
+    - [x] Fix secondary table cell text contrast
 
-- [ ] Task: Conductor - User Manual Verification 'Dashboard Section' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Dashboard Section' (Protocol in workflow.md)
 
 ## Phase 4: Session Tab
 
