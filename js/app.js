@@ -88,22 +88,39 @@ const App = (() => {
         await History.render();
     }
 
+    function animateCounter(el, target) {
+        const duration = 1200;
+        const start = performance.now();
+        const from = 0;
+        function tick(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.round(from + (target - from) * eased);
+            if (progress < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+    }
+
     async function refreshDashboard() {
         const teams = await Store.getTeams();
         const sessions = await Store.getSessions();
         const activeSessions = await Store.getActiveSessions();
 
-        document.getElementById('total-teams').textContent = teams.length;
-        document.getElementById('total-sessions').textContent = sessions.length;
-        document.getElementById('active-sessions').textContent = activeSessions.length;
+        const totalTeams = teams.length;
+        const totalSessions = sessions.length;
+        const totalActive = activeSessions.length;
 
-        // Total games count
         let totalGames = 0;
         for (const s of sessions) {
             const full = await Store.getSession(s.id);
             totalGames += full.games.length;
         }
-        document.getElementById('total-games').textContent = totalGames;
+
+        animateCounter(document.getElementById('total-teams'), totalTeams);
+        animateCounter(document.getElementById('total-sessions'), totalSessions);
+        animateCounter(document.getElementById('total-games'), totalGames);
+        animateCounter(document.getElementById('active-sessions'), totalActive);
 
         // Active session preview
         const activeCard = document.getElementById('active-session-card');
