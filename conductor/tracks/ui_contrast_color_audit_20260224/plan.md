@@ -22,20 +22,20 @@
     - [x] Fix outline/ghost button contrast
     - [x] Fix badge and status badge contrast
 
-- [ ] Task: Conductor - User Manual Verification 'CSS Custom Properties & Global Foundation' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'CSS Custom Properties & Global Foundation' (Protocol in workflow.md)
 
 ## Phase 2: Sidebar & Navigation
 
-- [ ] Task 1: Audit and fix sidebar contrast issues
+- [x] Task 1: Audit and fix sidebar contrast issues
   - Review `.sidebar-nav-item` inactive state (`--text-muted`) readability
   - Review `.sidebar-season` text (`--text-muted`) readability
   - Review `.sidebar-user-email` text (`--text-muted`) readability
   - Review `.sidebar-logout-btn` icon color readability
   - Sub-tasks:
-    - [ ] Fix inactive nav item text contrast
-    - [ ] Fix sidebar footer text contrast (season label, user email)
+    - [x] Fix inactive nav item text contrast
+    - [x] Fix sidebar footer text contrast (season label, user email)
 
-- [ ] Task: Conductor - User Manual Verification 'Sidebar & Navigation' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Sidebar & Navigation' (Protocol in workflow.md)
 
 ## Phase 3: Dashboard Section
 
