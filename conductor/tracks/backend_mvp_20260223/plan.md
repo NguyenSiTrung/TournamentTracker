@@ -34,15 +34,15 @@
 - [x] Task: Implement `GET /api/stats/leaderboard` (all-time leaderboard)
 - [x] Task: Implement `POST /api/import` and `GET /api/export` endpoints
 - [x] Task: Write tests for Stats & Data APIs
-- [ ] Task: Conductor - User Manual Verification 'Phase 5: Stats & Data APIs' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 5: Stats & Data APIs' (Protocol in workflow.md)
 
 ## Phase 6: Frontend Integration
-- [ ] Task: Create API client module (`js/api.js`) with fetch wrappers
-- [ ] Task: Refactor `Store` module to use API client instead of localStorage
-- [ ] Task: Update `Teams` module to use async API calls
-- [ ] Task: Update `Session` module to use async API calls
-- [ ] Task: Update `History` and `App` modules to use async API calls
-- [ ] Task: Enable CORS in FastAPI and test end-to-end
-- [ ] Task: Add localStorage JSON migration tool (one-time import via UI)
-- [ ] Task: Write integration tests for frontend-backend flow
+- [x] Task: Create API client module (`js/api.js`) with fetch wrappers
+- [x] Task: Refactor `Store` module to use API client instead of localStorage
+- [x] Task: Update `Teams` module to use async API calls
+- [x] Task: Update `Session` module to use async API calls
+- [x] Task: Update `History` and `App` modules to use async API calls
+- [x] Task: Enable CORS in FastAPI and test end-to-end
+- [x] Task: Add localStorage JSON migration tool (one-time import via UI)
+- [x] Task: Write integration tests for frontend-backend flow
 - [ ] Task: Conductor - User Manual Verification 'Phase 6: Frontend Integration' (Protocol in workflow.md)

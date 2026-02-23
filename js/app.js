@@ -2,10 +2,11 @@
  * App - Main application controller
  */
 const App = (() => {
-    function init() {
+    async function init() {
         setupTabNavigation();
         setupEventListeners();
-        refreshAll();
+        await checkLocalStorageMigration();
+        await refreshAll();
     }
 
     function setupTabNavigation() {
@@ -17,58 +18,48 @@ const App = (() => {
         });
     }
 
-    function switchTab(tabName) {
-        // Update buttons
+    async function switchTab(tabName) {
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.classList.toggle('active', btn.getAttribute('data-tab') === tabName);
         });
 
-        // Update content
         document.querySelectorAll('.tab-content').forEach(content => {
             content.classList.toggle('active', content.id === `view-${tabName}`);
         });
 
-        // Render the tab content
         switch (tabName) {
-            case 'dashboard': refreshDashboard(); break;
-            case 'teams': Teams.render(); break;
-            case 'session': Session.render(); break;
-            case 'history': History.render(); break;
+            case 'dashboard': await refreshDashboard(); break;
+            case 'teams': await Teams.render(); break;
+            case 'session': await Session.render(); break;
+            case 'history': await History.render(); break;
         }
     }
 
     function setupEventListeners() {
-        // Create team
         document.getElementById('btn-create-team').addEventListener('click', () => {
             Teams.showCreateModal();
         });
 
-        // New session
         document.getElementById('btn-new-session').addEventListener('click', () => {
             Session.showNewSessionModal();
         });
 
-        // Add game
         document.getElementById('btn-add-game').addEventListener('click', () => {
             Session.showAddGameModal();
         });
 
-        // Add penalty
         document.getElementById('btn-add-penalty').addEventListener('click', () => {
             Session.showAddPenaltyModal();
         });
 
-        // Complete session
         document.getElementById('btn-complete-session').addEventListener('click', () => {
             Session.completeSession();
         });
 
-        // Go to session from dashboard
         document.getElementById('btn-go-to-session').addEventListener('click', () => {
             switchTab('session');
         });
 
-        // Modal close
         document.getElementById('modal-close').addEventListener('click', closeModal);
         document.getElementById('modal-overlay').addEventListener('click', (e) => {
             if (e.target === document.getElementById('modal-overlay')) {
@@ -76,16 +67,13 @@ const App = (() => {
             }
         });
 
-        // Export
         document.getElementById('btn-export').addEventListener('click', exportData);
 
-        // Import
         document.getElementById('btn-import').addEventListener('click', () => {
             document.getElementById('import-file').click();
         });
         document.getElementById('import-file').addEventListener('change', importData);
 
-        // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeModal();
@@ -93,49 +81,52 @@ const App = (() => {
         });
     }
 
-    function refreshAll() {
-        refreshDashboard();
-        Teams.render();
-        Session.render();
-        History.render();
+    async function refreshAll() {
+        await refreshDashboard();
+        await Teams.render();
+        await Session.render();
+        await History.render();
     }
 
-    function refreshDashboard() {
-        const teams = Store.getTeams();
-        const sessions = Store.getSessions();
-        const activeSessions = Store.getActiveSessions();
+    async function refreshDashboard() {
+        const teams = await Store.getTeams();
+        const sessions = await Store.getSessions();
+        const activeSessions = await Store.getActiveSessions();
 
         document.getElementById('total-teams').textContent = teams.length;
         document.getElementById('total-sessions').textContent = sessions.length;
-        document.getElementById('total-games').textContent = Store.getTotalGamesPlayed();
         document.getElementById('active-sessions').textContent = activeSessions.length;
+
+        // Total games count
+        let totalGames = 0;
+        for (const s of sessions) {
+            const full = await Store.getSession(s.id);
+            totalGames += full.games.length;
+        }
+        document.getElementById('total-games').textContent = totalGames;
 
         // Active session preview
         const activeCard = document.getElementById('active-session-card');
         const activePreview = document.getElementById('active-session-preview');
         if (activeSessions.length > 0) {
-            const session = activeSessions[0];
-            const scores = Store.getSessionScores(session.id);
+            const session = await Store.getSession(activeSessions[0].id);
             activeCard.style.display = 'block';
             activePreview.innerHTML = `
                 <p style="font-weight:600; margin-bottom:8px;">${escapeHtml(session.name)}</p>
                 <p style="font-size:0.85rem; color:var(--text-secondary);">
-                    ${session.games.length} games played • ${session.teamIds.length} teams
+                    ${session.games.length} games played • ${session.team_ids.length} teams
                 </p>
             `;
         } else {
             activeCard.style.display = 'none';
         }
 
-        // Leaderboard
-        renderLeaderboard();
-
-        // Recent results
-        renderRecentResults();
+        await renderLeaderboard();
+        await renderRecentResults();
     }
 
-    function renderLeaderboard() {
-        const leaderboard = Store.getAllTimeLeaderboard();
+    async function renderLeaderboard() {
+        const leaderboard = await Store.getAllTimeLeaderboard();
         const container = document.getElementById('leaderboard-content');
 
         if (leaderboard.length === 0) {
@@ -144,7 +135,7 @@ const App = (() => {
         }
 
         container.innerHTML = leaderboard.slice(0, 5).map((entry, idx) => {
-            const team = Store.getTeam(entry.teamId);
+            const team = Store.getTeamFromCache(entry.teamId);
             const teamName = team ? team.name : 'Unknown';
             const rank = idx + 1;
             const rankIcon = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
@@ -162,34 +153,38 @@ const App = (() => {
         }).join('');
     }
 
-    function renderRecentResults() {
-        const completed = Store.getCompletedSessions()
-            .sort((a, b) => new Date(b.date) - new Date(a.date))
-            .slice(0, 5);
+    async function renderRecentResults() {
+        const completed = await Store.getCompletedSessions();
+        completed.sort((a, b) => new Date(b.date) - new Date(a.date));
+        const recent = completed.slice(0, 5);
 
         const container = document.getElementById('recent-results-content');
 
-        if (completed.length === 0) {
+        if (recent.length === 0) {
             container.innerHTML = '<p class="empty-state">No completed sessions yet.</p>';
             return;
         }
 
-        container.innerHTML = completed.map(session => {
-            const scores = Store.getSessionScores(session.id);
+        const entries = [];
+        for (const session of recent) {
+            const full = await Store.getSession(session.id);
+            const scores = await Store.getSessionScores(session.id);
             const sorted = Object.entries(scores).sort((a, b) => b[1].total - a[1].total);
-            const winnerTeam = Store.getTeam(sorted[0]?.[0]);
+            const winnerTeam = Store.getTeamFromCache(sorted[0]?.[0]);
             const winnerName = winnerTeam ? winnerTeam.name : 'Unknown';
 
-            return `
+            entries.push(`
                 <div class="recent-result" onclick="App.switchTab('history')">
                     <div class="recent-result-info">
-                        <span class="recent-result-name">${escapeHtml(session.name)}</span>
-                        <span class="recent-result-date">${new Date(session.date).toLocaleDateString()} • ${session.games.length} games</span>
+                        <span class="recent-result-name">${escapeHtml(full.name)}</span>
+                        <span class="recent-result-date">${new Date(full.date).toLocaleDateString()} • ${full.games.length} games</span>
                     </div>
                     <span class="recent-result-winner">🏆 ${escapeHtml(winnerName)}</span>
                 </div>
-            `;
-        }).join('');
+            `);
+        }
+
+        container.innerHTML = entries.join('');
     }
 
     // --- Modal ---
@@ -199,7 +194,6 @@ const App = (() => {
         document.getElementById('modal-footer').innerHTML = footerHtml;
         document.getElementById('modal-overlay').classList.add('active');
 
-        // Focus first input
         setTimeout(() => {
             const input = document.querySelector('#modal-body .form-input');
             if (input) input.focus();
@@ -226,37 +220,93 @@ const App = (() => {
     }
 
     // --- Export / Import ---
-    function exportData() {
-        const data = Store.exportData();
-        const blob = new Blob([data], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `tournament_tracker_${new Date().toISOString().split('T')[0]}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
-        toast('Data exported!', 'success');
+    async function exportData() {
+        try {
+            const data = await Store.exportData();
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `tournament_tracker_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            toast('Data exported!', 'success');
+        } catch (err) {
+            toast('Export failed: ' + err.message, 'error');
+        }
     }
 
-    function importData(e) {
+    async function importData(e) {
         const file = e.target.files[0];
         if (!file) return;
 
         const reader = new FileReader();
-        reader.onload = function (evt) {
+        reader.onload = async function (evt) {
             try {
-                Store.importData(evt.target.result);
-                refreshAll();
+                await Store.importData(evt.target.result);
+                Store.invalidateTeamsCache();
+                await refreshAll();
                 toast('Data imported successfully!', 'success');
             } catch (err) {
-                toast('Import failed: Invalid data format', 'error');
+                toast('Import failed: ' + err.message, 'error');
             }
         };
         reader.readAsText(file);
         e.target.value = '';
     }
 
-    return { init, switchTab, refreshDashboard, openModal, closeModal, toast };
+    // --- localStorage Migration ---
+    async function checkLocalStorageMigration() {
+        const STORAGE_KEY = 'tournament_tracker_data';
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+
+        let data;
+        try {
+            data = JSON.parse(raw);
+        } catch {
+            return;
+        }
+
+        if (!data.teams || !data.sessions) return;
+        if (data.teams.length === 0 && data.sessions.length === 0) return;
+
+        const body = `
+            <p>Found existing data in your browser's localStorage:</p>
+            <ul style="margin:12px 0;">
+                <li><strong>${data.teams.length}</strong> teams</li>
+                <li><strong>${data.sessions.length}</strong> sessions</li>
+            </ul>
+            <p>Would you like to migrate this data to the new backend database?</p>
+            <p class="text-muted mt-8" style="font-size:0.85rem;">After migration, localStorage data will be cleared.</p>
+        `;
+        const footer = `
+            <button class="btn btn-ghost" onclick="App.skipMigration()">Skip</button>
+            <button class="btn btn-accent" onclick="App.runMigration()">Migrate Data</button>
+        `;
+        openModal('📦 Data Migration Available', body, footer);
+    }
+
+    async function runMigration() {
+        const STORAGE_KEY = 'tournament_tracker_data';
+        const raw = localStorage.getItem(STORAGE_KEY);
+        try {
+            await Store.importData(raw);
+            localStorage.removeItem(STORAGE_KEY);
+            Store.invalidateTeamsCache();
+            closeModal();
+            toast('Data migrated successfully!', 'success');
+            await refreshAll();
+        } catch (err) {
+            toast('Migration failed: ' + err.message, 'error');
+        }
+    }
+
+    function skipMigration() {
+        closeModal();
+    }
+
+    return { init, switchTab, refreshDashboard, openModal, closeModal, toast, runMigration, skipMigration };
 })();
 
 // Initialize on DOM ready

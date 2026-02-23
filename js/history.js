@@ -2,13 +2,13 @@
  * History - Session history & summary UI
  */
 const History = (() => {
-    function render() {
-        renderOverallStats();
-        renderSessionList();
+    async function render() {
+        await renderOverallStats();
+        await renderSessionList();
     }
 
-    function renderOverallStats() {
-        const leaderboard = Store.getAllTimeLeaderboard();
+    async function renderOverallStats() {
+        const leaderboard = await Store.getAllTimeLeaderboard();
         const container = document.getElementById('overall-stats-content');
 
         if (leaderboard.length === 0) {
@@ -32,7 +32,7 @@ const History = (() => {
         `;
 
         leaderboard.forEach((entry, idx) => {
-            const team = Store.getTeam(entry.teamId);
+            const team = Store.getTeamFromCache(entry.teamId);
             const teamName = team ? team.name : 'Unknown';
             const avg = entry.sessions > 0 ? (entry.totalPoints / entry.sessions).toFixed(1) : '0';
             const rank = idx + 1;
@@ -54,8 +54,9 @@ const History = (() => {
         container.innerHTML = html;
     }
 
-    function renderSessionList() {
-        const completed = Store.getCompletedSessions().sort((a, b) => new Date(b.date) - new Date(a.date));
+    async function renderSessionList() {
+        const completed = await Store.getCompletedSessions();
+        completed.sort((a, b) => new Date(b.date) - new Date(a.date));
         const container = document.getElementById('history-list');
 
         if (completed.length === 0) {
@@ -63,13 +64,20 @@ const History = (() => {
             return;
         }
 
-        container.innerHTML = completed.map(session => {
-            const scores = Store.getSessionScores(session.id);
+        // Fetch full session data for each completed session
+        const sessionsWithDetails = [];
+        for (const s of completed) {
+            const full = await Store.getSession(s.id);
+            const scores = await Store.getSessionScores(s.id);
+            sessionsWithDetails.push({ session: full, scores });
+        }
+
+        container.innerHTML = sessionsWithDetails.map(({ session, scores }) => {
             const sorted = Object.entries(scores).sort((a, b) => b[1].total - a[1].total);
-            const winnerTeam = Store.getTeam(sorted[0]?.[0]);
+            const winnerTeam = Store.getTeamFromCache(sorted[0]?.[0]);
             const winnerName = winnerTeam ? winnerTeam.name : 'Unknown';
             const gameCount = session.games.length;
-            const teamCount = session.teamIds.length;
+            const teamCount = session.team_ids.length;
 
             return `
                 <div class="history-session-card" data-session-id="${session.id}">
@@ -118,7 +126,7 @@ const History = (() => {
         `;
 
         sorted.forEach(([teamId, score], idx) => {
-            const team = Store.getTeam(teamId);
+            const team = Store.getTeamFromCache(teamId);
             const teamName = team ? team.name : 'Unknown';
             const rank = idx + 1;
             const rankIcon = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `${rank}`;
@@ -148,7 +156,7 @@ const History = (() => {
         if (session.penalties.length > 0) {
             html += '<h4 class="mb-8 mt-16">⚠️ Penalties</h4>';
             session.penalties.forEach(p => {
-                const team = Store.getTeam(p.teamId);
+                const team = Store.getTeamFromCache(p.team_id);
                 const teamName = team ? team.name : 'Unknown';
                 html += `
                     <div class="penalty-item">

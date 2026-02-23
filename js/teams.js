@@ -2,8 +2,8 @@
  * Teams - Team management UI
  */
 const Teams = (() => {
-    function render() {
-        const teams = Store.getTeams();
+    async function render() {
+        const teams = await Store.getTeams();
         const grid = document.getElementById('teams-grid');
 
         if (teams.length === 0) {
@@ -69,7 +69,7 @@ const Teams = (() => {
         container.appendChild(row);
     }
 
-    function saveNewTeam() {
+    async function saveNewTeam() {
         const name = document.getElementById('team-name-input').value.trim();
         if (!name) {
             App.toast('Please enter a team name', 'error');
@@ -84,15 +84,15 @@ const Teams = (() => {
             return;
         }
 
-        Store.createTeam(name, players);
+        await Store.createTeam(name, players);
         App.closeModal();
-        render();
-        App.refreshDashboard();
+        await render();
+        await App.refreshDashboard();
         App.toast('Team created!', 'success');
     }
 
-    function editTeam(id) {
-        const team = Store.getTeam(id);
+    async function editTeam(id) {
+        const team = await Store.getTeam(id);
         if (!team) return;
 
         const body = `
@@ -120,7 +120,7 @@ const Teams = (() => {
         App.openModal('Edit Team', body, footer);
     }
 
-    function saveEditTeam(id) {
+    async function saveEditTeam(id) {
         const name = document.getElementById('team-name-input').value.trim();
         if (!name) {
             App.toast('Please enter a team name', 'error');
@@ -135,15 +135,15 @@ const Teams = (() => {
             return;
         }
 
-        Store.updateTeam(id, name, players);
+        await Store.updateTeam(id, name, players);
         App.closeModal();
-        render();
-        App.refreshDashboard();
+        await render();
+        await App.refreshDashboard();
         App.toast('Team updated!', 'success');
     }
 
-    function deleteTeam(id) {
-        const team = Store.getTeam(id);
+    async function deleteTeam(id) {
+        const team = await Store.getTeam(id);
         if (!team) return;
 
         const body = `
@@ -157,11 +157,11 @@ const Teams = (() => {
         App.openModal('Delete Team', body, footer);
     }
 
-    function confirmDelete(id) {
-        Store.deleteTeam(id);
+    async function confirmDelete(id) {
+        await Store.deleteTeam(id);
         App.closeModal();
-        render();
-        App.refreshDashboard();
+        await render();
+        await App.refreshDashboard();
         App.toast('Team deleted', 'info');
     }
 

@@ -4,13 +4,13 @@
 const Session = (() => {
     let currentSessionId = null;
 
-    function render() {
-        const activeSessions = Store.getActiveSessions();
+    async function render() {
+        const activeSessions = await Store.getActiveSessions();
 
         if (currentSessionId) {
-            const session = Store.getSession(currentSessionId);
+            const session = await Store.getSession(currentSessionId);
             if (session && session.status === 'active') {
-                showActiveSession(session);
+                await showActiveSession(session);
                 return;
             } else {
                 currentSessionId = null;
@@ -36,24 +36,25 @@ const Session = (() => {
         }
     }
 
-    function showActiveSession(session) {
+    async function showActiveSession(session) {
         document.getElementById('no-active-session').style.display = 'none';
         document.getElementById('active-session-panel').style.display = 'block';
 
         document.getElementById('session-name-display').textContent = session.name;
         document.getElementById('session-date-display').textContent = new Date(session.date).toLocaleDateString();
 
-        renderScoreboard(session);
+        await renderScoreboard(session);
         renderGamesList(session);
         renderPenalties(session);
     }
 
-    function renderScoreboard(session) {
-        const scores = Store.getSessionScores(session.id);
-        const teams = session.teamIds.map(tid => Store.getTeam(tid)).filter(Boolean);
+    async function renderScoreboard(session) {
+        const scores = await Store.getSessionScores(session.id);
+        const teams = await Store.getTeams();
+        const sessionTeams = session.team_ids.map(tid => teams.find(t => t.id === tid)).filter(Boolean);
 
-        const sorted = teams
-            .map(t => ({ team: t, ...scores[t.id] }))
+        const sorted = sessionTeams
+            .map(t => ({ team: t, ...(scores[t.id] || { gamePoints: 0, penaltyPoints: 0, total: 0 }) }))
             .sort((a, b) => b.total - a.total);
 
         if (sorted.length === 0) {
@@ -108,26 +109,20 @@ const Session = (() => {
     }
 
     function renderGameCard(game, index, showDelete) {
-        // Check if this game has player-level data
-        const hasPlayerData = game.playerPlacements && Object.keys(game.playerPlacements).length > 0;
+        const hasPlayerData = game.player_placements && Object.keys(game.player_placements).length > 0;
 
         let placementsHtml = '';
 
         if (hasPlayerData) {
-            // Group players by team and show individual scores
-            const sortedPlayers = Object.entries(game.playerPlacements)
-                .sort((a, b) => a[1] - b[1]);
-
-            // Build team sections
             const teamSections = {};
-            for (const [teamId, players] of Object.entries(game.teamPlayerMap || {})) {
-                const team = Store.getTeam(teamId);
+            for (const [teamId, players] of Object.entries(game.team_player_map || {})) {
+                const team = Store.getTeamFromCache(teamId);
                 const teamName = team ? team.name : 'Unknown';
                 const teamTotal = game.points[teamId] || 0;
                 teamSections[teamId] = { teamName, teamTotal, players: [] };
                 for (const pName of players) {
-                    const pos = game.playerPlacements[pName];
-                    const pts = game.playerPoints[pName];
+                    const pos = game.player_placements[pName];
+                    const pts = game.player_points[pName];
                     if (pos !== undefined) {
                         teamSections[teamId].players.push({ name: pName, position: pos, points: pts });
                     }
@@ -135,7 +130,6 @@ const Session = (() => {
                 teamSections[teamId].players.sort((a, b) => a.position - b.position);
             }
 
-            // Sort teams by total points descending
             const sortedTeams = Object.values(teamSections).sort((a, b) => b.teamTotal - a.teamTotal);
 
             placementsHtml = sortedTeams.map(ts => `
@@ -156,12 +150,11 @@ const Session = (() => {
                 </div>
             `).join('');
         } else {
-            // Legacy: team-level placements
             const sortedPlacements = Object.entries(game.placements)
                 .sort((a, b) => a[1] - b[1]);
 
             placementsHtml = sortedPlacements.map(([teamId, position]) => {
-                const team = Store.getTeam(teamId);
+                const team = Store.getTeamFromCache(teamId);
                 const teamName = team ? team.name : 'Unknown';
                 const pts = game.points[teamId];
                 const posLabel = getPositionLabel(position);
@@ -197,7 +190,7 @@ const Session = (() => {
         }
 
         container.innerHTML = session.penalties.map(p => {
-            const team = Store.getTeam(p.teamId);
+            const team = Store.getTeamFromCache(p.team_id);
             const teamName = team ? team.name : 'Unknown';
             return `
                 <div class="penalty-item">
@@ -224,8 +217,8 @@ const Session = (() => {
     }
 
     // --- Actions ---
-    function showNewSessionModal() {
-        const teams = Store.getTeams();
+    async function showNewSessionModal() {
+        const teams = await Store.getTeams();
         if (teams.length < 2) {
             App.toast('You need at least 2 teams to create a session. Go to Teams tab first!', 'error');
             return;
@@ -255,7 +248,7 @@ const Session = (() => {
         App.openModal('New Session', body, footer);
     }
 
-    function createNewSession() {
+    async function createNewSession() {
         const name = document.getElementById('session-name-input').value.trim();
         if (!name) {
             App.toast('Please enter a session name', 'error');
@@ -270,29 +263,29 @@ const Session = (() => {
             return;
         }
 
-        const session = Store.createSession(name, teamIds);
+        const session = await Store.createSession(name, teamIds);
         currentSessionId = session.id;
         App.closeModal();
-        render();
-        App.refreshDashboard();
+        await render();
+        await App.refreshDashboard();
         App.toast('Session started!', 'success');
     }
 
-    function resumeSession(id) {
+    async function resumeSession(id) {
         currentSessionId = id;
-        render();
+        await render();
     }
 
-    function showAddGameModal() {
-        const session = Store.getSession(currentSessionId);
+    async function showAddGameModal() {
+        const session = await Store.getSession(currentSessionId);
         if (!session) return;
 
-        const teams = session.teamIds.map(tid => Store.getTeam(tid)).filter(Boolean);
+        const teams = await Store.getTeams();
+        const sessionTeams = session.team_ids.map(tid => teams.find(t => t.id === tid)).filter(Boolean);
         const gameNum = session.games.length + 1;
 
-        // Collect all players from all teams
         const allPlayers = [];
-        teams.forEach(t => {
+        sessionTeams.forEach(t => {
             t.players.forEach(pName => {
                 allPlayers.push({ teamId: t.id, teamName: t.name, playerName: pName });
             });
@@ -308,7 +301,7 @@ const Session = (() => {
             <div class="form-group">
                 <label class="form-label">Assign Player Placements</label>
                 <p class="text-muted" style="font-size:0.78rem;margin-bottom:10px;">Rank each player individually. Team score = sum of player scores.</p>
-                ${teams.map(t => `
+                ${sessionTeams.map(t => `
                     <div class="player-placement-group">
                         <div class="player-placement-group-header">${escapeHtml(t.name)}</div>
                         ${t.players.map(pName => {
@@ -340,7 +333,7 @@ const Session = (() => {
         App.openModal('Add Game', body, footer);
     }
 
-    function saveGame() {
+    async function saveGame() {
         const name = document.getElementById('game-name-input').value.trim();
         if (!name) {
             App.toast('Please enter a game name', 'error');
@@ -379,32 +372,33 @@ const Session = (() => {
             return;
         }
 
-        Store.addGame(currentSessionId, name, playerPlacements, teamPlayerMap);
+        await Store.addGame(currentSessionId, name, playerPlacements, teamPlayerMap);
         App.closeModal();
-        render();
-        App.refreshDashboard();
+        await render();
+        await App.refreshDashboard();
         App.toast('Game added!', 'success');
     }
 
-    function removeGame(gameId) {
-        Store.removeGame(currentSessionId, gameId);
-        render();
-        App.refreshDashboard();
+    async function removeGame(gameId) {
+        await Store.removeGame(currentSessionId, gameId);
+        await render();
+        await App.refreshDashboard();
         App.toast('Game removed', 'info');
     }
 
-    function showAddPenaltyModal() {
-        const session = Store.getSession(currentSessionId);
+    async function showAddPenaltyModal() {
+        const session = await Store.getSession(currentSessionId);
         if (!session) return;
 
-        const teams = session.teamIds.map(tid => Store.getTeam(tid)).filter(Boolean);
+        const teams = await Store.getTeams();
+        const sessionTeams = session.team_ids.map(tid => teams.find(t => t.id === tid)).filter(Boolean);
 
         const body = `
             <div class="form-group">
                 <label class="form-label">Team</label>
                 <select class="form-select" id="penalty-team-select">
                     <option value="">Select team...</option>
-                    ${teams.map(t => `<option value="${t.id}">${escapeHtml(t.name)}</option>`).join('')}
+                    ${sessionTeams.map(t => `<option value="${t.id}">${escapeHtml(t.name)}</option>`).join('')}
                 </select>
             </div>
             <div class="form-group">
@@ -431,7 +425,7 @@ const Session = (() => {
         App.openModal('Add Penalty', body, footer);
     }
 
-    function savePenalty() {
+    async function savePenalty() {
         const teamId = document.getElementById('penalty-team-select').value;
         if (!teamId) {
             App.toast('Please select a team', 'error');
@@ -452,27 +446,27 @@ const Session = (() => {
 
         const reason = document.getElementById('penalty-reason-input').value.trim();
 
-        Store.addPenalty(currentSessionId, teamId, penaltyValue, reason);
+        await Store.addPenalty(currentSessionId, teamId, penaltyValue, reason);
         App.closeModal();
-        render();
-        App.refreshDashboard();
+        await render();
+        await App.refreshDashboard();
         App.toast('Penalty applied!', 'info');
     }
 
-    function removePenalty(penaltyId) {
-        Store.removePenalty(currentSessionId, penaltyId);
-        render();
-        App.refreshDashboard();
+    async function removePenalty(penaltyId) {
+        await Store.removePenalty(currentSessionId, penaltyId);
+        await render();
+        await App.refreshDashboard();
         App.toast('Penalty removed', 'info');
     }
 
-    function completeSession() {
-        const session = Store.getSession(currentSessionId);
+    async function completeSession() {
+        const session = await Store.getSession(currentSessionId);
         if (!session) return;
 
-        const scores = Store.getSessionScores(currentSessionId);
+        const scores = await Store.getSessionScores(currentSessionId);
         const sorted = Object.entries(scores).sort((a, b) => b[1].total - a[1].total);
-        const winnerTeam = Store.getTeam(sorted[0]?.[0]);
+        const winnerTeam = Store.getTeamFromCache(sorted[0]?.[0]);
         const winnerName = winnerTeam ? winnerTeam.name : 'Unknown';
 
         const body = `
@@ -487,13 +481,13 @@ const Session = (() => {
         App.openModal('Complete Session', body, footer);
     }
 
-    function confirmComplete() {
-        Store.updateSession(currentSessionId, { status: 'completed' });
+    async function confirmComplete() {
+        await Store.updateSession(currentSessionId, { status: 'completed' });
         currentSessionId = null;
         App.closeModal();
-        render();
-        App.refreshDashboard();
-        History.render();
+        await render();
+        await App.refreshDashboard();
+        await History.render();
         App.toast('Session completed! 🏆', 'success');
     }
 
