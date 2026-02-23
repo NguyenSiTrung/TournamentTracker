@@ -62,7 +62,7 @@
 
 ## Phase 4: Session Tab
 
-- [ ] Task 1: Audit and fix session hero, KPI cards, and matrix
+- [x] Task 1: Audit and fix session hero, KPI cards, and matrix
   - Review `.session-kpi-label` contrast on dark card backgrounds
   - Review `.session-sidebar-caption` contrast
   - Review `.matrix-player-breakdown` contrast (`--text-muted`)
@@ -71,19 +71,19 @@
   - Review `.standings-note-neutral` contrast
   - Review `.standings-score span` (unit text) contrast
   - Sub-tasks:
-    - [ ] Fix session KPI label and sidebar caption contrast
-    - [ ] Fix matrix secondary text contrast
-    - [ ] Fix standings secondary text contrast
+    - [x] Fix session KPI label and sidebar caption contrast
+    - [x] Fix matrix secondary text contrast
+    - [x] Fix standings secondary text contrast
 
-- [ ] Task 2: Audit and fix penalty panel contrast
+- [x] Task 2: Audit and fix penalty panel contrast
   - Review `.penalty-reason` text contrast
   - Review `.session-penalty-panel` background against penalty items
   - Review `.matrix-subtotal-cell span` contrast
   - Sub-tasks:
-    - [ ] Fix penalty reason text contrast
-    - [ ] Fix subtotal secondary text contrast
+    - [x] Fix penalty reason text contrast
+    - [x] Fix subtotal secondary text contrast
 
-- [ ] Task: Conductor - User Manual Verification 'Session Tab' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Session Tab' (Protocol in workflow.md)
 
 ## Phase 5: Teams, History, Settings & Modals
 
