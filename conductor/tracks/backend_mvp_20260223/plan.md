@@ -3,7 +3,7 @@
 ## Phase 1: Backend Project Setup
 - [x] Task: Initialize Python project structure (`backend/`, `requirements.txt`, `main.py`)
 - [x] Task: Set up SQLite database with SQLAlchemy ORM models (Team, Session, Game, Penalty)
-- [ ] Task: Create Pydantic request/response schemas
+- [x] Task: Create Pydantic request/response schemas
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Backend Project Setup' (Protocol in workflow.md)
 
 ## Phase 2: Teams API
