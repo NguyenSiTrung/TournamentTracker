@@ -183,7 +183,13 @@ const App = (() => {
         const container = document.getElementById('leaderboard-content');
 
         if (leaderboard.length === 0) {
-            container.innerHTML = '<p class="empty-state">No sessions completed yet. Start playing to see rankings!</p>';
+            container.innerHTML = `
+                <div class="empty-state-illustrated">
+                    <div class="empty-state-icon">🏅</div>
+                    <h4>No Rankings Yet</h4>
+                    <p>Complete a session to see your leaderboard!</p>
+                    <button class="btn btn-accent btn-sm" onclick="App.switchTab('session')">Start Playing →</button>
+                </div>`;
             return;
         }
 
@@ -246,7 +252,12 @@ const App = (() => {
         const container = document.getElementById('chart-content');
 
         if (leaderboard.length === 0) {
-            container.innerHTML = '<p class="empty-state">No completed sessions yet.</p>';
+            container.innerHTML = `
+                <div class="empty-state-illustrated">
+                    <div class="empty-state-icon">📊</div>
+                    <h4>No Data Yet</h4>
+                    <p>Play some games to see win distribution charts!</p>
+                </div>`;
             return;
         }
 
@@ -287,7 +298,12 @@ const App = (() => {
         const container = document.getElementById('recent-results-content');
 
         if (recent.length === 0) {
-            container.innerHTML = '<p class="empty-state">No completed sessions yet.</p>';
+            container.innerHTML = `
+                <div class="empty-state-illustrated">
+                    <div class="empty-state-icon">📋</div>
+                    <h4>No Results Yet</h4>
+                    <p>Complete your first session to see results here!</p>
+                </div>`;
             return;
         }
 
