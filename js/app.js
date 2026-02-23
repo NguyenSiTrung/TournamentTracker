@@ -157,9 +157,30 @@ const App = (() => {
             activeCard.style.display = 'none';
         }
 
+        // Update nav badges
+        updateNavBadges(activeSessions);
+
         await renderLeaderboard();
         await renderWinChart();
         await renderRecentResults();
+    }
+
+    async function updateNavBadges(activeSessions) {
+        const sessionBadge = document.getElementById('session-badge');
+        if (activeSessions.length > 0) {
+            sessionBadge.style.display = '';
+        } else {
+            sessionBadge.style.display = 'none';
+        }
+
+        const completed = await Store.getCompletedSessions();
+        const historyBadge = document.getElementById('history-badge');
+        if (completed.length > 0) {
+            historyBadge.textContent = completed.length;
+            historyBadge.style.display = '';
+        } else {
+            historyBadge.style.display = 'none';
+        }
     }
 
     function renderQuickActions(teams, activeSessions) {
