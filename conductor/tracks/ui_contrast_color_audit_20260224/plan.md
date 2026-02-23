@@ -87,20 +87,20 @@
 
 ## Phase 5: Teams, History, Settings & Modals
 
-- [ ] Task 1: Audit and fix teams tab
+- [x] Task 1: Audit and fix teams tab
   - Review `.player-tag` text contrast
   - Review `.team-card-actions .btn` contrast at small size
 
-- [ ] Task 2: Audit and fix history tab
+- [x] Task 2: Audit and fix history tab
   - Review `.history-session-meta` text contrast
   - Review `.stats-table th` header contrast
   - Review `.expand-icon` contrast
   - Review `.empty-state` text contrast
 
-- [ ] Task 3: Audit and fix modals and toasts
+- [x] Task 3: Audit and fix modals and toasts
   - Review `.btn-close` background/text contrast
   - Review modal form label contrast in game result modal
   - Review toast notification text contrast and border accents
   - Review `.btn-delete-inline` contrast (`--text-muted`)
 
-- [ ] Task: Conductor - User Manual Verification 'Teams, History, Settings & Modals' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Teams, History, Settings & Modals' (Protocol in workflow.md)
