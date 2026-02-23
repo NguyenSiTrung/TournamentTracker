@@ -11,3 +11,9 @@ Thumbs.db
 
 # Gemini/Agent
 .gemini/
+
+# Python
+backend/venv/
+backend/data/
+__pycache__/
+*.pyc
