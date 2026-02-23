@@ -1,0 +1,29 @@
+{
+    "track_id": "ui_contrast_color_audit_20260224",
+    "type": "chore",
+    "status": "new",
+    "priority": "high",
+    "depends_on": [],
+    "estimated_hours": null,
+    "created_at": "2026-02-24T02:25:19+07:00",
+    "updated_at": "2026-02-24T02:25:19+07:00",
+    "description": "Comprehensive audit and fix of UI contrast, color consistency, WCAG AA compliance, dark theme refinement, and visual hierarchy across all sections",
+    "beads_epic": "TournamentTracker-t8j",
+    "beads_tasks": {
+        "phase1": "TournamentTracker-t8j.1",
+        "phase1_task1": "TournamentTracker-t8j.1.1",
+        "phase1_task2": "TournamentTracker-t8j.1.2",
+        "phase2": "TournamentTracker-t8j.2",
+        "phase2_task1": "TournamentTracker-t8j.2.1",
+        "phase3": "TournamentTracker-t8j.3",
+        "phase3_task1": "TournamentTracker-t8j.3.1",
+        "phase3_task2": "TournamentTracker-t8j.3.2",
+        "phase4": "TournamentTracker-t8j.4",
+        "phase4_task1": "TournamentTracker-t8j.4.1",
+        "phase4_task2": "TournamentTracker-t8j.4.2",
+        "phase5": "TournamentTracker-t8j.5",
+        "phase5_task1": "TournamentTracker-t8j.5.1",
+        "phase5_task2": "TournamentTracker-t8j.5.2",
+        "phase5_task3": "TournamentTracker-t8j.5.3"
+    }
+}
