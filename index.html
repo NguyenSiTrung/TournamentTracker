@@ -62,6 +62,12 @@
                     <h2>Dashboard</h2>
                     <p class="section-subtitle">Overview of your tournaments</p>
                 </div>
+
+                <!-- Quick Actions -->
+                <div class="dashboard-quick-actions" id="dashboard-quick-actions">
+                </div>
+
+                <!-- Stat Cards -->
                 <div class="dashboard-grid">
                     <div class="stat-card glass-card" id="stat-teams">
                         <div class="stat-icon">👥</div>
@@ -93,6 +99,26 @@
                     </div>
                 </div>
 
+                <!-- Podium Leaderboard -->
+                <div class="glass-card" id="leaderboard-card">
+                    <div class="card-header">
+                        <h3><span style="font-size: 1.3rem;">🏅</span> All-Time Leaderboard</h3>
+                    </div>
+                    <div id="leaderboard-content">
+                        <p class="empty-state">No sessions completed yet. Start playing to see rankings!</p>
+                    </div>
+                </div>
+
+                <!-- Data Visualization -->
+                <div class="glass-card" id="chart-card">
+                    <div class="card-header">
+                        <h3><span style="font-size: 1.2rem;">📊</span> Win Distribution</h3>
+                    </div>
+                    <div id="chart-content">
+                        <p class="empty-state">No completed sessions yet.</p>
+                    </div>
+                </div>
+
                 <div class="dashboard-columns">
                     <div class="dashboard-main-col">
                         <!-- Active Session Quick View -->
@@ -102,16 +128,6 @@
                                 <button class="btn btn-accent btn-sm" id="btn-go-to-session">Go to Session →</button>
                             </div>
                             <div id="active-session-preview"></div>
-                        </div>
-
-                        <!-- Leaderboard -->
-                        <div class="glass-card" id="leaderboard-card">
-                            <div class="card-header">
-                                <h3><span style="font-size: 1.3rem;">🏅</span> All-Time Leaderboard</h3>
-                            </div>
-                            <div id="leaderboard-content">
-                                <p class="empty-state">No sessions completed yet. Start playing to see rankings!</p>
-                            </div>
                         </div>
                     </div>
 
