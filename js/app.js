@@ -109,7 +109,16 @@ const App = (() => {
         requestAnimationFrame(tick);
     }
 
+    function showSkeletons() {
+        const skeletonRows = (n) => Array(n).fill('<div class="skeleton skeleton-row"></div>').join('');
+        document.getElementById('leaderboard-content').innerHTML = skeletonRows(3);
+        document.getElementById('chart-content').innerHTML = Array(4).fill('<div class="skeleton skeleton-bar"></div>').join('');
+        document.getElementById('recent-results-content').innerHTML = skeletonRows(3);
+    }
+
     async function refreshDashboard() {
+        showSkeletons();
+
         const teams = await Store.getTeams();
         const sessions = await Store.getSessions();
         const activeSessions = await Store.getActiveSessions();
