@@ -30,6 +30,22 @@
     --glass-border: rgba(108, 99, 255, 0.15);
     --glass-blur: 16px;
 
+    /* Section-specific accent colors */
+    --accent-teams: #2ed573;
+    --accent-session: #6c63ff;
+    --accent-history: #a855f7;
+    --accent-dashboard-start: #6c63ff;
+    --accent-dashboard-end: #e040fb;
+
+    /* Animation timing */
+    --anim-counter: 1.2s;
+    --anim-stagger: 0.08s;
+    --anim-entrance: 0.5s;
+
+    /* Skeleton loading */
+    --skeleton-base: rgba(108, 99, 255, 0.06);
+    --skeleton-shine: rgba(108, 99, 255, 0.12);
+
     --border-radius: 16px;
     --border-radius-sm: 10px;
     --border-radius-xs: 6px;
