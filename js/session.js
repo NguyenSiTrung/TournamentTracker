@@ -40,72 +40,239 @@ const Session = (() => {
         document.getElementById('no-active-session').style.display = 'none';
         document.getElementById('active-session-panel').style.display = 'block';
 
-        document.getElementById('session-name-display').textContent = session.name;
-        document.getElementById('session-date-display').textContent = new Date(session.date).toLocaleDateString();
+        const [teams, scores, allSessions] = await Promise.all([
+            Store.getTeams(),
+            Store.getSessionScores(session.id),
+            Store.getSessions(),
+        ]);
 
-        await renderScoreboard(session);
-        renderGamesList(session);
+        const context = buildSessionContext(session, teams, scores, allSessions);
+
+        renderSessionHeader(session, context);
+        renderScoreboard(session, context);
+        renderGamesList(session, context);
         renderPenalties(session);
     }
 
-    async function renderScoreboard(session) {
-        const scores = await Store.getSessionScores(session.id);
-        const teams = await Store.getTeams();
-        const sessionTeams = session.team_ids.map(tid => teams.find(t => t.id === tid)).filter(Boolean);
+    function buildSessionContext(session, teams, scores, allSessions) {
+        const sessionTeams = session.team_ids
+            .map(tid => teams.find(t => t.id === tid))
+            .filter(Boolean);
 
-        const sorted = sessionTeams
-            .map(t => ({ team: t, ...(scores[t.id] || { gamePoints: 0, penaltyPoints: 0, total: 0 }) }))
+        const sortedStandings = sessionTeams
+            .map(team => ({
+                team,
+                ...(scores[team.id] || { gamePoints: 0, penaltyPoints: 0, total: 0 }),
+            }))
             .sort((a, b) => b.total - a.total);
 
-        if (sorted.length === 0) {
+        const penaltiesByTeam = {};
+        session.penalties.forEach((penalty) => {
+            penaltiesByTeam[penalty.team_id] = (penaltiesByTeam[penalty.team_id] || 0) + 1;
+        });
+
+        const orderedSessions = [...allSessions].sort((a, b) => new Date(a.date) - new Date(b.date));
+        const sessionIndex = orderedSessions.findIndex(item => item.id === session.id);
+        const averagePoints = sortedStandings.length > 0
+            ? (sortedStandings.reduce((sum, entry) => sum + entry.total, 0) / sortedStandings.length).toFixed(1)
+            : '0.0';
+
+        return {
+            sessionTeams,
+            sortedStandings,
+            penaltiesByTeam,
+            sessionNumber: sessionIndex >= 0 ? sessionIndex + 1 : null,
+            targetGames: Math.max(4, session.team_ids.length + 2),
+            averagePoints,
+        };
+    }
+
+    function renderSessionHeader(session, context) {
+        const prettyDate = new Date(session.date).toLocaleDateString(undefined, {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+        });
+        const leader = context.sortedStandings[0]?.team?.name || '-';
+
+        document.getElementById('session-name-display').textContent = session.name;
+        document.getElementById('session-number-display').textContent = context.sessionNumber
+            ? `Session #${context.sessionNumber}`
+            : 'Session';
+        document.getElementById('session-date-display').textContent = prettyDate;
+        document.getElementById('session-game-progress').textContent = `${session.games.length} of ${context.targetGames} games logged`;
+
+        document.getElementById('session-total-games-stat').textContent = `${session.games.length} / ${context.targetGames}`;
+        document.getElementById('session-leading-team-stat').textContent = leader;
+        document.getElementById('session-avg-points-stat').textContent = context.averagePoints;
+        document.getElementById('session-active-penalties-stat').textContent = String(session.penalties.length);
+    }
+
+    function renderScoreboard(session, context) {
+        if (context.sortedStandings.length === 0) {
             document.getElementById('live-scoreboard').innerHTML = '<p class="empty-state">No teams in this session</p>';
             return;
         }
 
-        let html = `
-            <table class="scoreboard-table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Team</th>
-                        <th style="text-align:right">Games</th>
-                        <th style="text-align:right">Penalty</th>
-                        <th style="text-align:right">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-
-        sorted.forEach((entry, idx) => {
+        const html = context.sortedStandings.map((entry, idx) => {
             const rank = idx + 1;
-            const rankIcon = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `${rank}`;
-            html += `
-                <tr class="scoreboard-row">
-                    <td class="scoreboard-rank">${rankIcon}</td>
-                    <td class="scoreboard-team-name">${escapeHtml(entry.team.name)}</td>
-                    <td class="scoreboard-points">${entry.gamePoints}</td>
-                    <td class="scoreboard-penalty">${entry.penaltyPoints < 0 ? entry.penaltyPoints : entry.penaltyPoints === 0 ? '-' : '+' + entry.penaltyPoints}</td>
-                    <td class="scoreboard-total">${entry.total}</td>
-                </tr>
-            `;
-        });
+            const penaltiesCount = context.penaltiesByTeam[entry.team.id] || 0;
+            const initials = getTeamInitials(entry.team.name);
+            let noteText = `Games +${entry.gamePoints} | Pen ${formatSigned(entry.penaltyPoints)}`;
+            let noteClass = 'standings-note-neutral';
 
-        html += '</tbody></table>';
+            if (rank === 1 && penaltiesCount === 0) {
+                noteText = 'Leader';
+                noteClass = 'standings-note-positive';
+            } else if (penaltiesCount > 0) {
+                noteText = `-${penaltiesCount} penalty${penaltiesCount > 1 ? 'ies' : 'y'} active`;
+                noteClass = 'standings-note-negative';
+            }
+
+            return `
+                <article class="standings-card standings-card-rank-${rank}">
+                    <span class="standings-rank-chip">${rank}</span>
+                    <div class="standings-card-main">
+                        <div class="standings-team-meta">
+                            <span class="standings-team-avatar">${escapeHtml(initials)}</span>
+                            <div>
+                                <p class="standings-team-name">${escapeHtml(entry.team.name)}</p>
+                                <p class="standings-team-note ${noteClass}">${escapeHtml(noteText)}</p>
+                            </div>
+                        </div>
+                        <div class="standings-score">
+                            ${entry.total}
+                            <span>pts</span>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }).join('');
+
         document.getElementById('live-scoreboard').innerHTML = html;
     }
 
-    function renderGamesList(session) {
+    function renderGamesList(session, context) {
         const container = document.getElementById('games-list');
         document.getElementById('game-count').textContent = `${session.games.length} game${session.games.length !== 1 ? 's' : ''}`;
 
-        if (session.games.length === 0) {
-            container.innerHTML = '<p class="empty-state">No games added yet. Click "Add Game" to start!</p>';
+        if (context.sessionTeams.length === 0) {
+            container.innerHTML = '<p class="empty-state">No teams assigned to this session.</p>';
             return;
         }
 
-        container.innerHTML = session.games.map((game, index) => {
-            return renderGameCard(game, index, true);
+        const headerCells = context.sessionTeams.map((team, idx) => `
+            <th>
+                <div class="matrix-team-header">
+                    <span class="matrix-team-badge">${String.fromCharCode(65 + idx)}</span>
+                    <span>${escapeHtml(team.name)}</span>
+                </div>
+            </th>
+        `).join('');
+
+        const gameRows = session.games.map((game, index) => {
+            const cells = context.sessionTeams.map(team => renderMatrixTeamCell(team.id, game)).join('');
+            return `
+                <tr>
+                    <th scope="row" class="matrix-game-label">
+                        <span>Game ${index + 1}</span>
+                        <button class="btn-delete-inline" onclick="Session.removeGame('${game.id}')" title="Remove game">🗑️</button>
+                    </th>
+                    ${cells}
+                </tr>
+            `;
         }).join('');
+
+        const nextGameCells = context.sessionTeams.map(() => `
+            <td>
+                <button class="matrix-add-result-btn" onclick="Session.showAddGameModal()">Add Result</button>
+            </td>
+        `).join('');
+
+        const subtotalCells = context.sessionTeams.map(team => {
+            const entry = context.sortedStandings.find(item => item.team.id === team.id);
+            const total = entry ? entry.total : 0;
+            const penaltyPoints = entry ? entry.penaltyPoints : 0;
+            return `
+                <td>
+                    <div class="matrix-subtotal-cell">
+                        <strong>${total}</strong>
+                        <span>${penaltyPoints !== 0 ? `Penalty ${formatSigned(penaltyPoints)}` : 'No penalties'}</span>
+                    </div>
+                </td>
+            `;
+        }).join('');
+
+        container.innerHTML = `
+            <div class="session-matrix-wrap">
+                <table class="session-matrix-table">
+                    <thead>
+                        <tr>
+                            <th class="matrix-game-col">Game</th>
+                            ${headerCells}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${gameRows || `
+                            <tr>
+                                <th scope="row" class="matrix-game-label">Game 1</th>
+                                ${context.sessionTeams.map(() => '<td><div class="matrix-cell-empty">No result yet</div></td>').join('')}
+                            </tr>
+                        `}
+                        <tr class="matrix-next-row">
+                            <th scope="row" class="matrix-game-label">Next Game</th>
+                            ${nextGameCells}
+                        </tr>
+                        <tr class="matrix-subtotal-row">
+                            <th scope="row" class="matrix-game-label">Subtotal</th>
+                            ${subtotalCells}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+
+    function renderMatrixTeamCell(teamId, game) {
+        const rawPlacement = game.placements[teamId];
+        const placement = Number.isFinite(rawPlacement) && rawPlacement < 900 ? rawPlacement : null;
+        const points = game.points[teamId] ?? 0;
+        const players = (game.team_player_map && game.team_player_map[teamId]) ? game.team_player_map[teamId] : [];
+        const playerBreakdown = players
+            .map(playerName => ({
+                placement: game.player_placements[playerName],
+                points: game.player_points[playerName],
+            }))
+            .filter(item => item.placement !== undefined)
+            .sort((a, b) => a.placement - b.placement)
+            .slice(0, 2)
+            .map((item, idx) => `P${idx + 1}: ${item.points}`)
+            .join(' | ');
+
+        return `
+            <td>
+                <div class="matrix-cell">
+                    <span class="matrix-rank matrix-rank-${placement || 0}">${placement !== null ? getPositionLabel(placement) : '--'}</span>
+                    <span class="matrix-points">${formatSigned(points)} pts</span>
+                    <span class="matrix-player-breakdown">${escapeHtml(playerBreakdown || 'No player data')}</span>
+                </div>
+            </td>
+        `;
+    }
+
+    function formatSigned(value) {
+        if (value > 0) return `+${value}`;
+        if (value < 0) return `${value}`;
+        return '0';
+    }
+
+    function getTeamInitials(name) {
+        return name
+            .split(/\s+/)
+            .map(part => part[0])
+            .join('')
+            .toUpperCase()
+            .slice(0, 2);
     }
 
     function renderGameCard(game, index, showDelete) {
@@ -193,13 +360,13 @@ const Session = (() => {
             const team = Store.getTeamFromCache(p.team_id);
             const teamName = team ? team.name : 'Unknown';
             return `
-                <div class="penalty-item">
+                <div class="penalty-item penalty-item-modern">
                     <div class="penalty-info">
                         <span class="penalty-team">${escapeHtml(teamName)}</span>
-                        ${p.reason ? `<span class="penalty-reason">— ${escapeHtml(p.reason)}</span>` : ''}
+                        <span class="penalty-reason">${p.reason ? `Reason: ${escapeHtml(p.reason)}` : 'Reason: Not specified'}</span>
                     </div>
-                    <div style="display:flex;align-items:center;gap:8px;">
-                        <span class="penalty-value">${p.value}</span>
+                    <div class="penalty-item-actions">
+                        <span class="penalty-value">${p.value} pts</span>
                         <button class="btn-delete-inline" onclick="Session.removePenalty('${p.id}')" title="Remove penalty">🗑️</button>
                     </div>
                 </div>
@@ -276,6 +443,38 @@ const Session = (() => {
         await render();
     }
 
+    async function showEditSessionModal() {
+        const session = await Store.getSession(currentSessionId);
+        if (!session) return;
+
+        const body = `
+            <div class="form-group">
+                <label class="form-label">Session Name</label>
+                <input class="form-input" id="session-name-edit-input" value="${escapeHtml(session.name)}" autofocus>
+            </div>
+        `;
+        const footer = `
+            <button class="btn btn-ghost" onclick="App.closeModal()">Cancel</button>
+            <button class="btn btn-accent" onclick="Session.saveSessionDetails()">Save Changes</button>
+        `;
+
+        App.openModal('Edit Session Details', body, footer);
+    }
+
+    async function saveSessionDetails() {
+        const name = document.getElementById('session-name-edit-input').value.trim();
+        if (!name) {
+            App.toast('Please enter a session name', 'error');
+            return;
+        }
+
+        await Store.updateSession(currentSessionId, { name });
+        App.closeModal();
+        await render();
+        await App.refreshDashboard();
+        App.toast('Session details updated', 'success');
+    }
+
     async function showAddGameModal() {
         const session = await Store.getSession(currentSessionId);
         if (!session) return;
@@ -305,7 +504,6 @@ const Session = (() => {
                     <div class="player-placement-group">
                         <div class="player-placement-group-header">${escapeHtml(t.name)}</div>
                         ${t.players.map(pName => {
-            const safeId = pName.replace(/[^a-zA-Z0-9]/g, '_');
             return `
                                 <div class="placement-form-row">
                                     <span class="placement-team-label">${escapeHtml(pName)}</span>
@@ -497,6 +695,7 @@ const Session = (() => {
 
     return {
         render, showNewSessionModal, createNewSession, resumeSession,
+        showEditSessionModal, saveSessionDetails,
         showAddGameModal, saveGame, removeGame,
         showAddPenaltyModal, savePenalty, removePenalty,
         completeSession, confirmComplete, getCurrentSessionId,
