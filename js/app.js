@@ -151,23 +151,58 @@ const App = (() => {
             return;
         }
 
-        container.innerHTML = leaderboard.slice(0, 5).map((entry, idx) => {
+        const top3 = leaderboard.slice(0, 3);
+        const rest = leaderboard.slice(3, 8);
+
+        function getInitials(name) {
+            return name.split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 2);
+        }
+
+        const podiumOrder = [1, 0, 2];
+        const podiumHeights = ['120px', '160px', '100px'];
+        const trophyIcons = ['🥈', '🥇', '🥉'];
+        const rankLabels = ['2nd', '1st', '3rd'];
+
+        let podiumHtml = '<div class="podium">';
+        podiumOrder.forEach((idx, pos) => {
+            const entry = top3[idx];
+            if (!entry) return;
             const team = Store.getTeamFromCache(entry.teamId);
             const teamName = team ? team.name : 'Unknown';
-            const rank = idx + 1;
-            const rankIcon = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
-
-            return `
-                <div class="leaderboard-entry rank-${rank}">
-                    <span class="leaderboard-rank">${rankIcon}</span>
-                    <div class="leaderboard-team">
-                        <div class="leaderboard-team-name">${escapeHtml(teamName)}</div>
-                        <div class="leaderboard-team-stats">${entry.wins} wins • ${entry.sessions} sessions</div>
-                    </div>
-                    <span class="leaderboard-score">${entry.totalPoints} pts</span>
+            const initials = getInitials(teamName);
+            podiumHtml += `
+                <div class="podium-place podium-place-${idx + 1}" style="--podium-height: ${podiumHeights[pos]}">
+                    <div class="podium-trophy">${trophyIcons[pos]}</div>
+                    <div class="podium-avatar podium-avatar-${idx + 1}">${escapeHtml(initials)}</div>
+                    <div class="podium-name">${escapeHtml(teamName)}</div>
+                    <div class="podium-score">${entry.totalPoints} pts</div>
+                    <div class="podium-stats">${entry.wins}W • ${entry.sessions}S</div>
+                    <div class="podium-bar"><span class="podium-rank-label">${rankLabels[pos]}</span></div>
                 </div>
             `;
-        }).join('');
+        });
+        podiumHtml += '</div>';
+
+        let restHtml = '';
+        if (rest.length > 0) {
+            restHtml = rest.map((entry, idx) => {
+                const team = Store.getTeamFromCache(entry.teamId);
+                const teamName = team ? team.name : 'Unknown';
+                const rank = idx + 4;
+                return `
+                    <div class="leaderboard-entry rank-${rank}">
+                        <span class="leaderboard-rank">#${rank}</span>
+                        <div class="leaderboard-team">
+                            <div class="leaderboard-team-name">${escapeHtml(teamName)}</div>
+                            <div class="leaderboard-team-stats">${entry.wins} wins • ${entry.sessions} sessions</div>
+                        </div>
+                        <span class="leaderboard-score">${entry.totalPoints} pts</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        container.innerHTML = podiumHtml + restHtml;
     }
 
     async function renderRecentResults() {
