@@ -12,15 +12,15 @@
     - [x] Propose improved values preserving dark green identity
     - [x] Update `:root` custom properties
 
-- [ ] Task 2: Audit and fix global element contrast (buttons, badges, forms)
+- [x] Task 2: Audit and fix global element contrast (buttons, badges, forms)
   - Review `.btn-outline` and `.btn-ghost` text color vs background
   - Review `.form-input::placeholder` color (`--text-dim`) readability
   - Review `.badge-active` and `.badge-completed` contrast
   - Review `.status-badge` variants (finalized, review, pending, active) contrast
   - Sub-tasks:
-    - [ ] Fix placeholder text contrast
-    - [ ] Fix outline/ghost button contrast
-    - [ ] Fix badge and status badge contrast
+    - [x] Fix placeholder text contrast
+    - [x] Fix outline/ghost button contrast
+    - [x] Fix badge and status badge contrast
 
 - [ ] Task: Conductor - User Manual Verification 'CSS Custom Properties & Global Foundation' (Protocol in workflow.md)
 
