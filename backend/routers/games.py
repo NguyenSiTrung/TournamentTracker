@@ -45,19 +45,27 @@ def add_game(
     total_players = len(body.player_placements)
 
     player_points = {
-        name: _calculate_points(pos, total_players)
-        for name, pos in body.player_placements.items()
+        key: _calculate_points(pos, total_players)
+        for key, pos in body.player_placements.items()
     }
 
+    # Aggregate team points and placements from composite keys.
+    # Keys may be "teamId::playerName" (new) or "playerName" (legacy).
     points: dict[str, int] = {}
     placements: dict[str, int] = {}
     for team_id, players in body.team_player_map.items():
         team_total = 0
         best_pos = 999
         for p_name in players:
-            if p_name in player_points:
+            composite_key = f"{team_id}::{p_name}"
+            # Try composite key first, fall back to plain name for legacy data
+            if composite_key in player_points:
+                team_total += player_points[composite_key]
+            elif p_name in player_points:
                 team_total += player_points[p_name]
-            if p_name in body.player_placements:
+            if composite_key in body.player_placements:
+                best_pos = min(best_pos, body.player_placements[composite_key])
+            elif p_name in body.player_placements:
                 best_pos = min(best_pos, body.player_placements[p_name])
         points[team_id] = team_total
         placements[team_id] = best_pos
