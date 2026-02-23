@@ -38,6 +38,8 @@ Reusable patterns discovered during development. Read this before starting new w
 - Removing a `@keyframes` rule that other components reference breaks those components silently — always grep for usages before removing (from: ui_ux_redesign_20260223, 2026-02-23)
 - `display: none/block` can't be animated; use `animation` on `.active` class instead (from: ui_ux_redesign_20260223, 2026-02-23)
 - Parallel worker output can diverge on CSS/JS selector naming; coordinator integration pass is required before final validation (from: session_game_result_modal_redesign_20260223, 2026-02-23)
+- Use composite keys (`teamId::playerName`) when dict keys must uniquely identify players across teams; always try composite key first, fall back to plain name for backward compat (from: duplicate_player_name_bug_20260224, 2026-02-24)
+- Nullish coalescing `??` is ideal for composite-key-with-fallback lookups: `dict[compositeKey] ?? dict[plainKey]` (from: duplicate_player_name_bug_20260224, 2026-02-24)
 
 ## Testing
 

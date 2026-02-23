@@ -10,5 +10,5 @@ This file tracks all major tracks for the project.
 
 ---
 
-## [~] Track: Duplicate Player Name Bug — Game result save fails when players across teams share the same name
+## [x] Track: Duplicate Player Name Bug — Game result save fails when players across teams share the same name
 *Link: [conductor/tracks/duplicate_player_name_bug_20260224/](conductor/tracks/duplicate_player_name_bug_20260224/)*

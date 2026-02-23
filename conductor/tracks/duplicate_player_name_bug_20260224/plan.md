@@ -49,7 +49,7 @@
   - Import: accept both old flat-key and new composite-key formats
   - Add backend import test for legacy format data
 
-- [ ] Task 3: End-to-end manual verification
+- [x] Task 3: End-to-end manual verification <!-- verified in browser -->
   - Test with duplicate player names across teams
   - Test with unique player names (no regression)
   - Test loading existing game data saved in old format
