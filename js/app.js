@@ -2,6 +2,8 @@
  * App - Main application controller
  */
 const App = (() => {
+    let activeModalClass = '';
+
     async function init() {
         setupSidebarNavigation();
         setupEventListeners();
@@ -367,7 +369,19 @@ const App = (() => {
     }
 
     // --- Modal ---
-    function openModal(title, bodyHtml, footerHtml) {
+    function openModal(title, bodyHtml, footerHtml, options = {}) {
+        const modal = document.getElementById('modal');
+        if (activeModalClass) {
+            modal.classList.remove(activeModalClass);
+            activeModalClass = '';
+        }
+
+        const modalClass = typeof options.modalClass === 'string' ? options.modalClass.trim() : '';
+        if (modalClass) {
+            modal.classList.add(modalClass);
+            activeModalClass = modalClass;
+        }
+
         document.getElementById('modal-title').textContent = title;
         document.getElementById('modal-body').innerHTML = bodyHtml;
         document.getElementById('modal-footer').innerHTML = footerHtml;
@@ -381,6 +395,11 @@ const App = (() => {
 
     function closeModal() {
         document.getElementById('modal-overlay').classList.remove('active');
+
+        if (activeModalClass) {
+            document.getElementById('modal').classList.remove(activeModalClass);
+            activeModalClass = '';
+        }
     }
 
     // --- Toast ---

@@ -374,12 +374,168 @@ const Session = (() => {
         }).join('');
     }
 
+    function getOrdinalLabel(value) {
+        const num = Number(value);
+        if (!Number.isFinite(num)) return String(value);
+
+        const absNum = Math.abs(num);
+        const mod100 = absNum % 100;
+        if (mod100 >= 11 && mod100 <= 13) {
+            return `${num}th`;
+        }
+
+        switch (absNum % 10) {
+            case 1: return `${num}st`;
+            case 2: return `${num}nd`;
+            case 3: return `${num}rd`;
+            default: return `${num}th`;
+        }
+    }
+
     function getPositionLabel(pos) {
-        switch (pos) {
-            case 1: return '1st';
-            case 2: return '2nd';
-            case 3: return '3rd';
-            default: return pos + 'th';
+        return getOrdinalLabel(pos);
+    }
+
+    function computeAddGameLiveTotals(selects, totalPlayers) {
+        const teamTotals = {};
+        const playerPreviewPoints = {};
+        const usedPlacements = new Set();
+        let filledCount = 0;
+        let hasDuplicatePlacements = false;
+
+        selects.forEach((selectEl) => {
+            const teamId = selectEl.getAttribute('data-team-id');
+            const previewId = selectEl.getAttribute('data-preview-id');
+            if (teamId && !Object.prototype.hasOwnProperty.call(teamTotals, teamId)) {
+                teamTotals[teamId] = 0;
+            }
+
+            const placement = parseInt(selectEl.value, 10);
+            if (!Number.isInteger(placement)) {
+                if (previewId) {
+                    playerPreviewPoints[previewId] = 0;
+                }
+                return;
+            }
+
+            filledCount += 1;
+            if (usedPlacements.has(placement)) {
+                hasDuplicatePlacements = true;
+            } else {
+                usedPlacements.add(placement);
+            }
+
+            const points = Store.calculatePoints(placement, totalPlayers);
+            if (teamId) {
+                teamTotals[teamId] = (teamTotals[teamId] || 0) + points;
+            }
+            if (previewId) {
+                playerPreviewPoints[previewId] = points;
+            }
+        });
+
+        return {
+            teamTotals,
+            playerPreviewPoints,
+            filledCount,
+            hasDuplicatePlacements,
+            allPlacementsComplete: selects.length > 0 && filledCount === selects.length,
+        };
+    }
+
+    function resolveAddGameWinnerTeamId(teamTotals, allPlacementsComplete, hasDuplicatePlacements) {
+        if (!allPlacementsComplete || hasDuplicatePlacements) {
+            return null;
+        }
+
+        const entries = Object.entries(teamTotals);
+        if (entries.length === 0) {
+            return null;
+        }
+
+        let topScore = Number.NEGATIVE_INFINITY;
+        let topTeamIds = [];
+        entries.forEach(([teamId, total]) => {
+            if (total > topScore) {
+                topScore = total;
+                topTeamIds = [teamId];
+            } else if (total === topScore) {
+                topTeamIds.push(teamId);
+            }
+        });
+
+        return topTeamIds.length === 1 ? topTeamIds[0] : null;
+    }
+
+    function updateAddGameLiveScoreboard(totalPlayers) {
+        const selects = Array.from(document.querySelectorAll('.player-placement-select'));
+        if (selects.length === 0) {
+            return;
+        }
+
+        const liveTotals = computeAddGameLiveTotals(selects, totalPlayers);
+        const winnerTeamId = resolveAddGameWinnerTeamId(
+            liveTotals.teamTotals,
+            liveTotals.allPlacementsComplete,
+            liveTotals.hasDuplicatePlacements
+        );
+
+        document.querySelectorAll('[data-preview-id-ref]').forEach((previewEl) => {
+            const previewId = previewEl.getAttribute('data-preview-id-ref');
+            const points = previewId ? (liveTotals.playerPreviewPoints[previewId] || 0) : 0;
+            previewEl.textContent = `${points > 0 ? `+${points}` : points} pts`;
+        });
+
+        document.querySelectorAll('[data-live-team-total]').forEach((totalEl) => {
+            const teamId = totalEl.getAttribute('data-live-team-total');
+            const total = teamId ? (liveTotals.teamTotals[teamId] || 0) : 0;
+            totalEl.textContent = `${total} pts`;
+        });
+
+        document.querySelectorAll('[data-live-team-card]').forEach((cardEl) => {
+            const teamId = cardEl.getAttribute('data-live-team-card');
+            const isWinner = Boolean(teamId && winnerTeamId === teamId);
+            cardEl.classList.toggle('is-winner', isWinner);
+
+            const badgeEl = cardEl.querySelector('[data-live-team-winner]');
+            if (badgeEl) {
+                badgeEl.hidden = !isWinner;
+            }
+        });
+
+        const statusEl = document.getElementById('add-game-live-status');
+        if (!statusEl) return;
+
+        if (liveTotals.hasDuplicatePlacements) {
+            statusEl.textContent = 'Placements must be unique across all players.';
+            return;
+        }
+
+        if (!liveTotals.allPlacementsComplete) {
+            statusEl.textContent = `${liveTotals.filledCount}/${selects.length} placements assigned.`;
+            return;
+        }
+
+        if (!winnerTeamId) {
+            statusEl.textContent = 'Top teams are tied. No winner highlight yet.';
+            return;
+        }
+
+        statusEl.textContent = 'Winner locked in for this game.';
+    }
+
+    function updateAddGamePenaltyFieldsState() {
+        const penaltyToggle = document.getElementById('add-game-penalty-toggle');
+        const enabled = Boolean(penaltyToggle && penaltyToggle.checked);
+
+        document.querySelectorAll('.add-game-penalty-input').forEach((inputEl) => {
+            inputEl.disabled = !enabled;
+        });
+
+        const fieldsWrap = document.getElementById('add-game-penalty-fields');
+        if (fieldsWrap) {
+            fieldsWrap.classList.toggle('is-active', enabled);
+            fieldsWrap.hidden = !enabled;
         }
     }
 
@@ -483,52 +639,115 @@ const Session = (() => {
         const sessionTeams = session.team_ids.map(tid => teams.find(t => t.id === tid)).filter(Boolean);
         const gameNum = session.games.length + 1;
 
-        const allPlayers = [];
-        sessionTeams.forEach(t => {
-            t.players.forEach(pName => {
-                allPlayers.push({ teamId: t.id, teamName: t.name, playerName: pName });
-            });
-        });
-
-        const totalPlayers = allPlayers.length;
+        const totalPlayers = sessionTeams.reduce((count, team) => count + team.players.length, 0);
 
         const body = `
-            <div class="form-group">
-                <label class="form-label">Game Name</label>
-                <input class="form-input" id="game-name-input" value="Game ${gameNum}" placeholder="e.g., Round 1">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Assign Player Placements</label>
-                <p class="text-muted" style="font-size:0.78rem;margin-bottom:10px;">Rank each player individually. Team score = sum of player scores.</p>
-                ${sessionTeams.map(t => `
-                    <div class="player-placement-group">
-                        <div class="player-placement-group-header">${escapeHtml(t.name)}</div>
-                        ${t.players.map(pName => {
-            return `
-                                <div class="placement-form-row">
-                                    <span class="placement-team-label">${escapeHtml(pName)}</span>
-                                    <div class="placement-select-wrapper">
-                                        <select class="form-select player-placement-select"
-                                                data-team-id="${t.id}"
-                                                data-player-name="${escapeHtml(pName)}">
-                                            <option value="">Select...</option>
-                                            ${Array.from({ length: totalPlayers }, (_, i) => i + 1).map(pos =>
-                `<option value="${pos}">${getPositionLabel(pos)} (+${Store.calculatePoints(pos, totalPlayers)}pts)</option>`
-            ).join('')}
-                                        </select>
+            <div class="add-game-modal">
+                <section class="add-game-intro">
+                    <div class="add-game-intro-main">
+                        <p class="add-game-intro-kicker">Game Result</p>
+                        <h4 class="add-game-intro-title">Log game ${gameNum}</h4>
+                        <p class="add-game-intro-subtitle">Rank every player once. Team totals and winner preview update live.</p>
+                    </div>
+                    <div class="add-game-intro-meta">
+                        <span class="add-game-meta-pill">${sessionTeams.length} Team${sessionTeams.length !== 1 ? 's' : ''}</span>
+                        <span class="add-game-meta-pill">${totalPlayers} Player${totalPlayers !== 1 ? 's' : ''}</span>
+                    </div>
+                </section>
+
+                <div class="form-group">
+                    <label class="form-label" for="game-name-input">Game Name</label>
+                    <input class="form-input" id="game-name-input" value="Game ${gameNum}" placeholder="e.g., Round 1">
+                </div>
+
+                <p class="add-game-live-status" id="add-game-live-status">0/${totalPlayers} placements assigned.</p>
+
+                <section class="add-game-team-grid">
+                    ${sessionTeams.map((team, teamIdx) => `
+                        <article class="add-game-team-card" data-live-team-card="${team.id}">
+                            <header class="add-game-team-card-header">
+                                <div class="add-game-team-identity">
+                                    <span class="add-game-team-badge">${escapeHtml(getTeamInitials(team.name) || String.fromCharCode(65 + teamIdx))}</span>
+                                    <div>
+                                        <p class="add-game-team-name">${escapeHtml(team.name)}</p>
+                                        <p class="add-game-team-meta">${team.players.length} player${team.players.length !== 1 ? 's' : ''}</p>
                                     </div>
                                 </div>
-                            `;
+                                <div class="add-game-team-points-wrap">
+                                    <span class="add-game-winner-badge" data-live-team-winner hidden>Winner</span>
+                                    <strong class="add-game-team-total" data-live-team-total="${team.id}">0 pts</strong>
+                                </div>
+                            </header>
+                            <div class="add-game-team-players">
+                                ${team.players.map((playerName, playerIdx) => {
+            const previewId = `add-game-preview-${teamIdx}-${playerIdx}`;
+            return `
+                                    <div class="add-game-player-row">
+                                        <label class="add-game-player-name">${escapeHtml(playerName)}</label>
+                                        <div class="add-game-player-controls">
+                                            <select class="form-select player-placement-select"
+                                                    data-team-id="${team.id}"
+                                                    data-player-name="${escapeHtml(playerName)}"
+                                                    data-preview-id="${previewId}">
+                                                <option value="">Select rank...</option>
+                                                ${Array.from({ length: totalPlayers }, (_, i) => i + 1).map(pos =>
+                `<option value="${pos}">${getOrdinalLabel(pos)} (+${Store.calculatePoints(pos, totalPlayers)} pts)</option>`
+            ).join('')}
+                                            </select>
+                                            <span class="add-game-player-points" data-preview-id-ref="${previewId}">0 pts</span>
+                                        </div>
+                                    </div>
+                                `;
         }).join('')}
+                            </div>
+                        </article>
+                    `).join('')}
+                </section>
+
+                <section class="add-game-penalty-panel">
+                    <label class="add-game-penalty-toggle">
+                        <input type="checkbox" id="add-game-penalty-toggle">
+                        <span>Apply penalty to this game</span>
+                    </label>
+                    <div class="add-game-penalty-fields" id="add-game-penalty-fields" hidden>
+                        <div class="form-group">
+                            <label class="form-label" for="add-game-penalty-team">Team</label>
+                            <select class="form-select add-game-penalty-input" id="add-game-penalty-team" disabled>
+                                <option value="">Select team...</option>
+                                ${sessionTeams.map(team => `<option value="${team.id}">${escapeHtml(team.name)}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="add-game-penalty-reason">Reason (optional)</label>
+                            <input class="form-input add-game-penalty-input" id="add-game-penalty-reason" placeholder="e.g., Rule violation" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="add-game-penalty-value">Point deduction</label>
+                            <input class="form-input add-game-penalty-input" id="add-game-penalty-value" type="number" min="1" step="1" placeholder="e.g., 2" disabled>
+                        </div>
                     </div>
-                `).join('')}
+                </section>
             </div>
         `;
         const footer = `
             <button class="btn btn-ghost" onclick="App.closeModal()">Cancel</button>
-            <button class="btn btn-accent" onclick="Session.saveGame()">Save Game</button>
+            <button class="btn btn-accent" onclick="Session.saveGame()">Save Game Result</button>
         `;
-        App.openModal('Add Game', body, footer);
+        App.openModal(`Game ${gameNum} Result`, body, footer, { modalClass: 'modal-game-result' });
+
+        document.querySelectorAll('.player-placement-select').forEach((selectEl) => {
+            selectEl.addEventListener('change', () => {
+                updateAddGameLiveScoreboard(totalPlayers);
+            });
+        });
+
+        const penaltyToggle = document.getElementById('add-game-penalty-toggle');
+        if (penaltyToggle) {
+            penaltyToggle.addEventListener('change', updateAddGamePenaltyFieldsState);
+        }
+
+        updateAddGamePenaltyFieldsState();
+        updateAddGameLiveScoreboard(totalPlayers);
     }
 
     async function saveGame() {
@@ -544,17 +763,17 @@ const Session = (() => {
         const usedPositions = new Set();
         let allFilled = true;
 
-        selects.forEach(sel => {
+        selects.forEach((sel) => {
             const teamId = sel.getAttribute('data-team-id');
             const playerName = sel.getAttribute('data-player-name');
-            const pos = parseInt(sel.value);
+            const pos = parseInt(sel.value, 10);
 
             if (!teamPlayerMap[teamId]) {
                 teamPlayerMap[teamId] = [];
             }
             teamPlayerMap[teamId].push(playerName);
 
-            if (!pos) {
+            if (!Number.isInteger(pos)) {
                 allFilled = false;
             } else {
                 if (usedPositions.has(pos)) {
@@ -570,7 +789,35 @@ const Session = (() => {
             return;
         }
 
+        const penaltyEnabled = Boolean(document.getElementById('add-game-penalty-toggle')?.checked);
+        let penaltyTeamId = '';
+        let penaltyValue = 0;
+        let penaltyReason = '';
+
+        if (penaltyEnabled) {
+            penaltyTeamId = document.getElementById('add-game-penalty-team').value;
+            penaltyReason = document.getElementById('add-game-penalty-reason').value.trim();
+            const rawPenaltyValue = parseInt(document.getElementById('add-game-penalty-value').value, 10);
+
+            if (!penaltyTeamId) {
+                App.toast('Select a team for the penalty', 'error');
+                return;
+            }
+
+            if (!Number.isInteger(rawPenaltyValue) || rawPenaltyValue <= 0) {
+                App.toast('Penalty deduction must be a positive number', 'error');
+                return;
+            }
+
+            penaltyValue = -Math.abs(rawPenaltyValue);
+        }
+
         await Store.addGame(currentSessionId, name, playerPlacements, teamPlayerMap);
+
+        if (penaltyEnabled && penaltyTeamId && penaltyValue < 0) {
+            await Store.addPenalty(currentSessionId, penaltyTeamId, penaltyValue, penaltyReason);
+        }
+
         App.closeModal();
         await render();
         await App.refreshDashboard();

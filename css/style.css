@@ -1849,6 +1849,471 @@ body {
 }
 
 /* ================================
+   GAME RESULT MODAL VARIANT
+   ================================ */
+.modal.modal-game-result {
+    width: min(960px, calc(100vw - 36px));
+    max-width: 960px;
+    max-height: 90vh;
+    margin-bottom: 0;
+    padding: 28px 30px 24px;
+    border-radius: var(--radius-xl);
+    border: 1px solid rgba(102, 187, 106, 0.24);
+    background:
+        radial-gradient(circle at 88% 12%, rgba(102, 187, 106, 0.18), transparent 42%),
+        radial-gradient(circle at 8% 88%, rgba(0, 200, 83, 0.1), transparent 52%),
+        linear-gradient(145deg, rgba(19, 34, 24, 0.94), rgba(11, 26, 15, 0.96));
+    box-shadow:
+        0 24px 44px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(102, 187, 106, 0.08) inset,
+        0 0 30px rgba(76, 175, 80, 0.16);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.modal.modal-game-result .modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.modal.modal-game-result .add-game-intro {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 12px 14px;
+    border: 1px solid rgba(46, 125, 50, 0.22);
+    border-radius: var(--radius-md);
+    background: rgba(12, 28, 18, 0.58);
+}
+
+.modal.modal-game-result .add-game-intro-main {
+    min-width: 0;
+    flex: 1;
+}
+
+.modal.modal-game-result .add-game-intro-kicker {
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.65px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+
+.modal.modal-game-result .add-game-intro-title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    line-height: 1.2;
+    margin-top: 3px;
+}
+
+.modal.modal-game-result .add-game-intro-subtitle {
+    margin-top: 4px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.modal.modal-game-result .add-game-intro-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.modal.modal-game-result .add-game-meta-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    border: 1px solid rgba(102, 187, 106, 0.42);
+    background: rgba(76, 175, 80, 0.14);
+}
+
+.modal.modal-game-result .add-game-live-status {
+    margin-top: -2px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.modal.modal-game-result .modal-header {
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(102, 187, 106, 0.2);
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.modal.modal-game-result .modal-header-main,
+.modal.modal-game-result .modal-title-wrap,
+.modal.modal-game-result .game-result-header-main,
+.modal.modal-game-result .game-result-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    flex: 1;
+}
+
+.modal.modal-game-result .modal-header h3 {
+    font-family: var(--font-display);
+    font-size: 1.32rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 2px;
+}
+
+.modal.modal-game-result .modal-header-icon,
+.modal.modal-game-result .game-result-header-icon,
+.modal.modal-game-result .header-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.08rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    background: linear-gradient(145deg, rgba(76, 175, 80, 0.28), rgba(46, 125, 50, 0.3));
+    border: 1px solid rgba(102, 187, 106, 0.45);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+}
+
+.modal.modal-game-result .modal-meta,
+.modal.modal-game-result .modal-header-meta,
+.modal.modal-game-result .game-result-meta,
+.modal.modal-game-result .game-result-header-meta {
+    font-size: 0.79rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.modal.modal-game-result .game-result-team-grid,
+.modal.modal-game-result .game-result-teams-grid,
+.modal.modal-game-result .team-cards-grid,
+.modal.modal-game-result .add-game-team-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 6px;
+}
+
+.modal.modal-game-result .game-result-team-card,
+.modal.modal-game-result .team-result-card,
+.modal.modal-game-result .player-placement-group,
+.modal.modal-game-result .add-game-team-card {
+    background: linear-gradient(158deg, rgba(27, 46, 33, 0.72), rgba(13, 29, 19, 0.78));
+    border: 1px solid rgba(46, 125, 50, 0.24);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    margin-bottom: 0;
+    box-shadow: 0 10px 18px rgba(0, 0, 0, 0.22);
+}
+
+.modal.modal-game-result .game-result-team-card.is-winner,
+.modal.modal-game-result .game-result-team-card[data-winner="true"],
+.modal.modal-game-result .team-result-card.is-winner,
+.modal.modal-game-result .team-result-card[data-winner="true"],
+.modal.modal-game-result .player-placement-group.is-winner,
+.modal.modal-game-result .player-placement-group[data-winner="true"],
+.modal.modal-game-result .add-game-team-card.is-winner,
+.modal.modal-game-result .add-game-team-card[data-winner="true"] {
+    border-color: rgba(102, 187, 106, 0.62);
+    background: linear-gradient(160deg, rgba(34, 61, 41, 0.75), rgba(15, 33, 22, 0.82));
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(102, 187, 106, 0.12) inset;
+}
+
+.modal.modal-game-result .game-result-team-header,
+.modal.modal-game-result .team-result-header,
+.modal.modal-game-result .player-placement-group-header,
+.modal.modal-game-result .add-game-team-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(46, 125, 50, 0.2);
+    color: var(--text-primary);
+    font-size: 0.88rem;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.modal.modal-game-result .game-result-team-main,
+.modal.modal-game-result .team-result-main,
+.modal.modal-game-result .team-card-main,
+.modal.modal-game-result .add-game-team-identity {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.modal.modal-game-result .game-result-team-badge,
+.modal.modal-game-result .team-result-badge,
+.modal.modal-game-result .team-badge,
+.modal.modal-game-result .team-initials,
+.modal.modal-game-result .add-game-team-badge {
+    width: 30px;
+    height: 30px;
+    border-radius: var(--radius-full);
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.74rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    background: rgba(76, 175, 80, 0.22);
+    border: 1px solid rgba(102, 187, 106, 0.42);
+}
+
+.modal.modal-game-result .game-result-team-name,
+.modal.modal-game-result .team-result-name,
+.modal.modal-game-result .team-name,
+.modal.modal-game-result .add-game-team-name {
+    min-width: 0;
+    font-size: 0.91rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.modal.modal-game-result .add-game-team-meta {
+    margin-top: 2px;
+    font-size: 0.74rem;
+    color: var(--text-secondary);
+}
+
+.modal.modal-game-result .add-game-team-points-wrap {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+}
+
+.modal.modal-game-result .game-result-winner-chip,
+.modal.modal-game-result .winner-chip,
+.modal.modal-game-result .team-winner-chip,
+.modal.modal-game-result .add-game-winner-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(102, 187, 106, 0.5);
+    background: rgba(76, 175, 80, 0.16);
+    color: var(--text-primary);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.45px;
+    text-transform: uppercase;
+}
+
+.modal.modal-game-result .game-result-rank-list,
+.modal.modal-game-result .player-placements,
+.modal.modal-game-result .add-game-team-players {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.modal.modal-game-result .game-result-rank-row,
+.modal.modal-game-result .placement-form-row,
+.modal.modal-game-result .add-game-player-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 170px;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    margin: 0;
+    border: 1px solid rgba(46, 125, 50, 0.16);
+    border-radius: var(--radius-sm);
+    background: rgba(12, 28, 18, 0.52);
+}
+
+.modal.modal-game-result .placement-form-row:last-child,
+.modal.modal-game-result .game-result-rank-row:last-child,
+.modal.modal-game-result .add-game-player-row:last-child {
+    border-bottom: 1px solid rgba(46, 125, 50, 0.16);
+}
+
+.modal.modal-game-result .placement-team-label,
+.modal.modal-game-result .game-result-player-name,
+.modal.modal-game-result .add-game-player-name {
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.modal.modal-game-result .placement-select-wrapper,
+.modal.modal-game-result .game-result-rank-select-wrap,
+.modal.modal-game-result .add-game-player-controls {
+    width: 100%;
+    max-width: 170px;
+    justify-self: end;
+}
+
+.modal.modal-game-result .add-game-player-controls {
+    display: inline-grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+    max-width: 240px;
+}
+
+.modal.modal-game-result .add-game-player-points {
+    min-width: 54px;
+    text-align: right;
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.modal.modal-game-result .form-select.player-placement-select,
+.modal.modal-game-result .game-result-rank-select {
+    min-height: 38px;
+    border-color: rgba(102, 187, 106, 0.3);
+    background-color: rgba(11, 26, 15, 0.86);
+}
+
+.modal.modal-game-result .game-result-team-total,
+.modal.modal-game-result .team-total-chip,
+.modal.modal-game-result .team-game-total,
+.modal.modal-game-result .add-game-team-total {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 74px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--accent-green-bright);
+    background: rgba(76, 175, 80, 0.15);
+    border: 1px solid rgba(102, 187, 106, 0.42);
+}
+
+.modal.modal-game-result .game-result-penalty-section,
+.modal.modal-game-result .inline-penalty-section,
+.modal.modal-game-result .penalty-inline-section,
+.modal.modal-game-result .add-game-penalty-panel {
+    margin-top: 4px;
+    padding: 14px;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(46, 125, 50, 0.24);
+    background: rgba(9, 22, 14, 0.64);
+}
+
+.modal.modal-game-result .game-result-penalty-row,
+.modal.modal-game-result .inline-penalty-row,
+.modal.modal-game-result .penalty-toggle-row,
+.modal.modal-game-result .add-game-penalty-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.modal.modal-game-result .add-game-penalty-toggle input[type="checkbox"] {
+    accent-color: var(--accent-green-bright);
+}
+
+.modal.modal-game-result .add-game-penalty-toggle span {
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+.modal.modal-game-result .game-result-penalty-row .form-checkbox-label,
+.modal.modal-game-result .inline-penalty-row .form-checkbox-label,
+.modal.modal-game-result .penalty-toggle-row .form-checkbox-label {
+    margin: 0;
+    padding: 8px 12px;
+    background: rgba(76, 175, 80, 0.09);
+    border-color: rgba(102, 187, 106, 0.36);
+}
+
+.modal.modal-game-result .game-result-penalty-grid,
+.modal.modal-game-result .inline-penalty-grid,
+.modal.modal-game-result .penalty-input-grid,
+.modal.modal-game-result .add-game-penalty-fields {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.modal.modal-game-result .game-result-penalty-grid .form-group,
+.modal.modal-game-result .inline-penalty-grid .form-group,
+.modal.modal-game-result .penalty-input-grid .form-group,
+.modal.modal-game-result .add-game-penalty-fields .form-group {
+    margin-bottom: 0;
+}
+
+.modal.modal-game-result .game-result-penalty-grid[hidden],
+.modal.modal-game-result .inline-penalty-grid[hidden],
+.modal.modal-game-result .penalty-input-grid[hidden],
+.modal.modal-game-result .add-game-penalty-fields[hidden],
+.modal.modal-game-result .game-result-penalty-grid.is-hidden,
+.modal.modal-game-result .inline-penalty-grid.is-hidden,
+.modal.modal-game-result .penalty-input-grid.is-hidden,
+.modal.modal-game-result .add-game-penalty-fields.is-hidden {
+    display: none;
+}
+
+.modal.modal-game-result .form-label {
+    color: var(--text-secondary);
+}
+
+.modal.modal-game-result .form-input:focus,
+.modal.modal-game-result .form-select:focus {
+    border-color: var(--accent-green-bright);
+    box-shadow: 0 0 0 3px rgba(102, 187, 106, 0.2);
+}
+
+.modal.modal-game-result .form-input:focus-visible,
+.modal.modal-game-result .form-select:focus-visible,
+.modal.modal-game-result input[type="checkbox"]:focus-visible,
+.modal.modal-game-result .btn:focus-visible,
+.modal.modal-game-result .btn-close:focus-visible {
+    outline: 2px solid var(--accent-green-bright);
+    outline-offset: 2px;
+}
+
+.modal.modal-game-result .modal-footer {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(102, 187, 106, 0.2);
+    gap: 12px;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.modal.modal-game-result .modal-footer-note,
+.modal.modal-game-result .modal-footer-meta {
+    margin-right: auto;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+}
+
+.modal.modal-game-result .modal-footer .btn {
+    min-width: 140px;
+    justify-content: center;
+}
+
+/* ================================
    FORM ELEMENTS
    ================================ */
 .form-group {
@@ -2191,6 +2656,78 @@ body {
     }
 }
 
+@media (max-width: 900px) {
+    .modal.modal-game-result {
+        width: min(760px, calc(100vw - 24px));
+        padding: 24px 22px 20px;
+    }
+
+    .modal.modal-game-result .game-result-team-grid,
+    .modal.modal-game-result .game-result-teams-grid,
+    .modal.modal-game-result .team-cards-grid,
+    .modal.modal-game-result .add-game-team-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .modal.modal-game-result {
+        width: min(100%, calc(100vw - 20px));
+        padding: 20px 18px;
+        border-radius: var(--radius-lg);
+    }
+
+    .modal.modal-game-result .modal-header {
+        margin-bottom: 14px;
+        padding-bottom: 12px;
+        flex-wrap: wrap;
+    }
+
+    .modal.modal-game-result .game-result-team-card,
+    .modal.modal-game-result .team-result-card,
+    .modal.modal-game-result .player-placement-group,
+    .modal.modal-game-result .add-game-team-card,
+    .modal.modal-game-result .game-result-penalty-section,
+    .modal.modal-game-result .inline-penalty-section,
+    .modal.modal-game-result .penalty-inline-section,
+    .modal.modal-game-result .add-game-penalty-panel {
+        padding: 12px;
+    }
+
+    .modal.modal-game-result .placement-form-row,
+    .modal.modal-game-result .game-result-rank-row,
+    .modal.modal-game-result .add-game-player-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .modal.modal-game-result .placement-select-wrapper,
+    .modal.modal-game-result .game-result-rank-select-wrap,
+    .modal.modal-game-result .add-game-player-controls {
+        max-width: none;
+        justify-self: stretch;
+    }
+
+    .modal.modal-game-result .game-result-penalty-grid,
+    .modal.modal-game-result .inline-penalty-grid,
+    .modal.modal-game-result .penalty-input-grid,
+    .modal.modal-game-result .add-game-penalty-fields {
+        grid-template-columns: 1fr;
+    }
+
+    .modal.modal-game-result .game-result-penalty-row,
+    .modal.modal-game-result .inline-penalty-row,
+    .modal.modal-game-result .penalty-toggle-row,
+    .modal.modal-game-result .add-game-penalty-toggle {
+        align-items: stretch;
+    }
+
+    .modal.modal-game-result .modal-footer .btn {
+        flex: 1 1 170px;
+        min-width: 0;
+    }
+}
+
 @media (max-width: 768px) {
     .sidebar {
         transform: translateX(-100%);
@@ -2253,6 +2790,72 @@ body {
     .sessions-table th:nth-child(4),
     .sessions-table td:nth-child(4) {
         display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal.modal-game-result {
+        width: calc(100vw - 14px);
+        max-height: 92vh;
+        padding: 16px 12px 14px;
+        border-radius: var(--radius-md);
+    }
+
+    .modal.modal-game-result .modal-header-icon,
+    .modal.modal-game-result .game-result-header-icon,
+    .modal.modal-game-result .header-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        font-size: 0.95rem;
+    }
+
+    .modal.modal-game-result .modal-header h3 {
+        font-size: 1.08rem;
+    }
+
+    .modal.modal-game-result .game-result-team-card,
+    .modal.modal-game-result .team-result-card,
+    .modal.modal-game-result .player-placement-group,
+    .modal.modal-game-result .add-game-team-card,
+    .modal.modal-game-result .game-result-penalty-section,
+    .modal.modal-game-result .inline-penalty-section,
+    .modal.modal-game-result .penalty-inline-section,
+    .modal.modal-game-result .add-game-penalty-panel {
+        padding: 10px;
+    }
+
+    .modal.modal-game-result .placement-form-row,
+    .modal.modal-game-result .game-result-rank-row,
+    .modal.modal-game-result .add-game-player-row {
+        padding: 8px;
+    }
+
+    .modal.modal-game-result .game-result-team-badge,
+    .modal.modal-game-result .team-result-badge,
+    .modal.modal-game-result .team-badge,
+    .modal.modal-game-result .team-initials,
+    .modal.modal-game-result .add-game-team-badge {
+        width: 28px;
+        height: 28px;
+        font-size: 0.69rem;
+    }
+
+    .modal.modal-game-result .game-result-penalty-row,
+    .modal.modal-game-result .inline-penalty-row,
+    .modal.modal-game-result .penalty-toggle-row,
+    .modal.modal-game-result .add-game-penalty-toggle {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .modal.modal-game-result .modal-footer {
+        gap: 8px;
+    }
+
+    .modal.modal-game-result .modal-footer .btn {
+        width: 100%;
+        flex-basis: 100%;
     }
 }
 

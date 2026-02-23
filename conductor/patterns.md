@@ -15,6 +15,8 @@ Reusable patterns discovered during development. Read this before starting new w
 - Store module wraps API client with team caching; use `getTeamFromCache()` for sync lookups in render loops (from: backend_mvp_20260223, 2026-02-23)
 - FastAPI routers: one file per resource in `backend/routers/`, shared helpers like `_get_session_or_404()` for DRY (from: backend_mvp_20260223, 2026-02-23)
 - Use `db.merge()` for import/upsert operations (from: backend_mvp_20260223, 2026-02-23)
+- For high-fidelity single-modal redesigns, use an optional `modalClass` in `App.openModal()` and scope styles to `.modal.<variant>` to avoid cross-modal regressions (from: session_game_result_modal_redesign_20260223, 2026-02-23)
+- For live modal previews (scores/winner state), derive render state directly from current form control values instead of duplicating transient state objects (from: session_game_result_modal_redesign_20260223, 2026-02-23)
 
 ## Gotchas
 
