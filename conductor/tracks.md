@@ -16,6 +16,6 @@ This file tracks all major tracks for the project.
 
 ---
 
-## [ ] Track: Redesign Empty States — Rich illustrated empty states across all app views
+## [~] Track: Redesign Empty States — Rich illustrated empty states across all app views
 *Link: [conductor/tracks/empty_state_redesign_20260224/](conductor/tracks/empty_state_redesign_20260224/)*
 

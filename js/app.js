@@ -192,12 +192,14 @@ const App = (() => {
 
         if (leaderboard.length === 0) {
             container.innerHTML = `
-                <div class="empty-state-illustrated">
-                    <div class="empty-state-icon">🏅</div>
-                    <h4>No Rankings Yet</h4>
-                    <p>Complete a session to see your leaderboard!</p>
-                    <button class="btn btn-primary btn-sm" onclick="App.switchTab('session')">Start Playing →</button>
-                </div>`;
+            <div class="empty-state-hero">
+                <div class="empty-state-hero__illustration">
+                    <img src="images/empty-states/leaderboard-podium.png" alt="Leaderboard podium illustration" loading="lazy">
+                </div>
+                <h3 class="empty-state-hero__title">No Rankings Yet</h3>
+                <p class="empty-state-hero__subtitle">Complete your first session to see team rankings here.</p>
+                <button class="empty-state-hero__cta" onclick="App.switchTab('session')" id="cta-start-session-lb">Start a Session</button>
+            </div>`;
             return;
         }
 
@@ -268,7 +270,23 @@ const App = (() => {
         const viewAll = document.getElementById('sessions-view-all');
 
         if (recent.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No sessions yet. Start a new session!</td></tr>';
+            tbody.innerHTML = `<tr><td colspan="5">
+                <div class="empty-state-hero">
+                    <svg class="empty-state-hero__svg-illustration" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="30" y="20" width="120" height="140" rx="12" fill="#132218" stroke="#2e7d32" stroke-width="1.5" opacity="0.9"/>
+                        <rect x="45" y="45" width="90" height="8" rx="4" fill="#2e7d32" opacity="0.4"/>
+                        <rect x="45" y="65" width="70" height="6" rx="3" fill="#2e7d32" opacity="0.25"/>
+                        <rect x="45" y="83" width="90" height="8" rx="4" fill="#2e7d32" opacity="0.4"/>
+                        <rect x="45" y="103" width="55" height="6" rx="3" fill="#2e7d32" opacity="0.25"/>
+                        <rect x="45" y="121" width="80" height="8" rx="4" fill="#2e7d32" opacity="0.4"/>
+                        <circle cx="140" cy="40" r="26" fill="#0b1a0f" stroke="#4caf50" stroke-width="2"/>
+                        <polygon points="140,22 144.5,33 156,34.5 147.8,42.3 149.8,53.8 140,48.5 130.2,53.8 132.2,42.3 124,34.5 135.5,33" fill="#ffd700" opacity="0.9"/>
+                    </svg>
+                    <h3 class="empty-state-hero__title">No Sessions Recorded</h3>
+                    <p class="empty-state-hero__subtitle">Start a new session to track games and scores.</p>
+                    <button class="empty-state-hero__cta" onclick="Session.showNewSessionModal()" id="cta-start-new-session">Start New Session</button>
+                </div>
+            </td></tr>`;
             viewAll.style.display = 'none';
             return;
         }

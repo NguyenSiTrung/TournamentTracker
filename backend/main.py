@@ -35,6 +35,7 @@ FRONTEND_DIR = Path(__file__).resolve().parent.parent
 
 app.mount("/css", StaticFiles(directory=FRONTEND_DIR / "css"), name="css")
 app.mount("/js", StaticFiles(directory=FRONTEND_DIR / "js"), name="js")
+app.mount("/images", StaticFiles(directory=FRONTEND_DIR / "images"), name="images")
 
 
 @app.get("/")

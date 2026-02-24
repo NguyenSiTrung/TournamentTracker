@@ -7,7 +7,32 @@ const Teams = (() => {
         const grid = document.getElementById('teams-grid');
 
         if (teams.length === 0) {
-            grid.innerHTML = '<p class="empty-state">No teams yet. Create your first team to get started!</p>';
+            grid.innerHTML = `
+                <div class="empty-state-hero">
+                    <div class="empty-state-hero__illustration">
+                        <img src="images/empty-states/teams-trophy.png" alt="Trophy illustration" loading="lazy">
+                    </div>
+                    <h3 class="empty-state-hero__title">No Teams Registered</h3>
+                    <p class="empty-state-hero__subtitle">Start by creating your first team to track their progress and scores across sessions.</p>
+                    <button class="empty-state-hero__cta" onclick="Teams.showCreateModal()" id="cta-create-first-team">+ Create Your First Team</button>
+                    <div class="empty-state-hero__steps">
+                        <div class="empty-state-hero__step">
+                            <div class="empty-state-hero__step-icon">✏️</div>
+                            <span class="empty-state-hero__step-num">Step 1</span>
+                            <span class="empty-state-hero__step-label">Name your team</span>
+                        </div>
+                        <div class="empty-state-hero__step">
+                            <div class="empty-state-hero__step-icon">👥</div>
+                            <span class="empty-state-hero__step-num">Step 2</span>
+                            <span class="empty-state-hero__step-label">Add players</span>
+                        </div>
+                        <div class="empty-state-hero__step">
+                            <div class="empty-state-hero__step-icon">🎮</div>
+                            <span class="empty-state-hero__step-num">Step 3</span>
+                            <span class="empty-state-hero__step-label">Start playing!</span>
+                        </div>
+                    </div>
+                </div>`;
             return;
         }
 

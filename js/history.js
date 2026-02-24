@@ -12,7 +12,15 @@ const History = (() => {
         const container = document.getElementById('overall-stats-content');
 
         if (leaderboard.length === 0) {
-            container.innerHTML = '<p class="empty-state">No completed sessions yet.</p>';
+            container.innerHTML = `
+                <div class="empty-state-hero">
+                    <div class="empty-state-hero__illustration">
+                        <img src="images/empty-states/history-archive.png" alt="History illustration" loading="lazy">
+                    </div>
+                    <h3 class="empty-state-hero__title">No History Yet</h3>
+                    <p class="empty-state-hero__subtitle">Complete sessions to build your tournament history and statistics.</p>
+                    <button class="empty-state-hero__cta" onclick="App.switchTab('session')" id="cta-go-sessions-stats">Go to Sessions</button>
+                </div>`;
             return;
         }
 
@@ -60,7 +68,15 @@ const History = (() => {
         const container = document.getElementById('history-list');
 
         if (completed.length === 0) {
-            container.innerHTML = '<p class="empty-state">No completed sessions yet. Complete a session to see it here!</p>';
+            container.innerHTML = `
+                <div class="empty-state-hero">
+                    <div class="empty-state-hero__illustration">
+                        <img src="images/empty-states/history-archive.png" alt="History illustration" loading="lazy">
+                    </div>
+                    <h3 class="empty-state-hero__title">No Sessions Completed</h3>
+                    <p class="empty-state-hero__subtitle">Complete a session to see detailed results and game history here.</p>
+                    <button class="empty-state-hero__cta" onclick="App.switchTab('session')" id="cta-go-sessions-history">Go to Sessions</button>
+                </div>`;
             return;
         }
 
