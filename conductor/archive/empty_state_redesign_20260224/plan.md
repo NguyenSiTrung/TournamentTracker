@@ -66,14 +66,16 @@
   - [x] Wire CTA to switch to session tab
   - Commit: 84aeb66
 
-- [ ] Task 2: Polish inline empty states
-  - [ ] Update inline empty states (games list, penalties, scoreboard) with subtle icon + text style
-  - [ ] Ensure consistent `.empty-state` styling across all inline instances
+- [x] Task 2: Polish inline empty states
+  - [x] Update inline empty states (games list, penalties, scoreboard) with subtle icon + text style
+  - [x] Ensure consistent `.empty-state` styling across all inline instances
+  - Commit: 89f2e08
 
-- [ ] Task 3: Final cross-browser and responsive testing
-  - [ ] Verify all 5 primary empty states render correctly
-  - [ ] Test responsive layouts at 768px and 480px breakpoints
-  - [ ] Verify `prefers-reduced-motion` disables animations
-  - [ ] Verify all CTA buttons trigger correct actions
+- [x] Task 3: Final cross-browser and responsive testing
+  - [x] Verify all 5 primary empty states render correctly
+  - [x] Test responsive layouts at 768px and 480px breakpoints
+  - [x] Verify `prefers-reduced-motion` disables animations
+  - [x] Verify all CTA buttons trigger correct actions
+  - Verified via browser screenshots at 480px, 768px, and 1200px
 
 - [ ] Task: Conductor - User Manual Verification 'Phase 4: History Empty States & Polish' (Protocol in workflow.md)

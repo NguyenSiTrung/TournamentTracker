@@ -47,6 +47,13 @@ Reusable patterns discovered during development. Read this before starting new w
 - Override FastAPI `get_db` dependency in test fixtures with fresh in-memory engine per test (from: backend_mvp_20260223, 2026-02-23)
 - Import all ORM models in `conftest.py` to ensure they're registered with `Base.metadata` (from: backend_mvp_20260223, 2026-02-23)
 - Points calculation: 1st=4, 2nd=3, 3rd=2, 4th+=1; 2 players: 1st=4, 2nd=1 (from: backend_mvp_20260223, 2026-02-23)
+- Test both new format AND legacy format simultaneously to catch regressions when migrating key schemas (from: duplicate_player_name_bug_20260224, archived 2026-02-24)
+
+## Static Assets & UI Components
+
+- FastAPI `StaticFiles` mounts must include all frontend asset directories (css, js, images) — missing mounts cause silent 404s for new assets (from: empty_state_redesign_20260224, archived 2026-02-24)
+- Inline SVG illustrations are more reliable than external images for empty states (no server dependency, always theme-consistent, no broken images) (from: empty_state_redesign_20260224, archived 2026-02-24)
+- BEM naming for component variants (`.empty-state-hero__title`) prevents style collisions with base `.empty-state` class (from: empty_state_redesign_20260224, archived 2026-02-24)
 
 ---
 Last refreshed: 2026-02-24
