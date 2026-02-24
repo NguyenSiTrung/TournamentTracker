@@ -1,16 +1,18 @@
-# Track Learnings: teams_empty_state_fix_20260224
+# Learnings
 
-Patterns, gotchas, and context discovered during implementation.
+## Inherited (from previous tracks)
+- Inline SVGs preferred over PNGs for empty states
+- BEM naming convention for component variants
+- FastAPI StaticFiles mounts need to include all asset directories
+- `void el.offsetWidth` forces reflow for CSS trigger of animations
+- Animations: use transform/opacity for GPU compositing
+- `prefers-reduced-motion` handled globally via blanket rule at end of stylesheet
 
-## Codebase Patterns (Inherited)
-
-- Inline SVG illustrations are more reliable than external images for empty states (no server dependency, always theme-consistent, no broken images) (from: empty_state_redesign_20260224)
-- BEM naming for component variants (`.empty-state-hero__title`) prevents style collisions with base `.empty-state` class (from: empty_state_redesign_20260224)
-- FastAPI `StaticFiles` mounts must include all frontend asset directories — missing mounts cause silent 404s for new assets (from: empty_state_redesign_20260224)
-- Use `void el.offsetWidth` to force reflow and re-trigger CSS animations on class toggle (from: ui_ux_redesign_20260223)
-- Performance: animations should use `transform`/`opacity` only (GPU-composited properties) (from: ui_ux_redesign_20260223)
-- Global `prefers-reduced-motion` blanket (0.01ms duration on all) is simplest accessibility approach (from: ui_ux_redesign_20260223)
-
----
-
-<!-- Learnings from implementation will be appended below -->
+## Discovered
+- `grid-column: 1 / -1` is the cleanest way to span an element across all CSS Grid columns
+- Glassmorphism effect: combine `backdrop-filter: blur(16px)` with `rgba()` background and radial gradient glow for premium feel
+- Inline SVG `<defs>` gradient IDs must be unique per page to avoid ID collisions when multiple SVGs are present
+- Horizontal stepper connecting lines: use `::after` pseudo-elements with `border-top: dashed` positioned absolutely
+- When replacing PNG empty states with inline SVGs, update both the JS render functions AND the static HTML in index.html to keep initial render consistent
+- `aria-hidden="true"` on decorative SVGs prevents screen readers from announcing visual-only content
+- SVG `<text>` elements need explicit `font-family` attribute to render consistently across browsers
