@@ -1,0 +1,11 @@
+{
+  "track_id": "empty_state_redesign_20260224",
+  "type": "feature",
+  "status": "new",
+  "priority": "medium",
+  "depends_on": [],
+  "estimated_hours": null,
+  "created_at": "2026-02-24T13:16:48+07:00",
+  "updated_at": "2026-02-24T13:16:48+07:00",
+  "description": "Redesign all empty states across the app with rich illustrated cards, themed images, bold headings, CTA buttons, and onboarding steps"
+}
