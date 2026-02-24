@@ -12,16 +12,17 @@
 - Empty states should guide the user: "No teams yet. Create your first team to get started!"
 
 ## Visual Identity
-- **Theme:** Dark theme with vibrant accents — deep navy background (#0a0a14), purple-to-pink accent gradient
+- **Theme:** Dark green pro theme — deep forest background (`#0b1a0f`), green accent system
 - **Style:** Glassmorphism cards with subtle blur and translucent borders
-- **Typography:** Inter font family, bold weights for emphasis (700–900)
+- **Typography:** Inter (body) + Space Grotesk (display/headings), bold weights for emphasis (700–900)
 - **Iconography:** Emoji-based icons for simplicity and personality (🏆, 👥, 🎮, 📊)
 - **Color Palette:**
-  - Primary background: `#0a0a14`
-  - Accent gradient: `#6c63ff` → `#e040fb`
+  - Primary background: `#0b1a0f` (body), `#0d1f12` (sidebar), `#132218` (cards)
+  - Accent green: `#4caf50` / bright: `#66bb6a` / dark: `#2e7d32` / emerald: `#00c853`
   - Gold (winners): `#ffd700`
-  - Danger/errors: `#ff4757`
-  - Success: `#2ed573`
+  - Danger/errors: `#ef5350`
+  - Success: `#4caf50`
+  - Text primary: `#e8f5e9` / secondary: `#81c784` / muted: `#6b9b72`
 
 ## Interaction Patterns
 - Confirm destructive actions (delete team, complete session) with a modal

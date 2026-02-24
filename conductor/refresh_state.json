@@ -1,39 +1,39 @@
 {
-  "last_refresh": "2026-02-24T00:44:51+07:00",
+  "last_refresh": "2026-02-24T17:41:13+07:00",
   "scope": "all",
   "changes_applied": [
     {
-      "file": "tech-stack.md",
+      "file": "product.md",
       "changes": [
-        "Backend marked as implemented (was 'Planned')",
-        "Storage updated to SQLite (was 'localStorage / Planned')",
-        "All Python dependencies documented from requirements.txt",
-        "Added Space Grotesk font",
-        "Added frontend serving via FastAPI",
-        "Added venv requirement note"
+        "Added shipped feature #11: WCAG AA Contrast Compliance",
+        "Added shipped feature #12: Empty State Illustrations",
+        "Updated refresh timestamp"
       ]
     },
     {
-      "file": "product.md",
+      "file": "product-guidelines.md",
       "changes": [
-        "Added 'Shipped Features' section with 5 post-MVP features",
-        "Backend API & Persistence marked as shipped",
-        "Dashboard Redesign marked as shipped",
-        "Game Result Modal Redesign marked as shipped",
-        "Live Session Dashboard marked as shipped",
-        "UI/UX Polish marked as shipped",
-        "Updated Platform & Architecture to reflect actual state"
+        "Fixed color palette from stale dark navy/purple to actual dark green theme",
+        "Updated typography to include Space Grotesk display font",
+        "Updated specific hex values to match CSS custom properties"
       ]
     },
     {
       "file": "patterns.md",
       "changes": [
-        "Elevated CSS animation patterns from ui_ux_redesign track",
-        "Added CSS & Animation Patterns section (6 patterns)",
-        "Elevated 3 gotchas from ui_ux_redesign and session_game_result_modal tracks",
-        "Added dashboard rendering order pattern"
+        "Elevated 4 patterns from ui_contrast_color_audit_20260224 track",
+        "Added design token contrast strategy pattern",
+        "Added dark theme muted text minimum threshold",
+        "Added placeholder text WCAG exception gotcha",
+        "Added SVG data URI color gotcha"
+      ]
+    },
+    {
+      "file": "beads",
+      "changes": [
+        "Closed orphaned TournamentTracker-prk epic (was open, track already archived)"
       ]
     }
   ],
-  "next_refresh_hint": "2026-02-26T00:44:51+07:00"
+  "next_refresh_hint": "2026-02-26T17:41:13+07:00"
 }

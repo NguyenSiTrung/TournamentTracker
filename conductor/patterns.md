@@ -27,6 +27,8 @@ Reusable patterns discovered during development. Read this before starting new w
 - Skeleton shimmer uses `background-size: 200%` with `background-position` animation (from: ui_ux_redesign_20260223, 2026-02-23)
 - Podium layout uses `align-items: flex-end` on flex container with CSS variable `--podium-height` per place (from: ui_ux_redesign_20260223, 2026-02-23)
 - Performance: animations should use `transform`/`opacity` only (GPU-composited properties) (from: ui_ux_redesign_20260223, 2026-02-23)
+- When contrast issues are pervasive, fix at the design token level (CSS custom properties) rather than per-element — one change cascades to 50+ elements (from: ui_contrast_color_audit_20260224, 2026-02-24)
+- For dark themes, muted text should be at least `#6b9b72` brightness on backgrounds around `#132218` to hit WCAG AA 4.5:1 contrast ratio (from: ui_contrast_color_audit_20260224, 2026-02-24)
 - Glassmorphism effect: combine `backdrop-filter: blur()` with `rgba()` background and radial gradient glow (from: teams_empty_state_fix_20260224, archived 2026-02-24)
 - Horizontal stepper connecting lines: use `::after` pseudo-elements with `border-top: dashed` positioned absolutely (from: teams_empty_state_fix_20260224, archived 2026-02-24)
 - `grid-column: 1 / -1` is the cleanest way to span an element across all CSS Grid columns (from: teams_empty_state_fix_20260224, archived 2026-02-24)
@@ -45,6 +47,8 @@ Reusable patterns discovered during development. Read this before starting new w
 - Nullish coalescing `??` is ideal for composite-key-with-fallback lookups: `dict[compositeKey] ?? dict[plainKey]` (from: duplicate_player_name_bug_20260224, 2026-02-24)
 - Inline SVG `<defs>` gradient IDs must be unique per page to avoid ID collisions when multiple SVGs are present (from: teams_empty_state_fix_20260224, archived 2026-02-24)
 - When replacing empty states with inline SVGs, update both JS render functions AND static HTML in index.html to keep initial render consistent (from: teams_empty_state_fix_20260224, archived 2026-02-24)
+- Hardcoded color values in SVG data URIs (e.g., form-select chevron) won't update when CSS custom properties change — grep for old hex values after token changes (from: ui_contrast_color_audit_20260224, 2026-02-24)
+- `::placeholder` text doesn't require 4.5:1 contrast ratio since it's non-essential content — 3:1 is acceptable per WCAG (from: ui_contrast_color_audit_20260224, 2026-02-24)
 
 ## Testing
 
@@ -63,4 +67,4 @@ Reusable patterns discovered during development. Read this before starting new w
 - SVG `<text>` elements need explicit `font-family` attribute to render consistently across browsers (from: teams_empty_state_fix_20260224, archived 2026-02-24)
 
 ---
-Last refreshed: 2026-02-24
+Last refreshed: 2026-02-24T17:41
