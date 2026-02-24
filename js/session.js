@@ -110,7 +110,7 @@ const Session = (() => {
 
     function renderScoreboard(session, context) {
         if (context.sortedStandings.length === 0) {
-            document.getElementById('live-scoreboard').innerHTML = '<p class="empty-state">No teams in this session</p>';
+            document.getElementById('live-scoreboard').innerHTML = '<p class="empty-state">📊 No teams in this session</p>';
             return;
         }
 
@@ -157,7 +157,7 @@ const Session = (() => {
         document.getElementById('game-count').textContent = `${session.games.length} game${session.games.length !== 1 ? 's' : ''}`;
 
         if (context.sessionTeams.length === 0) {
-            container.innerHTML = '<p class="empty-state">No teams assigned to this session.</p>';
+            container.innerHTML = '<p class="empty-state">👥 No teams assigned to this session.</p>';
             return;
         }
 
@@ -356,7 +356,7 @@ const Session = (() => {
         const container = document.getElementById('penalties-list');
 
         if (session.penalties.length === 0) {
-            container.innerHTML = '<p class="empty-state">No penalties applied.</p>';
+            container.innerHTML = '<p class="empty-state">✅ No penalties applied.</p>';
             return;
         }
 
