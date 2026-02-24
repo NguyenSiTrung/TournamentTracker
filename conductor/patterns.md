@@ -27,6 +27,9 @@ Reusable patterns discovered during development. Read this before starting new w
 - Skeleton shimmer uses `background-size: 200%` with `background-position` animation (from: ui_ux_redesign_20260223, 2026-02-23)
 - Podium layout uses `align-items: flex-end` on flex container with CSS variable `--podium-height` per place (from: ui_ux_redesign_20260223, 2026-02-23)
 - Performance: animations should use `transform`/`opacity` only (GPU-composited properties) (from: ui_ux_redesign_20260223, 2026-02-23)
+- Glassmorphism effect: combine `backdrop-filter: blur()` with `rgba()` background and radial gradient glow (from: teams_empty_state_fix_20260224, archived 2026-02-24)
+- Horizontal stepper connecting lines: use `::after` pseudo-elements with `border-top: dashed` positioned absolutely (from: teams_empty_state_fix_20260224, archived 2026-02-24)
+- `grid-column: 1 / -1` is the cleanest way to span an element across all CSS Grid columns (from: teams_empty_state_fix_20260224, archived 2026-02-24)
 
 ## Gotchas
 
@@ -40,6 +43,8 @@ Reusable patterns discovered during development. Read this before starting new w
 - Parallel worker output can diverge on CSS/JS selector naming; coordinator integration pass is required before final validation (from: session_game_result_modal_redesign_20260223, 2026-02-23)
 - Use composite keys (`teamId::playerName`) when dict keys must uniquely identify players across teams; always try composite key first, fall back to plain name for backward compat (from: duplicate_player_name_bug_20260224, 2026-02-24)
 - Nullish coalescing `??` is ideal for composite-key-with-fallback lookups: `dict[compositeKey] ?? dict[plainKey]` (from: duplicate_player_name_bug_20260224, 2026-02-24)
+- Inline SVG `<defs>` gradient IDs must be unique per page to avoid ID collisions when multiple SVGs are present (from: teams_empty_state_fix_20260224, archived 2026-02-24)
+- When replacing empty states with inline SVGs, update both JS render functions AND static HTML in index.html to keep initial render consistent (from: teams_empty_state_fix_20260224, archived 2026-02-24)
 
 ## Testing
 
@@ -54,6 +59,8 @@ Reusable patterns discovered during development. Read this before starting new w
 - FastAPI `StaticFiles` mounts must include all frontend asset directories (css, js, images) — missing mounts cause silent 404s for new assets (from: empty_state_redesign_20260224, archived 2026-02-24)
 - Inline SVG illustrations are more reliable than external images for empty states (no server dependency, always theme-consistent, no broken images) (from: empty_state_redesign_20260224, archived 2026-02-24)
 - BEM naming for component variants (`.empty-state-hero__title`) prevents style collisions with base `.empty-state` class (from: empty_state_redesign_20260224, archived 2026-02-24)
+- `aria-hidden="true"` on decorative SVGs prevents screen readers from announcing visual-only content (from: teams_empty_state_fix_20260224, archived 2026-02-24)
+- SVG `<text>` elements need explicit `font-family` attribute to render consistently across browsers (from: teams_empty_state_fix_20260224, archived 2026-02-24)
 
 ---
 Last refreshed: 2026-02-24
