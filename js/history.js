@@ -13,13 +13,36 @@ const History = (() => {
 
         if (leaderboard.length === 0) {
             container.innerHTML = `
-                <div class="empty-state-hero">
-                    <div class="empty-state-hero__illustration">
-                        <img src="images/empty-states/history-archive.png" alt="History illustration" loading="lazy">
+                <div class="empty-state-hero-card">
+                    <div class="empty-state-hero">
+                        <svg class="empty-state-hero__svg-illustration" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <!-- Clock face -->
+                            <circle cx="90" cy="80" r="45" fill="#132218" stroke="#4caf50" stroke-width="2"/>
+                            <circle cx="90" cy="80" r="40" fill="none" stroke="#2e7d32" stroke-width="1" opacity="0.3"/>
+                            <!-- Clock hands -->
+                            <line x1="90" y1="80" x2="90" y2="52" stroke="#4caf50" stroke-width="2.5" stroke-linecap="round"/>
+                            <line x1="90" y1="80" x2="110" y2="75" stroke="#00c853" stroke-width="2" stroke-linecap="round"/>
+                            <circle cx="90" cy="80" r="3" fill="#ffd700" opacity="0.8"/>
+                            <!-- Hour markers -->
+                            <circle cx="90" cy="42" r="2" fill="#4caf50" opacity="0.5"/>
+                            <circle cx="128" cy="80" r="2" fill="#4caf50" opacity="0.5"/>
+                            <circle cx="90" cy="118" r="2" fill="#4caf50" opacity="0.5"/>
+                            <circle cx="52" cy="80" r="2" fill="#4caf50" opacity="0.5"/>
+                            <!-- Chart bars below -->
+                            <rect x="40" y="140" width="16" height="28" rx="3" fill="#2e7d32" opacity="0.4"/>
+                            <rect x="62" y="148" width="16" height="20" rx="3" fill="#4caf50" opacity="0.35"/>
+                            <rect x="84" y="135" width="16" height="33" rx="3" fill="#00c853" opacity="0.45"/>
+                            <rect x="106" y="142" width="16" height="26" rx="3" fill="#4caf50" opacity="0.35"/>
+                            <rect x="128" y="150" width="16" height="18" rx="3" fill="#2e7d32" opacity="0.3"/>
+                            <!-- Sparkles -->
+                            <circle cx="35" cy="45" r="2" fill="#ffd700" opacity="0.5"/>
+                            <circle cx="148" cy="50" r="2.5" fill="#ffd700" opacity="0.4"/>
+                            <circle cx="155" cy="135" r="1.8" fill="#4caf50" opacity="0.3"/>
+                        </svg>
+                        <h3 class="empty-state-hero__title">No History Yet</h3>
+                        <p class="empty-state-hero__subtitle">Complete sessions to build your tournament history and statistics.</p>
+                        <button class="empty-state-hero__cta" onclick="App.switchTab('session')" id="cta-go-sessions-stats">Go to Sessions</button>
                     </div>
-                    <h3 class="empty-state-hero__title">No History Yet</h3>
-                    <p class="empty-state-hero__subtitle">Complete sessions to build your tournament history and statistics.</p>
-                    <button class="empty-state-hero__cta" onclick="App.switchTab('session')" id="cta-go-sessions-stats">Go to Sessions</button>
                 </div>`;
             return;
         }
@@ -69,13 +92,36 @@ const History = (() => {
 
         if (completed.length === 0) {
             container.innerHTML = `
-                <div class="empty-state-hero">
-                    <div class="empty-state-hero__illustration">
-                        <img src="images/empty-states/history-archive.png" alt="History illustration" loading="lazy">
+                <div class="empty-state-hero-card">
+                    <div class="empty-state-hero">
+                        <svg class="empty-state-hero__svg-illustration" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <!-- Clock face -->
+                            <circle cx="90" cy="80" r="45" fill="#132218" stroke="#4caf50" stroke-width="2"/>
+                            <circle cx="90" cy="80" r="40" fill="none" stroke="#2e7d32" stroke-width="1" opacity="0.3"/>
+                            <!-- Clock hands -->
+                            <line x1="90" y1="80" x2="90" y2="52" stroke="#4caf50" stroke-width="2.5" stroke-linecap="round"/>
+                            <line x1="90" y1="80" x2="110" y2="75" stroke="#00c853" stroke-width="2" stroke-linecap="round"/>
+                            <circle cx="90" cy="80" r="3" fill="#ffd700" opacity="0.8"/>
+                            <!-- Hour markers -->
+                            <circle cx="90" cy="42" r="2" fill="#4caf50" opacity="0.5"/>
+                            <circle cx="128" cy="80" r="2" fill="#4caf50" opacity="0.5"/>
+                            <circle cx="90" cy="118" r="2" fill="#4caf50" opacity="0.5"/>
+                            <circle cx="52" cy="80" r="2" fill="#4caf50" opacity="0.5"/>
+                            <!-- Chart bars below -->
+                            <rect x="40" y="140" width="16" height="28" rx="3" fill="#2e7d32" opacity="0.4"/>
+                            <rect x="62" y="148" width="16" height="20" rx="3" fill="#4caf50" opacity="0.35"/>
+                            <rect x="84" y="135" width="16" height="33" rx="3" fill="#00c853" opacity="0.45"/>
+                            <rect x="106" y="142" width="16" height="26" rx="3" fill="#4caf50" opacity="0.35"/>
+                            <rect x="128" y="150" width="16" height="18" rx="3" fill="#2e7d32" opacity="0.3"/>
+                            <!-- Sparkles -->
+                            <circle cx="35" cy="45" r="2" fill="#ffd700" opacity="0.5"/>
+                            <circle cx="148" cy="50" r="2.5" fill="#ffd700" opacity="0.4"/>
+                            <circle cx="155" cy="135" r="1.8" fill="#4caf50" opacity="0.3"/>
+                        </svg>
+                        <h3 class="empty-state-hero__title">No Sessions Completed</h3>
+                        <p class="empty-state-hero__subtitle">Complete a session to see detailed results and game history here.</p>
+                        <button class="empty-state-hero__cta" onclick="App.switchTab('session')" id="cta-go-sessions-history">Go to Sessions</button>
                     </div>
-                    <h3 class="empty-state-hero__title">No Sessions Completed</h3>
-                    <p class="empty-state-hero__subtitle">Complete a session to see detailed results and game history here.</p>
-                    <button class="empty-state-hero__cta" onclick="App.switchTab('session')" id="cta-go-sessions-history">Go to Sessions</button>
                 </div>`;
             return;
         }

@@ -192,14 +192,33 @@ const App = (() => {
 
         if (leaderboard.length === 0) {
             container.innerHTML = `
+        <div class="empty-state-hero-card">
             <div class="empty-state-hero">
-                <div class="empty-state-hero__illustration">
-                    <img src="images/empty-states/leaderboard-podium.png" alt="Leaderboard podium illustration" loading="lazy">
-                </div>
+                <svg class="empty-state-hero__svg-illustration" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <!-- Podium blocks -->
+                    <rect x="20" y="100" width="40" height="55" rx="4" fill="#132218" stroke="#2e7d32" stroke-width="1.5"/>
+                    <rect x="70" y="75" width="40" height="80" rx="4" fill="#132218" stroke="#4caf50" stroke-width="2"/>
+                    <rect x="120" y="110" width="40" height="45" rx="4" fill="#132218" stroke="#2e7d32" stroke-width="1.5"/>
+                    <!-- Rank numbers -->
+                    <text x="40" y="132" text-anchor="middle" fill="#2e7d32" font-size="18" font-weight="800" font-family="Inter,sans-serif" opacity="0.6">2</text>
+                    <text x="90" y="112" text-anchor="middle" fill="#4caf50" font-size="22" font-weight="800" font-family="Inter,sans-serif" opacity="0.7">1</text>
+                    <text x="140" y="140" text-anchor="middle" fill="#2e7d32" font-size="16" font-weight="800" font-family="Inter,sans-serif" opacity="0.5">3</text>
+                    <!-- Stars above podium -->
+                    <polygon points="90,42 93,50 101,51 95,56 96.5,64 90,60 83.5,64 85,56 79,51 87,50" fill="#ffd700" opacity="0.8"/>
+                    <polygon points="40,70 42,75 47,75.5 43.5,78.5 44.5,83 40,80.5 35.5,83 36.5,78.5 33,75.5 38,75" fill="#c0c0c0" opacity="0.5"/>
+                    <polygon points="140,82 141.5,86 146,86.5 143,89 143.8,93 140,91 136.2,93 137,89 134,86.5 138.5,86" fill="#cd7f32" opacity="0.5"/>
+                    <!-- Sparkles -->
+                    <circle cx="25" cy="60" r="2" fill="#ffd700" opacity="0.5"/>
+                    <circle cx="160" cy="70" r="2.5" fill="#ffd700" opacity="0.4"/>
+                    <circle cx="90" cy="168" r="2" fill="#4caf50" opacity="0.3"/>
+                    <!-- Base line -->
+                    <line x1="15" y1="156" x2="165" y2="156" stroke="#2e7d32" stroke-width="1" opacity="0.3"/>
+                </svg>
                 <h3 class="empty-state-hero__title">No Rankings Yet</h3>
                 <p class="empty-state-hero__subtitle">Complete your first session to see team rankings here.</p>
                 <button class="empty-state-hero__cta" onclick="App.switchTab('session')" id="cta-start-session-lb">Start a Session</button>
-            </div>`;
+            </div>
+        </div>`;
             return;
         }
 
