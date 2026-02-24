@@ -13,4 +13,5 @@ This file tracks all major tracks for the project.
 
 ---
 
-<!-- No active tracks -->
+## [~] Track: Teams Empty State UI/UX Redesign + Consistency Pass
+*Link: [./conductor/tracks/teams_empty_state_fix_20260224/](./conductor/tracks/teams_empty_state_fix_20260224/)*

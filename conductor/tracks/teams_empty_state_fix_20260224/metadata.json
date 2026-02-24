@@ -1,0 +1,29 @@
+{
+    "track_id": "teams_empty_state_fix_20260224",
+    "type": "bug",
+    "status": "new",
+    "priority": "medium",
+    "depends_on": [],
+    "estimated_hours": null,
+    "created_at": "2026-02-24T16:56:53+07:00",
+    "updated_at": "2026-02-24T16:56:53+07:00",
+    "description": "Teams empty state showing very bad UI/UX - fix layout centering, replace PNG illustrations with inline SVGs, convert steps to horizontal stepper, and apply consistency pass across all empty states",
+    "beads_epic": "TournamentTracker-prk",
+    "beads_tasks": {
+        "phase1": "TournamentTracker-prk.1",
+        "phase1_task1": "TournamentTracker-prk.1.1",
+        "phase1_task2": "TournamentTracker-prk.1.2",
+        "phase1_task3": "TournamentTracker-prk.1.3",
+        "phase2": "TournamentTracker-prk.2",
+        "phase2_task1": "TournamentTracker-prk.2.1",
+        "phase2_task2": "TournamentTracker-prk.2.2",
+        "phase2_task3": "TournamentTracker-prk.2.3",
+        "phase3": "TournamentTracker-prk.3",
+        "phase3_task1": "TournamentTracker-prk.3.1",
+        "phase3_task2": "TournamentTracker-prk.3.2",
+        "phase3_task3": "TournamentTracker-prk.3.3",
+        "phase4": "TournamentTracker-prk.4",
+        "phase4_task1": "TournamentTracker-prk.4.1",
+        "phase4_task2": "TournamentTracker-prk.4.2"
+    }
+}
