@@ -437,6 +437,14 @@ const App = (() => {
             document.getElementById('modal').classList.remove(activeModalClass);
             activeModalClass = '';
         }
+
+        // Clean up any custom header injections and restore default title
+        const header = document.querySelector('#modal .modal-header');
+        if (header) {
+            header.querySelectorAll('.ct-header').forEach(el => el.remove());
+            const title = header.querySelector('#modal-title');
+            if (title) title.style.display = '';
+        }
     }
 
     // --- Toast ---

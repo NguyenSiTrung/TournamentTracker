@@ -86,42 +86,221 @@ const Teams = (() => {
         }).join('');
     }
 
+    const TEAM_COLORS = [
+        { name: 'Green', hex: '#4caf50' },
+        { name: 'Blue', hex: '#42a5f5' },
+        { name: 'Purple', hex: '#ab47bc' },
+        { name: 'Red', hex: '#ef5350' },
+        { name: 'Amber', hex: '#ffc107' },
+        { name: 'Cyan', hex: '#26c6da' },
+        { name: 'Pink', hex: '#ec407a' },
+        { name: 'Orange', hex: '#ff7043' },
+    ];
+
+    let selectedColor = TEAM_COLORS[0].hex;
+
     function showCreateModal() {
+        const colorSwatches = TEAM_COLORS.map((c, i) =>
+            `<button type="button" class="ct-color-swatch${i === 0 ? ' active' : ''}" style="background:${c.hex}" data-color="${c.hex}" title="${c.name}" onclick="Teams.selectColor(this, '${c.hex}')"></button>`
+        ).join('');
+
         const body = `
-            <div class="form-group">
-                <label class="form-label">Team Name</label>
-                <input class="form-input" id="team-name-input" placeholder="Enter team name" autofocus>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Players</label>
-                <div class="player-inputs" id="player-inputs">
-                    <div class="player-input-row">
-                        <input class="form-input" placeholder="Player 1 name">
-                    </div>
-                    <div class="player-input-row">
-                        <input class="form-input" placeholder="Player 2 name">
+            <!-- Team Identity Section -->
+            <div class="ct-input-row">
+                <div class="ct-input-group">
+                    <label>Team Name</label>
+                    <div class="ct-input-wrap">
+                        <span class="ct-input-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </span>
+                        <input class="form-input" id="team-name-input" placeholder="e.g. Shadow Strikers" autofocus oninput="Teams.updatePreview()">
                     </div>
                 </div>
-                <button class="btn btn-ghost btn-sm btn-add-player mt-8" onclick="Teams.addPlayerInput()">+ Add Player</button>
+                <div class="ct-input-group ct-input-group-tag">
+                    <label>Tag <span class="ct-char-count" id="tag-char-count">0/4</span></label>
+                    <input class="form-input ct-input-tag" id="team-tag-input" placeholder="TAG" maxlength="4" oninput="Teams.updateTagCount(); Teams.updatePreview()">
+                </div>
+            </div>
+
+            <!-- Color + Preview -->
+            <div class="ct-color-preview-row">
+                <div class="ct-color-picker-wrap">
+                    <div class="ct-input-group" style="margin-bottom:0">
+                        <label>Team Color</label>
+                        <div class="ct-color-picker">${colorSwatches}</div>
+                    </div>
+                </div>
+                <div>
+                    <span class="ct-preview-label">Preview</span>
+                    <div class="ct-preview-card">
+                        <div class="ct-preview-avatar" id="ct-preview-avatar" style="background:${TEAM_COLORS[0].hex}">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </div>
+                        <div class="ct-preview-name" id="ct-preview-name">Team Name</div>
+                        <div class="ct-preview-tag" id="ct-preview-tag">[TAG]</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ct-divider"></div>
+
+            <!-- Players Section -->
+            <div class="ct-section">
+                <div class="ct-section-label">
+                    <span>Team Members</span>
+                    <span class="ct-badge" id="ct-player-count">2 players</span>
+                </div>
+                <div class="ct-players-grid" id="player-inputs">
+                    <div class="ct-player-row">
+                        <div class="ct-player-avatar">P1</div>
+                        <input class="form-input" placeholder="Player 1 name" oninput="Teams.updatePlayerCount()">
+                    </div>
+                    <div class="ct-player-row">
+                        <div class="ct-player-avatar">P2</div>
+                        <input class="form-input" placeholder="Player 2 name" oninput="Teams.updatePlayerCount()">
+                        <button class="ct-player-remove" onclick="Teams.removePlayer(this)" title="Remove player">×</button>
+                    </div>
+                </div>
+                <button type="button" class="ct-add-player-btn" onclick="Teams.addPlayerInput()">
+                    <span class="ct-add-icon">+</span>
+                    Add Player
+                </button>
+                <div class="ct-helper-text">Minimum 1 player required</div>
             </div>
         `;
+
         const footer = `
-            <button class="btn btn-ghost" onclick="App.closeModal()">Cancel</button>
-            <button class="btn btn-accent" onclick="Teams.saveNewTeam()">Create Team</button>
+            <div class="ct-footer">
+                <span class="ct-footer-hint">Teams can be edited later</span>
+                <div class="ct-footer-actions">
+                    <button class="ct-btn-cancel" onclick="App.closeModal()">Cancel</button>
+                    <button class="ct-btn-create" onclick="Teams.saveNewTeam()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Create Team
+                    </button>
+                </div>
+            </div>
         `;
-        App.openModal('Create Team', body, footer);
+        selectedColor = TEAM_COLORS[0].hex;
+        App.openModal('', body, footer, { modalClass: 'modal-create-team' });
+
+        // Replace the default header with our custom rich header
+        setTimeout(() => {
+            const headerEl = document.querySelector('#modal .modal-header');
+            if (headerEl) {
+                const titleEl = headerEl.querySelector('#modal-title');
+                const closeEl = headerEl.querySelector('#modal-close');
+                if (titleEl) {
+                    titleEl.style.display = 'none';
+                }
+                // Remove any previous custom headers first
+                headerEl.querySelectorAll('.ct-header').forEach(el => el.remove());
+                // Insert custom header
+                const customHeader = document.createElement('div');
+                customHeader.className = 'ct-header';
+                customHeader.innerHTML = `
+                    <div class="ct-header-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <div class="ct-header-text">
+                        <h3>Create New Team</h3>
+                        <p>Assemble your squad and customize your identity.</p>
+                    </div>
+                `;
+                headerEl.insertBefore(customHeader, closeEl);
+            }
+            // Focus name input
+            const nameInput = document.getElementById('team-name-input');
+            if (nameInput) nameInput.focus();
+        }, 50);
+    }
+
+    function selectColor(el, hex) {
+        selectedColor = hex;
+        document.querySelectorAll('.ct-color-swatch').forEach(s => s.classList.remove('active'));
+        el.classList.add('active');
+        updatePreview();
+    }
+
+    function updateTagCount() {
+        const tag = document.getElementById('team-tag-input');
+        const counter = document.getElementById('tag-char-count');
+        if (tag && counter) {
+            counter.textContent = `${tag.value.length}/4`;
+        }
+    }
+
+    function updatePreview() {
+        const name = document.getElementById('team-name-input')?.value.trim() || '';
+        const tag = document.getElementById('team-tag-input')?.value.trim().toUpperCase() || '';
+
+        const avatarEl = document.getElementById('ct-preview-avatar');
+        const nameEl = document.getElementById('ct-preview-name');
+        const tagEl = document.getElementById('ct-preview-tag');
+
+        if (avatarEl) {
+            avatarEl.style.background = selectedColor;
+            if (name) {
+                const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().substr(0, 2);
+                avatarEl.innerHTML = initials;
+            } else {
+                avatarEl.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`;
+            }
+        }
+        if (nameEl) nameEl.textContent = name || 'Team Name';
+        if (tagEl) tagEl.textContent = tag ? tag : '[TAG]';
+    }
+
+    function updatePlayerCount() {
+        const container = document.getElementById('player-inputs');
+        const badge = document.getElementById('ct-player-count');
+        if (container && badge) {
+            const count = container.children.length;
+            badge.textContent = `${count} player${count !== 1 ? 's' : ''}`;
+        }
     }
 
     function addPlayerInput() {
         const container = document.getElementById('player-inputs');
+        if (!container) return;
         const count = container.children.length + 1;
         const row = document.createElement('div');
-        row.className = 'player-input-row';
+        row.className = 'ct-player-row';
         row.innerHTML = `
-            <input class="form-input" placeholder="Player ${count} name">
-            <button class="btn-remove-player" onclick="this.parentElement.remove()">×</button>
+            <div class="ct-player-avatar">P${count}</div>
+            <input class="form-input" placeholder="Player ${count} name" oninput="Teams.updatePlayerCount()">
+            <button class="ct-player-remove" onclick="Teams.removePlayer(this)" title="Remove player">×</button>
         `;
         container.appendChild(row);
+        updatePlayerCount();
+        row.querySelector('.form-input').focus();
+    }
+
+    function removePlayer(btn) {
+        const row = btn.closest('.ct-player-row');
+        if (row) {
+            row.remove();
+            renumberPlayers();
+            updatePlayerCount();
+        }
+    }
+
+    function renumberPlayers() {
+        const container = document.getElementById('player-inputs');
+        if (!container) return;
+        container.querySelectorAll('.ct-player-row').forEach((row, i) => {
+            const avatar = row.querySelector('.ct-player-avatar');
+            const input = row.querySelector('.form-input');
+            if (avatar) avatar.textContent = `P${i + 1}`;
+            if (input && !input.value) input.placeholder = `Player ${i + 1} name`;
+            // Ensure first player doesn't have remove button
+            const removeBtn = row.querySelector('.ct-player-remove');
+            if (i === 0 && container.children.length <= 1) {
+                if (removeBtn) removeBtn.style.display = 'none';
+            } else {
+                if (removeBtn) removeBtn.style.display = '';
+            }
+        });
     }
 
     async function saveNewTeam() {
@@ -139,11 +318,15 @@ const Teams = (() => {
             return;
         }
 
-        await Store.createTeam(name, players);
-        App.closeModal();
-        await render();
-        await App.refreshDashboard();
-        App.toast('Team created!', 'success');
+        try {
+            await Store.createTeam(name, players);
+            App.closeModal();
+            await render();
+            await App.refreshDashboard();
+            App.toast('Team created!', 'success');
+        } catch (err) {
+            App.toast('Failed to create team: ' + err.message, 'error');
+        }
     }
 
     async function editTeam(id) {
@@ -223,7 +406,9 @@ const Teams = (() => {
     return {
         render, showCreateModal, addPlayerInput,
         saveNewTeam, editTeam, saveEditTeam,
-        deleteTeam, confirmDelete
+        deleteTeam, confirmDelete,
+        selectColor, updateTagCount, updatePreview,
+        updatePlayerCount, removePlayer
     };
 })();
 
