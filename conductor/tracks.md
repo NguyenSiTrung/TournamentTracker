@@ -15,3 +15,6 @@ This file tracks all major tracks for the project.
 - [x] Track: settings_tab_redesign_20260226 - "Settings Tab Redesign — Premium Settings Dashboard" (archived: 2026-02-26)
 
 ---
+
+## [ ] Track: Dashboard Analytics Visualizations
+*Link: [./conductor/tracks/dashboard_analytics_visualizations_20260226/](./conductor/tracks/dashboard_analytics_visualizations_20260226/)*
