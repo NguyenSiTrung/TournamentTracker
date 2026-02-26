@@ -26,19 +26,19 @@
   - Test default assignment for existing teams
   - Test response includes color/tag fields
 
-- [~] Task: Conductor - User Manual Verification 'Backend — Team Identity Fields' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Backend — Team Identity Fields' (Protocol in workflow.md)
 
 ## Phase 2: Frontend — API & Store Layer
 
-- [ ] Task 1: Update API client to send color/tag
+- [x] Task 1: Update API client to send color/tag
   - Modify `API.createTeam()` to accept and send `color` and `tag` parameters
   - Modify `API.updateTeam()` to accept and send `color` and `tag` parameters
 
-- [ ] Task 2: Update Store layer to pass color/tag
+- [x] Task 2: Update Store layer to pass color/tag
   - Modify `Store.createTeam()` to accept and forward `color` and `tag`
   - Modify `Store.updateTeam()` to accept and forward `color` and `tag`
 
-- [ ] Task: Conductor - User Manual Verification 'Frontend — API & Store Layer' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Frontend — API & Store Layer' (Protocol in workflow.md)
 
 ## Phase 3: Frontend — Edit Team Modal Redesign
 
