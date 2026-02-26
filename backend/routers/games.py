@@ -1,8 +1,10 @@
+import json
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session as DBSession
 
 from database.connection import get_db
-from database.orm_models import Game, Penalty, Session
+from database.orm_models import Game, Penalty, Session, Setting
 from models.schemas import (
     GameCreate,
     GameResponse,
@@ -14,16 +16,39 @@ from models.schemas import (
 router = APIRouter(prefix="/api/sessions", tags=["games", "penalties"])
 
 
-def _calculate_points(position: int, num_players: int) -> int:
+def _get_scoring_config(db: DBSession) -> tuple[dict[int, int], dict[int, int]]:
+    """Read scoring configuration from settings table.
+
+    Returns (standard_scoring, two_player_scoring) as {position: points} dicts.
+    Falls back to defaults if not configured.
+    """
+    default_std = {1: 4, 2: 3, 3: 2, 4: 1}
+    default_2p = {1: 4, 2: 1}
+
+    scoring_row = db.query(Setting).filter(Setting.key == "scoring").first()
+    scoring_2p_row = db.query(Setting).filter(Setting.key == "scoring_2p").first()
+
+    if scoring_row:
+        raw = json.loads(scoring_row.value)
+        std = {1: raw.get("first", 4), 2: raw.get("second", 3),
+               3: raw.get("third", 2), 4: raw.get("fourth", 1)}
+    else:
+        std = default_std
+
+    if scoring_2p_row:
+        raw = json.loads(scoring_2p_row.value)
+        two_p = {1: raw.get("first", 4), 2: raw.get("second", 1)}
+    else:
+        two_p = default_2p
+
+    return std, two_p
+
+
+def _calculate_points(position: int, num_players: int, db: DBSession) -> int:
+    std, two_p = _get_scoring_config(db)
     if num_players <= 2:
-        return 4 if position == 1 else 1
-    if position == 1:
-        return 4
-    if position == 2:
-        return 3
-    if position == 3:
-        return 2
-    return 1
+        return two_p.get(position, two_p.get(2, 1))
+    return std.get(position, std.get(4, 1))
 
 
 def _get_session_or_404(session_id: str, db: DBSession) -> Session:
@@ -45,7 +70,7 @@ def add_game(
     total_players = len(body.player_placements)
 
     player_points = {
-        key: _calculate_points(pos, total_players)
+        key: _calculate_points(pos, total_players, db)
         for key, pos in body.player_placements.items()
     }
 

@@ -16,11 +16,11 @@
   - [x] Register router in `main.py`
   - [x] Write tests for settings endpoints
 
-- [ ] Task 3: Create Reset Data API endpoint
-  - [ ] Add `DELETE /api/data/reset` endpoint to data router
-  - [ ] Accept body: `{ "teams": bool, "sessions": bool, "settings": bool }`
-  - [ ] Implement selective deletion with proper cascade handling
-  - [ ] Write tests for reset endpoint
+- [x] Task 3: Create Reset Data API endpoint
+  - [x] Add `DELETE /api/data/reset` endpoint to data router
+  - [x] Accept body: `{ "teams": bool, "sessions": bool, "settings": bool }`
+  - [x] Implement selective deletion with proper cascade handling
+  - [x] Write tests for reset endpoint
 
 - [ ] Task 4: Integrate scoring config into game scoring logic
   - [ ] Modify scoring calculation to read from settings instead of hardcoded values

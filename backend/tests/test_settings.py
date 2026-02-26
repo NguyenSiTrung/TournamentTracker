@@ -88,3 +88,51 @@ def test_empty_update_changes_nothing(client):
     assert resp.status_code == 200
     after = resp.json()
     assert before == after
+
+
+def test_custom_scoring_applied_to_game(client):
+    """Custom scoring config from settings is used when adding a game."""
+    # Set custom scoring: 1st=10, 2nd=7, 3rd=5, 4th=2
+    client.put("/api/settings", json={
+        "scoring": {"first": 10, "second": 7, "third": 5, "fourth": 2},
+    })
+
+    # Create teams and a session
+    client.post("/api/teams", json={"name": "Team A", "players": ["P1"]})
+    client.post("/api/teams", json={"name": "Team B", "players": ["P2"]})
+    s = client.post("/api/sessions", json={"name": "Test", "team_ids": ["tA", "tB"]})
+    sid = s.json()["id"]
+
+    # Add a game with 4 players
+    resp = client.post(f"/api/sessions/{sid}/games", json={
+        "name": "G1",
+        "player_placements": {"P1": 1, "P2": 2, "P3": 3, "P4": 4},
+        "team_player_map": {"tA": ["P1", "P3"], "tB": ["P2", "P4"]},
+    })
+    assert resp.status_code == 201
+    data = resp.json()
+    # P1 (1st) should get 10 points, P2 (2nd) should get 7
+    assert data["player_points"]["P1"] == 10
+    assert data["player_points"]["P2"] == 7
+    assert data["player_points"]["P3"] == 5
+    assert data["player_points"]["P4"] == 2
+
+
+def test_custom_scoring_2p_applied(client):
+    """Custom 2-player scoring config is used when adding a 2-player game."""
+    client.put("/api/settings", json={
+        "scoring_2p": {"first": 6, "second": 2},
+    })
+
+    s = client.post("/api/sessions", json={"name": "Test2P", "team_ids": ["t1", "t2"]})
+    sid = s.json()["id"]
+
+    resp = client.post(f"/api/sessions/{sid}/games", json={
+        "name": "G1",
+        "player_placements": {"Alice": 1, "Bob": 2},
+        "team_player_map": {"t1": ["Alice"], "t2": ["Bob"]},
+    })
+    assert resp.status_code == 201
+    data = resp.json()
+    assert data["player_points"]["Alice"] == 6
+    assert data["player_points"]["Bob"] == 2
