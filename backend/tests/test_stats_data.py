@@ -129,3 +129,66 @@ def test_import_roundtrip(client, populated_db):
     # Import into fresh state (same db, merge should work)
     resp = client.post("/api/import", json=exported)
     assert resp.status_code == 201
+
+
+# --- Reset ---
+
+
+def test_reset_sessions(client, populated_db):
+    """DELETE /api/data/reset with sessions=true clears sessions, games, penalties."""
+    resp = client.request("DELETE", "/api/data/reset", json={"sessions": True})
+    assert resp.status_code == 200
+    assert resp.json()["reset"]["sessions"] is True
+
+    # Verify sessions are gone
+    sessions = client.get("/api/sessions").json()
+    assert len(sessions) == 0
+
+    # Teams should still exist
+    teams = client.get("/api/teams").json()
+    assert len(teams) == 2
+
+
+def test_reset_teams(client, populated_db):
+    """DELETE /api/data/reset with teams=true clears teams only."""
+    resp = client.request("DELETE", "/api/data/reset", json={"teams": True})
+    assert resp.status_code == 200
+    assert resp.json()["reset"]["teams"] is True
+
+    teams = client.get("/api/teams").json()
+    assert len(teams) == 0
+
+
+def test_reset_settings(client):
+    """DELETE /api/data/reset with settings=true clears settings."""
+    # First update settings
+    client.put("/api/settings", json={"league_name": "Test League"})
+
+    resp = client.request("DELETE", "/api/data/reset", json={"settings": True})
+    assert resp.status_code == 200
+    assert resp.json()["reset"]["settings"] is True
+
+    # Settings should now return defaults (empty table → schema defaults)
+    settings = client.get("/api/settings").json()
+    assert settings["league_name"] == "Pro League"
+
+
+def test_reset_multiple_categories(client, populated_db):
+    """DELETE /api/data/reset with multiple categories clears all selected."""
+    resp = client.request("DELETE", "/api/data/reset", json={
+        "teams": True, "sessions": True,
+    })
+    assert resp.status_code == 200
+    assert resp.json()["reset"]["teams"] is True
+    assert resp.json()["reset"]["sessions"] is True
+
+    teams = client.get("/api/teams").json()
+    sessions = client.get("/api/sessions").json()
+    assert len(teams) == 0
+    assert len(sessions) == 0
+
+
+def test_reset_no_categories_returns_422(client):
+    """DELETE /api/data/reset with no categories returns 422."""
+    resp = client.request("DELETE", "/api/data/reset", json={})
+    assert resp.status_code == 422

@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session as DBSession
 
 from database.connection import get_db
-from database.orm_models import Game, Penalty, Session, Team
+from database.orm_models import Game, Penalty, Session, Setting, Team
 
 router = APIRouter(prefix="/api", tags=["data"])
 
@@ -13,6 +13,12 @@ router = APIRouter(prefix="/api", tags=["data"])
 class ImportData(BaseModel):
     teams: list[dict]
     sessions: list[dict]
+
+
+class ResetRequest(BaseModel):
+    teams: bool = False
+    sessions: bool = False
+    settings: bool = False
 
 
 @router.get("/export")
@@ -123,3 +129,30 @@ def import_data(body: ImportData, db: DBSession = Depends(get_db)) -> dict:
 
     db.commit()
     return {"imported": {"teams": teams_count, "sessions": sessions_count}}
+
+
+@router.delete("/data/reset")
+def reset_data(body: ResetRequest, db: DBSession = Depends(get_db)) -> dict:
+    """Selectively reset data categories."""
+    if not body.teams and not body.sessions and not body.settings:
+        raise HTTPException(status_code=422, detail="No reset categories selected")
+
+    deleted = {}
+
+    if body.sessions:
+        # Delete games and penalties first (cascade), then sessions
+        db.query(Penalty).delete()
+        db.query(Game).delete()
+        db.query(Session).delete()
+        deleted["sessions"] = True
+
+    if body.teams:
+        db.query(Team).delete()
+        deleted["teams"] = True
+
+    if body.settings:
+        db.query(Setting).delete()
+        deleted["settings"] = True
+
+    db.commit()
+    return {"reset": deleted}

@@ -3,18 +3,18 @@
 ## Phase 1: Backend — Settings API & Database
 <!-- execution: sequential -->
 
-- [ ] Task 1: Create Settings ORM model and database migration
-  - [ ] Add `Setting` model to `backend/database/orm_models.py` (key-value store or structured table)
-  - [ ] Add Pydantic schemas for settings requests/responses
-  - [ ] Create migration logic in `main.py` startup (ALTER TABLE / create_all pattern)
-  - [ ] Default seed: league_name="Pro League", season="Season 4", description="", scoring={1:4, 2:3, 3:2, 4:1}, scoring_2p={1:4, 2:1}
+- [x] Task 1: Create Settings ORM model and database migration
+  - [x] Add `Setting` model to `backend/database/orm_models.py` (key-value store or structured table)
+  - [x] Add Pydantic schemas for settings requests/responses
+  - [x] Create migration logic in `main.py` startup (ALTER TABLE / create_all pattern)
+  - [x] Default seed: league_name="Pro League", season="Season 4", description="", scoring={1:4, 2:3, 3:2, 4:1}, scoring_2p={1:4, 2:1}
 
-- [ ] Task 2: Create Settings API router
-  - [ ] Create `backend/routers/settings.py` with:
+- [x] Task 2: Create Settings API router
+  - [x] Create `backend/routers/settings.py` with:
     - `GET /api/settings` — retrieve all settings
     - `PUT /api/settings` — update settings (league info + scoring rules)
-  - [ ] Register router in `main.py`
-  - [ ] Write tests for settings endpoints
+  - [x] Register router in `main.py`
+  - [x] Write tests for settings endpoints
 
 - [ ] Task 3: Create Reset Data API endpoint
   - [ ] Add `DELETE /api/data/reset` endpoint to data router
