@@ -3,6 +3,16 @@ import pytest
 
 @pytest.fixture()
 def session_id(client):
+    import_resp = client.post(
+        "/api/import",
+        json={
+            "teams": [
+                {"id": "t1", "name": "Team 1", "players": ["Alice", "Bob"]},
+                {"id": "t2", "name": "Team 2", "players": ["Carol", "Dave"]},
+            ]
+        },
+    )
+    assert import_resp.status_code == 201
     resp = client.post("/api/sessions", json={"name": "R1", "team_ids": ["t1", "t2"]})
     return resp.json()["id"]
 
@@ -43,6 +53,16 @@ def test_add_game_two_players(client, session_id):
 def test_add_game_session_not_found(client):
     resp = client.post("/api/sessions/nonexistent/games", json=GAME_BODY)
     assert resp.status_code == 404
+
+
+def test_add_game_team_not_in_session_rejected(client, session_id):
+    invalid_body = {
+        "name": "Bad Game",
+        "player_placements": {"Alice": 1, "Eve": 2},
+        "team_player_map": {"t1": ["Alice"], "t3": ["Eve"]},
+    }
+    resp = client.post(f"/api/sessions/{session_id}/games", json=invalid_body)
+    assert resp.status_code == 422
 
 
 def test_remove_game(client, session_id):
@@ -136,6 +156,12 @@ def test_add_penalty_session_not_found(client):
         json={"team_id": "t1", "value": -1},
     )
     assert resp.status_code == 404
+
+
+def test_add_penalty_team_not_in_session_rejected(client, session_id):
+    body = {"team_id": "t3", "value": -2, "reason": "Late"}
+    resp = client.post(f"/api/sessions/{session_id}/penalties", json=body)
+    assert resp.status_code == 422
 
 
 def test_remove_penalty(client, session_id):

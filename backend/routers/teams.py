@@ -24,10 +24,10 @@ def get_team(team_id: str, db: DBSession = Depends(get_db)) -> TeamResponse:
 @router.post("", response_model=TeamResponse, status_code=201)
 def create_team(body: TeamCreate, db: DBSession = Depends(get_db)) -> TeamResponse:
     team = Team(
-        name=body.name.strip(),
-        players=[p.strip() for p in body.players if p.strip()],
+        name=body.name,
+        players=body.players,
         color=body.color,
-        tag=body.tag.strip()[:4] if body.tag else None,
+        tag=body.tag,
     )
     db.add(team)
     db.commit()
@@ -42,10 +42,10 @@ def update_team(
     team = db.query(Team).filter(Team.id == team_id).first()
     if not team:
         raise HTTPException(status_code=404, detail="Team not found")
-    team.name = body.name.strip()
-    team.players = [p.strip() for p in body.players if p.strip()]
+    team.name = body.name
+    team.players = body.players
     team.color = body.color
-    team.tag = body.tag.strip()[:4] if body.tag else None
+    team.tag = body.tag
     db.commit()
     db.refresh(team)
     return team

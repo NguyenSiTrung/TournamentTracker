@@ -2,20 +2,32 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session as DBSession
 
 from database.connection import get_db
-from database.orm_models import Session
+from database.orm_models import Session, Team
 from models.schemas import (
     SessionCreate,
     SessionListResponse,
     SessionResponse,
+    SessionStatus,
     SessionUpdate,
 )
 
 router = APIRouter(prefix="/api/sessions", tags=["sessions"])
 
 
+def _validate_team_ids_exist(team_ids: list[str], db: DBSession) -> None:
+    existing_team_ids = {
+        team_id
+        for (team_id,) in db.query(Team.id).filter(Team.id.in_(team_ids)).all()
+    }
+    missing_team_ids = sorted(set(team_ids) - existing_team_ids)
+    if missing_team_ids:
+        missing = ", ".join(missing_team_ids)
+        raise HTTPException(status_code=422, detail=f"Unknown team_ids: {missing}")
+
+
 @router.get("", response_model=list[SessionListResponse])
 def list_sessions(
-    status: str | None = Query(None),
+    status: SessionStatus | None = Query(None),
     db: DBSession = Depends(get_db),
 ) -> list[SessionListResponse]:
     query = db.query(Session)
@@ -38,8 +50,10 @@ def get_session(
 def create_session(
     body: SessionCreate, db: DBSession = Depends(get_db)
 ) -> SessionResponse:
+    _validate_team_ids_exist(body.team_ids, db)
+
     session = Session(
-        name=body.name.strip(),
+        name=body.name,
         team_ids=body.team_ids,
     )
     db.add(session)
@@ -56,7 +70,7 @@ def update_session(
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
     if body.name is not None:
-        session.name = body.name.strip()
+        session.name = body.name
     if body.status is not None:
         session.status = body.status
     db.commit()

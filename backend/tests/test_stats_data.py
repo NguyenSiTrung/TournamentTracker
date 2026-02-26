@@ -4,8 +4,28 @@ import pytest
 @pytest.fixture()
 def populated_db(client):
     """Create teams, a completed session with games and penalties."""
-    client.post("/api/teams", json={"name": "Alpha", "players": ["Alice", "Bob"]})
-    client.post("/api/teams", json={"name": "Beta", "players": ["Carol", "Dave"]})
+    import_resp = client.post(
+        "/api/import",
+        json={
+            "teams": [
+                {
+                    "id": "t1",
+                    "name": "Alpha",
+                    "players": ["Alice", "Bob"],
+                    "color": "#e74c3c",
+                    "tag": "ALP",
+                },
+                {
+                    "id": "t2",
+                    "name": "Beta",
+                    "players": ["Carol", "Dave"],
+                    "color": "#3498db",
+                    "tag": "BET",
+                },
+            ]
+        },
+    )
+    assert import_resp.status_code == 201
 
     s = client.post("/api/sessions", json={"name": "R1", "team_ids": ["t1", "t2"]})
     sid = s.json()["id"]
@@ -47,6 +67,7 @@ def test_leaderboard_with_data(client, populated_db):
 
 
 def test_leaderboard_ignores_active_sessions(client):
+    client.post("/api/import", json={"teams": [{"id": "t1", "name": "Alpha", "players": ["Alice"]}]})
     s = client.post("/api/sessions", json={"name": "Active", "team_ids": ["t1"]})
     sid = s.json()["id"]
     client.post(f"/api/sessions/{sid}/games", json={
@@ -68,6 +89,7 @@ def test_export_empty(client):
     data = resp.json()
     assert data["teams"] == []
     assert data["sessions"] == []
+    assert data["settings"]["league_name"] == "Pro League"
 
 
 def test_export_with_data(client, populated_db):
@@ -75,9 +97,11 @@ def test_export_with_data(client, populated_db):
     assert resp.status_code == 200
     data = resp.json()
     assert len(data["teams"]) == 2
+    assert all("color" in t and "tag" in t for t in data["teams"])
     assert len(data["sessions"]) == 1
     assert len(data["sessions"][0]["games"]) == 1
     assert len(data["sessions"][0]["penalties"]) == 1
+    assert "settings" in data
 
 
 # --- Import ---
@@ -124,11 +148,54 @@ def test_import_data(client):
     assert len(session["games"]) == 1
 
 
-def test_import_roundtrip(client, populated_db):
+def test_import_invalid_date_returns_422(client):
+    payload = {
+        "teams": [{"id": "imp1", "name": "Imported1", "players": ["X"]}],
+        "sessions": [
+            {
+                "id": "s1",
+                "name": "Imported Session",
+                "date": "not-a-date",
+                "teamIds": ["imp1"],
+                "status": "active",
+                "games": [],
+                "penalties": [],
+            }
+        ],
+    }
+    resp = client.post("/api/import", json=payload)
+    assert resp.status_code == 422
+
+
+def test_import_roundtrip_preserves_team_identity_and_settings(client, populated_db):
+    client.put(
+        "/api/settings",
+        json={
+            "league_name": "Roundtrip League",
+            "season": "Season 77",
+            "scoring": {"first": 9, "second": 6, "third": 3, "fourth": 1},
+        },
+    )
     exported = client.get("/api/export").json()
-    # Import into fresh state (same db, merge should work)
+
+    # Import into fresh state
+    client.request(
+        "DELETE",
+        "/api/data/reset",
+        json={"teams": True, "sessions": True, "settings": True},
+    )
     resp = client.post("/api/import", json=exported)
     assert resp.status_code == 201
+
+    teams = client.get("/api/teams").json()
+    assert {team["id"] for team in teams} == {"t1", "t2"}
+    assert next(team for team in teams if team["id"] == "t1")["color"] == "#e74c3c"
+    assert next(team for team in teams if team["id"] == "t1")["tag"] == "ALP"
+
+    settings = client.get("/api/settings").json()
+    assert settings["league_name"] == "Roundtrip League"
+    assert settings["season"] == "Season 77"
+    assert settings["scoring"]["first"] == 9
 
 
 # --- Reset ---

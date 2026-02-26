@@ -27,6 +27,11 @@ def test_create_team_empty_name_rejected(client):
     assert resp.status_code == 422
 
 
+def test_create_team_whitespace_name_rejected(client):
+    resp = client.post("/api/teams", json={"name": "   ", "players": []})
+    assert resp.status_code == 422
+
+
 def test_get_team(client):
     create = client.post("/api/teams", json={"name": "Gamma", "players": ["Eve"]})
     team_id = create.json()["id"]

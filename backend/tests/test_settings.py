@@ -98,16 +98,16 @@ def test_custom_scoring_applied_to_game(client):
     })
 
     # Create teams and a session
-    client.post("/api/teams", json={"name": "Team A", "players": ["P1"]})
-    client.post("/api/teams", json={"name": "Team B", "players": ["P2"]})
-    s = client.post("/api/sessions", json={"name": "Test", "team_ids": ["tA", "tB"]})
+    team_a = client.post("/api/teams", json={"name": "Team A", "players": ["P1"]}).json()["id"]
+    team_b = client.post("/api/teams", json={"name": "Team B", "players": ["P2"]}).json()["id"]
+    s = client.post("/api/sessions", json={"name": "Test", "team_ids": [team_a, team_b]})
     sid = s.json()["id"]
 
     # Add a game with 4 players
     resp = client.post(f"/api/sessions/{sid}/games", json={
         "name": "G1",
         "player_placements": {"P1": 1, "P2": 2, "P3": 3, "P4": 4},
-        "team_player_map": {"tA": ["P1", "P3"], "tB": ["P2", "P4"]},
+        "team_player_map": {team_a: ["P1", "P3"], team_b: ["P2", "P4"]},
     })
     assert resp.status_code == 201
     data = resp.json()
@@ -124,13 +124,15 @@ def test_custom_scoring_2p_applied(client):
         "scoring_2p": {"first": 6, "second": 2},
     })
 
-    s = client.post("/api/sessions", json={"name": "Test2P", "team_ids": ["t1", "t2"]})
+    team_1 = client.post("/api/teams", json={"name": "Team One", "players": ["Alice"]}).json()["id"]
+    team_2 = client.post("/api/teams", json={"name": "Team Two", "players": ["Bob"]}).json()["id"]
+    s = client.post("/api/sessions", json={"name": "Test2P", "team_ids": [team_1, team_2]})
     sid = s.json()["id"]
 
     resp = client.post(f"/api/sessions/{sid}/games", json={
         "name": "G1",
         "player_placements": {"Alice": 1, "Bob": 2},
-        "team_player_map": {"t1": ["Alice"], "t2": ["Bob"]},
+        "team_player_map": {team_1: ["Alice"], team_2: ["Bob"]},
     })
     assert resp.status_code == 201
     data = resp.json()

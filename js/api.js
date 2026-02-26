@@ -2,7 +2,7 @@
  * API - HTTP client for Tournament Tracker backend
  */
 const API = (() => {
-    const BASE_URL = 'http://localhost:8000/api';
+    const BASE_URL = '/api';
 
     async function request(path, options = {}) {
         const url = `${BASE_URL}${path}`;

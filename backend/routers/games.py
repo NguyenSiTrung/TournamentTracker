@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session as DBSession
 
 from database.connection import get_db
-from database.orm_models import Game, Penalty, Session, Setting
+from database.orm_models import Game, Penalty, Session, Setting, Team
 from models.schemas import (
     GameCreate,
     GameResponse,
@@ -58,6 +58,34 @@ def _get_session_or_404(session_id: str, db: DBSession) -> Session:
     return session
 
 
+def _assert_session_teams_exist(session: Session, db: DBSession) -> None:
+    if not session.team_ids:
+        return
+    existing_team_ids = {
+        team_id
+        for (team_id,) in db.query(Team.id).filter(Team.id.in_(session.team_ids)).all()
+    }
+    missing_team_ids = sorted(set(session.team_ids) - existing_team_ids)
+    if missing_team_ids:
+        missing = ", ".join(missing_team_ids)
+        raise HTTPException(
+            status_code=422,
+            detail=f"Session references unknown team ids: {missing}",
+        )
+
+
+def _validate_session_team_ids(
+    session: Session, candidate_team_ids: set[str], field_name: str
+) -> None:
+    unknown_team_ids = sorted(candidate_team_ids - set(session.team_ids))
+    if unknown_team_ids:
+        unknown = ", ".join(unknown_team_ids)
+        raise HTTPException(
+            status_code=422,
+            detail=f"{field_name} contains team ids not in session: {unknown}",
+        )
+
+
 # --- Games ---
 
 
@@ -65,7 +93,11 @@ def _get_session_or_404(session_id: str, db: DBSession) -> Session:
 def add_game(
     session_id: str, body: GameCreate, db: DBSession = Depends(get_db)
 ) -> GameResponse:
-    _get_session_or_404(session_id, db)
+    session = _get_session_or_404(session_id, db)
+    _assert_session_teams_exist(session, db)
+    _validate_session_team_ids(
+        session, set(body.team_player_map.keys()), "team_player_map"
+    )
 
     total_players = len(body.player_placements)
 
@@ -97,7 +129,7 @@ def add_game(
 
     game = Game(
         session_id=session_id,
-        name=body.name.strip(),
+        name=body.name,
         player_placements=body.player_placements,
         player_points=player_points,
         team_player_map=body.team_player_map,
@@ -134,7 +166,14 @@ def remove_game(
 def add_penalty(
     session_id: str, body: PenaltyCreate, db: DBSession = Depends(get_db)
 ) -> PenaltyResponse:
-    _get_session_or_404(session_id, db)
+    session = _get_session_or_404(session_id, db)
+    _assert_session_teams_exist(session, db)
+    if body.team_id not in set(session.team_ids):
+        raise HTTPException(
+            status_code=422,
+            detail="Penalty team_id must belong to the session",
+        )
+
     penalty = Penalty(
         session_id=session_id,
         team_id=body.team_id,

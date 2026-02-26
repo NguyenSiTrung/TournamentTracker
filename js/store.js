@@ -187,7 +187,10 @@ const Store = (() => {
 
     async function importData(jsonStr) {
         const data = JSON.parse(jsonStr);
-        if (!data.teams || !data.sessions) {
+        const hasTeams = Array.isArray(data.teams) && data.teams.length > 0;
+        const hasSessions = Array.isArray(data.sessions) && data.sessions.length > 0;
+        const hasSettings = !!data.settings && typeof data.settings === 'object';
+        if (!hasTeams && !hasSessions && !hasSettings) {
             throw new Error('Invalid data format');
         }
         return API.importData(data);
