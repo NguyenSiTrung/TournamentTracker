@@ -3,14 +3,43 @@
  */
 const API = (() => {
     const DEFAULT_BASE_URL = '/api';
-    const LOCAL_BACKEND_PORT = '8000';
+    const COMMON_BACKEND_PORTS = ['8000', '8001', '8080', '5000'];
     const configuredBaseUrl = typeof window !== 'undefined' ? window.TOURNAMENT_TRACKER_API_BASE_URL : null;
     const PRIMARY_BASE_URL = (configuredBaseUrl || DEFAULT_BASE_URL).replace(/\/$/, '');
+    let resolvedBaseUrl = PRIMARY_BASE_URL;
 
-    function getLocalBackendBaseUrl() {
-        if (typeof window === 'undefined') return 'http://127.0.0.1:8000/api';
-        const host = window.location.hostname || '127.0.0.1';
-        return `${window.location.protocol}//${host}:${LOCAL_BACKEND_PORT}/api`;
+    function getCandidateBaseUrls() {
+        const candidates = [PRIMARY_BASE_URL];
+        if (typeof window === 'undefined') {
+            COMMON_BACKEND_PORTS.forEach((port) => candidates.push(`http://127.0.0.1:${port}/api`));
+            return [...new Set(candidates)];
+        }
+
+        const protocol = window.location.protocol || 'http:';
+        const hostname = window.location.hostname || '127.0.0.1';
+        const origin = window.location.origin;
+        if (origin && PRIMARY_BASE_URL.startsWith('/')) {
+            candidates.push(`${origin}${PRIMARY_BASE_URL}`);
+        }
+        COMMON_BACKEND_PORTS.forEach((port) => candidates.push(`${protocol}//${hostname}:${port}/api`));
+        return [...new Set(candidates.map((url) => url.replace(/\/$/, '')) )];
+    }
+
+    async function discoverBackendBaseUrl() {
+        const candidates = getCandidateBaseUrls();
+        for (const baseUrl of candidates) {
+            try {
+                const probe = await fetch(`${baseUrl}/settings`, { method: 'GET' });
+                const contentType = probe.headers.get('content-type') || '';
+                if (probe.ok && contentType.includes('application/json')) {
+                    resolvedBaseUrl = baseUrl;
+                    return baseUrl;
+                }
+            } catch (_error) {
+                // Ignore probe failures and continue trying common local API locations.
+            }
+        }
+        return null;
     }
 
     function shouldRetryWithLocalBackend(method, status, detail) {
@@ -51,18 +80,20 @@ const API = (() => {
 
     async function request(path, options = {}) {
         try {
-            return await fetchJson(PRIMARY_BASE_URL, path, options);
+            return await fetchJson(resolvedBaseUrl, path, options);
         } catch (error) {
             const method = options.method || 'GET';
-            const localBackendBaseUrl = getLocalBackendBaseUrl();
-            if (
-                localBackendBaseUrl === PRIMARY_BASE_URL ||
-                !shouldRetryWithLocalBackend(method, error.status, error.detail)
-            ) {
+            if (!shouldRetryWithLocalBackend(method, error.status, error.detail)) {
                 throw error;
             }
 
-            return fetchJson(localBackendBaseUrl, path, options);
+            const previousBaseUrl = resolvedBaseUrl;
+            const discoveredBaseUrl = await discoverBackendBaseUrl();
+            if (!discoveredBaseUrl || discoveredBaseUrl === previousBaseUrl) {
+                throw error;
+            }
+
+            return fetchJson(discoveredBaseUrl, path, options);
         }
     }
 
