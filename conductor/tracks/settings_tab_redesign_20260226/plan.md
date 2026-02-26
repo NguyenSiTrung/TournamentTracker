@@ -22,12 +22,12 @@
   - [x] Implement selective deletion with proper cascade handling
   - [x] Write tests for reset endpoint
 
-- [ ] Task 4: Integrate scoring config into game scoring logic
-  - [ ] Modify scoring calculation to read from settings instead of hardcoded values
-  - [ ] Update `backend/routers/games.py` or scoring utility
-  - [ ] Write tests verifying custom scoring rules are applied
+- [x] Task 4: Integrate scoring config into game scoring logic
+  - [x] Modify scoring calculation to read from settings instead of hardcoded values
+  - [x] Update `backend/routers/games.py` or scoring utility
+  - [x] Write tests verifying custom scoring rules are applied
 
-- [ ] Task 5: Conductor — User Manual Verification 'Backend — Settings API & Database' (Protocol in workflow.md)
+- [x] Task 5: Conductor — User Manual Verification 'Backend — Settings API & Database' (Protocol in workflow.md)
 
 ## Phase 2: Frontend — Settings Tab UI Redesign
 <!-- execution: parallel -->

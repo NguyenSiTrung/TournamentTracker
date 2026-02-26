@@ -593,33 +593,249 @@
                 <div class="page-header">
                     <div class="page-header-text">
                         <h1 class="page-title">Settings</h1>
-                        <p class="page-subtitle">Manage your tournament settings</p>
+                        <p class="page-subtitle">Configure your tournament league, scoring, and preferences.</p>
                     </div>
                 </div>
-                <div class="panel">
-                    <div class="panel-header">
-                        <h2 class="panel-title">Data Management</h2>
+
+                <div class="settings-grid">
+                    <!-- Left Column -->
+                    <div class="settings-col">
+
+                        <!-- Tournament Profile Card -->
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div class="settings-card-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <circle cx="12" cy="12" r="3"/>
+                                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 class="settings-card-title">Tournament Profile</h2>
+                                    <p class="settings-card-subtitle">League identity and branding</p>
+                                </div>
+                            </div>
+                            <div class="settings-form-row">
+                                <div class="settings-form-group">
+                                    <label class="settings-form-label" for="settings-league-name">League Name</label>
+                                    <input type="text" class="settings-form-input" id="settings-league-name" placeholder="e.g. Pro League" autocomplete="off">
+                                </div>
+                                <div class="settings-form-group">
+                                    <label class="settings-form-label" for="settings-season">Season</label>
+                                    <input type="text" class="settings-form-input" id="settings-season" placeholder="e.g. Season 4" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="settings-form-group">
+                                <label class="settings-form-label" for="settings-description">Description</label>
+                                <textarea class="settings-form-textarea" id="settings-description" placeholder="Optional league description..." rows="3"></textarea>
+                            </div>
+                            <button class="settings-save-btn" id="settings-save-profile">Save Profile</button>
+                        </div>
+
+                        <!-- Scoring Configuration Card -->
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div class="settings-card-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 class="settings-card-title">Scoring Configuration</h2>
+                                    <p class="settings-card-subtitle">Points per placement position</p>
+                                </div>
+                            </div>
+                            <div class="scoring-cards">
+                                <div class="scoring-card scoring-card--gold">
+                                    <div class="scoring-card-position">1st</div>
+                                    <div class="scoring-card-label">Gold</div>
+                                    <input type="number" class="scoring-card-input" id="settings-scoring-1st" min="0" step="1" value="4" aria-label="1st place points">
+                                </div>
+                                <div class="scoring-card scoring-card--silver">
+                                    <div class="scoring-card-position">2nd</div>
+                                    <div class="scoring-card-label">Silver</div>
+                                    <input type="number" class="scoring-card-input" id="settings-scoring-2nd" min="0" step="1" value="3" aria-label="2nd place points">
+                                </div>
+                                <div class="scoring-card scoring-card--bronze">
+                                    <div class="scoring-card-position">3rd</div>
+                                    <div class="scoring-card-label">Bronze</div>
+                                    <input type="number" class="scoring-card-input" id="settings-scoring-3rd" min="0" step="1" value="2" aria-label="3rd place points">
+                                </div>
+                                <div class="scoring-card scoring-card--default">
+                                    <div class="scoring-card-position">4th</div>
+                                    <div class="scoring-card-label">Default</div>
+                                    <input type="number" class="scoring-card-input" id="settings-scoring-4th" min="0" step="1" value="1" aria-label="4th place points">
+                                </div>
+                            </div>
+
+                            <!-- 2-Player Mode -->
+                            <div class="scoring-2p-toggle">
+                                <div class="scoring-2p-header">
+                                    <span class="scoring-2p-header-text">2-Player Mode Scoring</span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="settings-2p-toggle" aria-label="Toggle 2-player scoring view">
+                                        <span class="toggle-switch-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="scoring-2p-cards" id="settings-2p-section" style="display:none;">
+                                    <div class="scoring-card scoring-card--gold">
+                                        <div class="scoring-card-position">1st</div>
+                                        <div class="scoring-card-label">Winner</div>
+                                        <input type="number" class="scoring-card-input" id="settings-scoring-2p-1st" min="0" step="1" value="4" aria-label="2-player 1st place points">
+                                    </div>
+                                    <div class="scoring-card scoring-card--silver">
+                                        <div class="scoring-card-position">2nd</div>
+                                        <div class="scoring-card-label">Runner-up</div>
+                                        <input type="number" class="scoring-card-input" id="settings-scoring-2p-2nd" min="0" step="1" value="1" aria-label="2-player 2nd place points">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="scoring-btn-row" style="margin-top: 18px;">
+                                <button class="settings-save-btn" id="settings-save-scoring">Save Scoring</button>
+                                <button class="settings-link-btn" id="settings-restore-defaults">Restore Defaults</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="settings-actions">
-                        <button class="btn btn-outline" id="btn-export-settings">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                <polyline points="17 8 12 3 7 8" />
-                                <line x1="12" y1="3" x2="12" y2="15" />
-                            </svg>
-                            Export Data
-                        </button>
-                        <button class="btn btn-outline" id="btn-import-settings">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                <polyline points="7 10 12 15 17 10" />
-                                <line x1="12" y1="15" x2="12" y2="3" />
-                            </svg>
-                            Import Data
-                        </button>
-                        <input type="file" id="import-file" accept=".json" style="display:none">
+
+                    <!-- Right Column -->
+                    <div class="settings-col">
+
+                        <!-- Appearance Card -->
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div class="settings-card-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <circle cx="12" cy="12" r="5"/>
+                                        <line x1="12" y1="1" x2="12" y2="3"/>
+                                        <line x1="12" y1="21" x2="12" y2="23"/>
+                                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                                        <line x1="1" y1="12" x2="3" y2="12"/>
+                                        <line x1="21" y1="12" x2="23" y2="12"/>
+                                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 class="settings-card-title">Appearance</h2>
+                                    <p class="settings-card-subtitle">Visual preferences and accessibility</p>
+                                </div>
+                            </div>
+                            <div class="settings-toggle-row">
+                                <div class="settings-toggle-info">
+                                    <span class="settings-toggle-label">Reduce Motion</span>
+                                    <span class="settings-toggle-desc">Disable animations for accessibility</span>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="settings-reduce-motion" aria-label="Toggle reduced motion">
+                                    <span class="toggle-switch-slider"></span>
+                                </label>
+                            </div>
+                            <div class="settings-toggle-row">
+                                <div class="settings-toggle-info">
+                                    <span class="settings-toggle-label">Theme</span>
+                                    <span class="settings-toggle-desc">Current visual theme</span>
+                                </div>
+                                <span id="settings-theme-value" style="font-size:0.88rem;color:#a5d6a7;font-weight:500;">Dark</span>
+                            </div>
+                        </div>
+
+                        <!-- Data Management Card -->
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div class="settings-card-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                                        <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+                                        <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 class="settings-card-title">Data Management</h2>
+                                    <p class="settings-card-subtitle">Import, export, and manage data</p>
+                                </div>
+                            </div>
+                            <div class="data-stats-panel">
+                                <div class="data-stat">
+                                    <div class="data-stat-value" id="settings-stat-teams">-</div>
+                                    <div class="data-stat-label">Teams</div>
+                                </div>
+                                <div class="data-stat">
+                                    <div class="data-stat-value" id="settings-stat-sessions">-</div>
+                                    <div class="data-stat-label">Sessions</div>
+                                </div>
+                                <div class="data-stat">
+                                    <div class="data-stat-value" id="settings-stat-games">-</div>
+                                    <div class="data-stat-label">Games</div>
+                                </div>
+                            </div>
+                            <div class="settings-actions">
+                                <button class="btn btn-outline" id="btn-export-settings">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="17 8 12 3 7 8"/>
+                                        <line x1="12" y1="3" x2="12" y2="15"/>
+                                    </svg>
+                                    Export Data
+                                </button>
+                                <button class="btn btn-outline" id="btn-import-settings">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="7 10 12 15 17 10"/>
+                                        <line x1="12" y1="15" x2="12" y2="3"/>
+                                    </svg>
+                                    Import Data
+                                </button>
+                                <input type="file" id="import-file" accept=".json" style="display:none">
+                            </div>
+                            <div class="danger-zone">
+                                <div class="danger-zone-label">Danger Zone</div>
+                                <p class="danger-zone-desc">Permanently delete selected data. This action cannot be undone.</p>
+                                <button class="danger-zone-btn" id="settings-reset-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <polyline points="3 6 5 6 21 6"/>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                    </svg>
+                                    Reset All Data…
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- About Card -->
+                        <div class="settings-card">
+                            <div class="settings-card-header">
+                                <div class="settings-card-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <line x1="12" y1="16" x2="12" y2="12"/>
+                                        <line x1="12" y1="8" x2="12.01" y2="8"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 class="settings-card-title">About</h2>
+                                    <p class="settings-card-subtitle">Application information</p>
+                                </div>
+                            </div>
+                            <div class="about-info">
+                                <div class="about-row">
+                                    <span class="about-row-label">Application</span>
+                                    <span class="about-row-value">Tournament Tracker</span>
+                                </div>
+                                <div class="about-row">
+                                    <span class="about-row-label">Version</span>
+                                    <span class="about-row-value">1.0.0</span>
+                                </div>
+                                <div class="about-row">
+                                    <span class="about-row-label">Build</span>
+                                    <span class="about-row-value">2026.02</span>
+                                </div>
+                                <div class="about-row">
+                                    <span class="about-row-label">Stack</span>
+                                    <span class="about-row-value">Vanilla JS + FastAPI</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
