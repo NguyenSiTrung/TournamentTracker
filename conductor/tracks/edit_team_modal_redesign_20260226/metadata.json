@@ -1,0 +1,18 @@
+{
+    "track_id": "edit_team_modal_redesign_20260226",
+    "type": "bug",
+    "status": "new",
+    "priority": "medium",
+    "depends_on": [],
+    "estimated_hours": 4,
+    "created_at": "2026-02-26T06:14:37Z",
+    "updated_at": "2026-02-26T06:14:37Z",
+    "description": "Edit Team modal uses old basic styling while Create Team was redesigned with premium look. Unify both modals and add persistent team identity (color, tag).",
+    "beads_epic": "TournamentTracker-dk3",
+    "beads_tasks": {
+        "phase1": "TournamentTracker-dk3.1",
+        "phase2": "TournamentTracker-dk3.2",
+        "phase3": "TournamentTracker-dk3.3",
+        "phase4": "TournamentTracker-dk3.4"
+    }
+}

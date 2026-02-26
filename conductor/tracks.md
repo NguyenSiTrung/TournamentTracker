@@ -13,3 +13,6 @@ This file tracks all major tracks for the project.
 - [x] Track: teams_empty_state_fix_20260224 - "Teams Empty State UI/UX Redesign + Consistency Pass" (archived: 2026-02-24)
 
 ---
+
+## [~] Track: Edit Team Modal Redesign + Team Identity System
+*Link: [./conductor/tracks/edit_team_modal_redesign_20260226/](./conductor/tracks/edit_team_modal_redesign_20260226/)*

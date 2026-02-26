@@ -8,11 +8,15 @@ from pydantic import BaseModel, ConfigDict, Field
 class TeamCreate(BaseModel):
     name: str = Field(..., min_length=1)
     players: list[str] = Field(default_factory=list)
+    color: str | None = None
+    tag: str | None = Field(default=None, max_length=4)
 
 
 class TeamUpdate(BaseModel):
     name: str = Field(..., min_length=1)
     players: list[str] = Field(default_factory=list)
+    color: str | None = None
+    tag: str | None = Field(default=None, max_length=4)
 
 
 class TeamResponse(BaseModel):
@@ -21,6 +25,8 @@ class TeamResponse(BaseModel):
     id: str
     name: str
     players: list[str]
+    color: str | None = None
+    tag: str | None = None
     created_at: datetime
 
 

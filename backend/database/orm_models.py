@@ -17,6 +17,8 @@ class Team(Base):
     id: Mapped[str] = mapped_column(String, primary_key=True, default=_generate_id)
     name: Mapped[str] = mapped_column(String, nullable=False)
     players: Mapped[list] = mapped_column(JSON, default=list)
+    color: Mapped[str | None] = mapped_column(String, nullable=True, default=None)
+    tag: Mapped[str | None] = mapped_column(String(4), nullable=True, default=None)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=lambda: datetime.now(timezone.utc)
     )

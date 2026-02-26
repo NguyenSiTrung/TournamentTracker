@@ -26,6 +26,8 @@ def create_team(body: TeamCreate, db: DBSession = Depends(get_db)) -> TeamRespon
     team = Team(
         name=body.name.strip(),
         players=[p.strip() for p in body.players if p.strip()],
+        color=body.color,
+        tag=body.tag.strip()[:4] if body.tag else None,
     )
     db.add(team)
     db.commit()
@@ -42,6 +44,8 @@ def update_team(
         raise HTTPException(status_code=404, detail="Team not found")
     team.name = body.name.strip()
     team.players = [p.strip() for p in body.players if p.strip()]
+    team.color = body.color
+    team.tag = body.tag.strip()[:4] if body.tag else None
     db.commit()
     db.refresh(team)
     return team
