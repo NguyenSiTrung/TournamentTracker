@@ -89,6 +89,7 @@ const Settings = (() => {
 
         try {
             await API.updateSettings(payload);
+            Store.invalidateScoringCache();
             App.toast('Scoring configuration saved!', 'success');
         } catch (err) {
             App.toast('Failed to save scoring: ' + err.message, 'error');
@@ -102,6 +103,7 @@ const Settings = (() => {
                 scoring: { first: 4, second: 3, third: 2, fourth: 1 },
                 scoring_2p: { first: 4, second: 1 },
             });
+            Store.invalidateScoringCache();
             // Update form fields
             document.getElementById('settings-scoring-1st').value = 4;
             document.getElementById('settings-scoring-2nd').value = 3;
@@ -203,6 +205,7 @@ const Settings = (() => {
             App.closeModal(true);
 
             if (resetSettings) {
+                Store.invalidateScoringCache();
                 await loadSettings();
             }
             if (resetTeams) {

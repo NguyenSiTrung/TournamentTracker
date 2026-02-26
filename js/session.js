@@ -406,7 +406,7 @@ const Session = (() => {
         return getOrdinalLabel(pos);
     }
 
-    function computeAddGameLiveTotals(selects, totalPlayers) {
+    function computeAddGameLiveTotals(selects, totalPlayers, scoringConfig) {
         const teamTotals = {};
         const playerPreviewPoints = {};
         const usedPlacements = new Set();
@@ -435,7 +435,7 @@ const Session = (() => {
                 usedPlacements.add(placement);
             }
 
-            const points = Store.calculatePoints(placement, totalPlayers);
+            const points = Store.calculatePoints(placement, totalPlayers, scoringConfig);
             if (teamId) {
                 teamTotals[teamId] = (teamTotals[teamId] || 0) + points;
             }
@@ -477,13 +477,13 @@ const Session = (() => {
         return topTeamIds.length === 1 ? topTeamIds[0] : null;
     }
 
-    function updateAddGameLiveScoreboard(totalPlayers) {
+    function updateAddGameLiveScoreboard(totalPlayers, scoringConfig) {
         const selects = Array.from(document.querySelectorAll('.player-placement-select'));
         if (selects.length === 0) {
             return;
         }
 
-        const liveTotals = computeAddGameLiveTotals(selects, totalPlayers);
+        const liveTotals = computeAddGameLiveTotals(selects, totalPlayers, scoringConfig);
         const winnerTeamId = resolveAddGameWinnerTeamId(
             liveTotals.teamTotals,
             liveTotals.allPlacementsComplete,
@@ -547,6 +547,36 @@ const Session = (() => {
             fieldsWrap.classList.toggle('is-active', enabled);
             fieldsWrap.hidden = !enabled;
         }
+    }
+
+    function updateAddGamePlacementOptionAvailability() {
+        const selects = Array.from(document.querySelectorAll('.player-placement-select'));
+        if (selects.length === 0) return;
+
+        const selectedBySelect = new Map();
+        const usedPlacements = new Set();
+
+        selects.forEach((selectEl) => {
+            const placement = parseInt(selectEl.value, 10);
+            if (Number.isInteger(placement)) {
+                selectedBySelect.set(selectEl, placement);
+                usedPlacements.add(placement);
+                return;
+            }
+            selectedBySelect.set(selectEl, null);
+        });
+
+        selects.forEach((selectEl) => {
+            const ownPlacement = selectedBySelect.get(selectEl);
+            Array.from(selectEl.options).forEach((optionEl) => {
+                const value = parseInt(optionEl.value, 10);
+                if (!Number.isInteger(value)) {
+                    optionEl.disabled = false;
+                    return;
+                }
+                optionEl.disabled = usedPlacements.has(value) && value !== ownPlacement;
+            });
+        });
     }
 
     // --- Actions ---
@@ -650,6 +680,7 @@ const Session = (() => {
         const gameNum = session.games.length + 1;
 
         const totalPlayers = sessionTeams.reduce((count, team) => count + team.players.length, 0);
+        const scoringConfig = await Store.getScoringConfig();
 
         const body = `
             <div class="add-game-modal">
@@ -701,7 +732,7 @@ const Session = (() => {
                                                     data-preview-id="${previewId}">
                                                 <option value="">Select rank...</option>
                                                 ${Array.from({ length: totalPlayers }, (_, i) => i + 1).map(pos =>
-                `<option value="${pos}">${getOrdinalLabel(pos)} (+${Store.calculatePoints(pos, totalPlayers)} pts)</option>`
+                `<option value="${pos}">${getOrdinalLabel(pos)} (+${Store.calculatePoints(pos, totalPlayers, scoringConfig)} pts)</option>`
             ).join('')}
                                             </select>
                                             <span class="add-game-player-points" data-preview-id-ref="${previewId}">0 pts</span>
@@ -747,7 +778,8 @@ const Session = (() => {
 
         document.querySelectorAll('.player-placement-select').forEach((selectEl) => {
             selectEl.addEventListener('change', () => {
-                updateAddGameLiveScoreboard(totalPlayers);
+                updateAddGamePlacementOptionAvailability();
+                updateAddGameLiveScoreboard(totalPlayers, scoringConfig);
             });
         });
 
@@ -757,7 +789,8 @@ const Session = (() => {
         }
 
         updateAddGamePenaltyFieldsState();
-        updateAddGameLiveScoreboard(totalPlayers);
+        updateAddGamePlacementOptionAvailability();
+        updateAddGameLiveScoreboard(totalPlayers, scoringConfig);
     }
 
     async function saveGame() {

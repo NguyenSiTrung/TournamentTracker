@@ -5,9 +5,51 @@ const Store = (() => {
     // Local cache for teams (avoids repeated fetches during rendering)
     let _teamsCache = [];
     let _teamsCacheValid = false;
+    let _scoringConfigCache = null;
+    let _scoringConfigCacheValid = false;
+
+    const DEFAULT_SCORING_CONFIG = {
+        standard: { 1: 4, 2: 3, 3: 2, 4: 1 },
+        twoPlayer: { 1: 4, 2: 1 },
+    };
 
     function invalidateTeamsCache() {
         _teamsCacheValid = false;
+    }
+
+    function invalidateScoringCache() {
+        _scoringConfigCacheValid = false;
+    }
+
+    function normalizeScoringConfig(settings) {
+        const scoring = settings?.scoring || {};
+        const scoring2p = settings?.scoring_2p || {};
+        return {
+            standard: {
+                1: scoring.first ?? DEFAULT_SCORING_CONFIG.standard[1],
+                2: scoring.second ?? DEFAULT_SCORING_CONFIG.standard[2],
+                3: scoring.third ?? DEFAULT_SCORING_CONFIG.standard[3],
+                4: scoring.fourth ?? DEFAULT_SCORING_CONFIG.standard[4],
+            },
+            twoPlayer: {
+                1: scoring2p.first ?? DEFAULT_SCORING_CONFIG.twoPlayer[1],
+                2: scoring2p.second ?? DEFAULT_SCORING_CONFIG.twoPlayer[2],
+            },
+        };
+    }
+
+    async function getScoringConfig() {
+        if (!_scoringConfigCacheValid) {
+            try {
+                const settings = await API.getSettings();
+                _scoringConfigCache = normalizeScoringConfig(settings);
+            } catch (err) {
+                console.error('Failed to load scoring settings, using defaults:', err);
+                _scoringConfigCache = normalizeScoringConfig(null);
+            }
+            _scoringConfigCacheValid = true;
+        }
+        return _scoringConfigCache;
     }
 
     // --- Teams ---
@@ -92,14 +134,12 @@ const Store = (() => {
     }
 
     // --- Points calculation (kept client-side for UI display) ---
-    function calculatePoints(position, numTeams) {
-        if (numTeams <= 2) {
-            return position === 1 ? 4 : 1;
+    function calculatePoints(position, numPlayers, scoringConfig = null) {
+        const activeConfig = scoringConfig || _scoringConfigCache || DEFAULT_SCORING_CONFIG;
+        if (numPlayers <= 2) {
+            return activeConfig.twoPlayer[position] ?? activeConfig.twoPlayer[2] ?? 1;
         }
-        if (position === 1) return 4;
-        if (position === 2) return 3;
-        if (position === 3) return 2;
-        return 1;
+        return activeConfig.standard[position] ?? activeConfig.standard[4] ?? 1;
     }
 
     async function getSessionScores(sessionId) {
@@ -159,9 +199,9 @@ const Store = (() => {
         createSession, updateSession, deleteSession,
         addGame, removeGame,
         addPenalty, removePenalty,
-        calculatePoints, getSessionScores,
+        calculatePoints, getScoringConfig, getSessionScores,
         exportData, importData,
         getTotalGamesPlayed, getAllTimeLeaderboard,
-        invalidateTeamsCache,
+        invalidateTeamsCache, invalidateScoringCache,
     };
 })();
