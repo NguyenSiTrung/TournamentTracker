@@ -53,29 +53,29 @@
   - [x] About card with app info
   - [x] All inputs with proper labels, IDs, and aria attributes
 
-- [ ] Task 3: Implement Settings JavaScript module
+- [x] Task 3: Implement Settings JavaScript module
   <!-- files: js/settings.js -->
   <!-- depends: task1, task2 -->
-  - [ ] Create `js/settings.js` with Settings IIFE module
-  - [ ] `Settings.render()` — fetch settings from API and populate form fields
-  - [ ] `Settings.saveProfile()` — save league name, season, description
-  - [ ] `Settings.saveScoring()` — save scoring configuration
-  - [ ] `Settings.loadDataStats()` — fetch and display team/session/game counts
-  - [ ] `Settings.showResetModal()` — open reset confirmation modal with checkboxes
-  - [ ] `Settings.executeReset()` — call reset API with selected categories
-  - [ ] `Settings.toggleReduceMotion()` — toggle CSS class + localStorage
-  - [ ] `Settings.restoreDefaultScoring()` — reset to 4/3/2/1
+  - [x] Create `js/settings.js` with Settings IIFE module
+  - [x] `Settings.render()` — fetch settings from API and populate form fields
+  - [x] `Settings.saveProfile()` — save league name, season, description
+  - [x] `Settings.saveScoring()` — save scoring configuration
+  - [x] `Settings.loadDataStats()` — fetch and display team/session/game counts
+  - [x] `Settings.showResetModal()` — open reset confirmation modal with checkboxes
+  - [x] `Settings.executeReset()` — call reset API with selected categories
+  - [x] `Settings.toggleReduceMotion()` — toggle CSS class + localStorage
+  - [x] `Settings.restoreDefaultScoring()` — reset to 4/3/2/1
 
-- [ ] Task 4: Wire up Settings to App module
+- [x] Task 4: Wire up Settings to App module
   <!-- files: js/app.js, index.html -->
   <!-- depends: task3 -->
-  - [ ] Add `<script src="js/settings.js">` to index.html
-  - [ ] Add `Settings.render()` call in `App.switchTab('settings')` case
-  - [ ] Update sidebar brand text dynamically from settings API on init
-  - [ ] Wire export/import buttons to existing handlers
-  - [ ] Apply stored reduce-motion preference on page load
+  - [x] Add `<script src="js/settings.js">` to index.html
+  - [x] Add `Settings.render()` call in `App.switchTab('settings')` case
+  - [x] Update sidebar brand text dynamically from settings API on init
+  - [x] Wire export/import buttons to existing handlers
+  - [x] Apply stored reduce-motion preference on page load
 
-- [ ] Task 5: Conductor — User Manual Verification 'Frontend — Settings Tab UI Redesign' (Protocol in workflow.md)
+- [x] Task 5: Conductor — User Manual Verification 'Frontend — Settings Tab UI Redesign' (Protocol in workflow.md)
 
 ## Phase 3: Integration & Polish
 <!-- execution: sequential -->
