@@ -14,3 +14,6 @@ This file tracks all major tracks for the project.
 - [x] Track: edit_team_modal_redesign_20260226 - "Edit Team Modal Redesign + Team Identity System" (archived: 2026-02-26)
 
 ---
+
+## [ ] Track: Settings Tab Redesign — Premium Settings Dashboard with Backend Persistence
+*Link: [./conductor/tracks/settings_tab_redesign_20260226/](./conductor/tracks/settings_tab_redesign_20260226/)*
