@@ -42,21 +42,21 @@
 
 ## Phase 3: Frontend — Edit Team Modal Redesign
 
-- [ ] Task 1: Extract shared `buildTeamFormBody()` function
+- [x] Task 1: Extract shared `buildTeamFormBody()` function
   - Create a reusable function that generates the modal body HTML
   - Accepts optional `team` parameter for pre-population
   - Uses all `ct-*` classes: `ct-input-row`, `ct-input-group`, `ct-color-picker`, `ct-preview-card`, `ct-player-row`, etc.
   - When `team` is provided: pre-populates name, tag, color (active swatch), players
 
-- [ ] Task 2: Extract shared `buildTeamFormFooter()` function
+- [x] Task 2: Extract shared `buildTeamFormFooter()` function
   - Reusable footer with `ct-footer` layout
   - Accepts mode parameter ('create' vs 'edit') for button text
 
-- [ ] Task 3: Refactor `showCreateModal()` to use shared builders
+- [x] Task 3: Refactor `showCreateModal()` to use shared builders
   - Replace inline HTML with calls to `buildTeamFormBody()` and `buildTeamFormFooter('create')`
   - Verify no visual regression
 
-- [ ] Task 4: Rewrite `editTeam()` to use shared builders
+- [x] Task 4: Rewrite `editTeam()` to use shared builders
   - Call `buildTeamFormBody(team)` with existing team data
   - Call `buildTeamFormFooter('edit')`
   - Open modal with `modalClass: 'modal-create-team'`
@@ -64,31 +64,31 @@
   - Pre-select the team's stored color swatch
   - Pre-populate live preview with team data
 
-- [ ] Task 5: Update `saveEditTeam()` to include color/tag
+- [x] Task 5: Update `saveEditTeam()` to include color/tag
   - Read selected color and tag input values
   - Pass them through `Store.updateTeam(id, name, players, color, tag)`
 
-- [ ] Task 6: Update `saveNewTeam()` to include color/tag
+- [x] Task 6: Update `saveNewTeam()` to include color/tag
   - Read selected color and tag input values
   - Pass them through `Store.createTeam(name, players, color, tag)`
 
-- [ ] Task: Conductor - User Manual Verification 'Frontend — Edit Team Modal Redesign' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Frontend — Edit Team Modal Redesign' (Protocol in workflow.md)
 
 ## Phase 4: Team Cards — Stored Identity Display
 
-- [ ] Task 1: Update team card rendering to use stored color
+- [x] Task 1: Update team card rendering to use stored color
   - Replace `TEAM_ACCENT_COLORS[idx % length]` with color derived from `team.color`
   - Build accent gradient from stored color value
   - Avatar uses stored color for background
 
-- [ ] Task 2: Add tag display to team cards
+- [x] Task 2: Add tag display to team cards
   - Show tag badge near team name on the card
   - Style the tag badge to match the team's accent color
 
-- [ ] Task 3: Visual polish and regression check
+- [x] Task 3: Visual polish and regression check
   - Verify team cards look correct with stored colors
   - Verify teams without color/tag (edge case) fall back gracefully
   - Test responsive layout at 768px and 480px breakpoints
   - Verify `prefers-reduced-motion` is respected
 
-- [ ] Task: Conductor - User Manual Verification 'Team Cards — Stored Identity Display' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Team Cards — Stored Identity Display' (Protocol in workflow.md)

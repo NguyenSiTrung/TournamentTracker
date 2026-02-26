@@ -14,5 +14,5 @@ This file tracks all major tracks for the project.
 
 ---
 
-## [~] Track: Edit Team Modal Redesign + Team Identity System
+## [x] Track: Edit Team Modal Redesign + Team Identity System
 *Link: [./conductor/tracks/edit_team_modal_redesign_20260226/](./conductor/tracks/edit_team_modal_redesign_20260226/)*
