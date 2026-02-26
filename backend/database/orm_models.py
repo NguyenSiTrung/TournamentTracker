@@ -72,3 +72,10 @@ class Penalty(Base):
     reason: Mapped[str] = mapped_column(String, default="")
 
     session: Mapped["Session"] = relationship(back_populates="penalties")
+
+
+class Setting(Base):
+    __tablename__ = "settings"
+
+    key: Mapped[str] = mapped_column(String, primary_key=True)
+    value: Mapped[str] = mapped_column(String, nullable=False, default="")

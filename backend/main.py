@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -6,7 +7,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from database.connection import create_tables
-from routers import data, games, sessions, stats, teams
+from routers import data, games, sessions, stats, teams, settings
 
 # Default team colors matching the frontend ct-color-picker palette
 TEAM_COLOR_PALETTE = [
@@ -88,10 +89,36 @@ def _migrate_team_identity():
         db.close()
 
 
+DEFAULT_SETTINGS = {
+    "league_name": "Pro League",
+    "season": "Season 4",
+    "description": "",
+    "scoring": json.dumps({"first": 4, "second": 3, "third": 2, "fourth": 1}),
+    "scoring_2p": json.dumps({"first": 4, "second": 1}),
+}
+
+
+def _seed_default_settings():
+    """Seed default settings if the settings table is empty."""
+    from database.connection import SessionLocal
+    from database.orm_models import Setting
+
+    db = SessionLocal()
+    try:
+        existing = db.query(Setting).count()
+        if existing == 0:
+            for key, value in DEFAULT_SETTINGS.items():
+                db.add(Setting(key=key, value=value))
+            db.commit()
+    finally:
+        db.close()
+
+
 @app.on_event("startup")
 def on_startup():
     create_tables()
     _migrate_team_identity()
+    _seed_default_settings()
 
 
 app.include_router(teams.router)
@@ -99,6 +126,7 @@ app.include_router(sessions.router)
 app.include_router(games.router)
 app.include_router(stats.router)
 app.include_router(data.router)
+app.include_router(settings.router)
 
 # --- Static frontend serving ---
 FRONTEND_DIR = Path(__file__).resolve().parent.parent

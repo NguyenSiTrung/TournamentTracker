@@ -117,3 +117,33 @@ class SessionScoreEntry(BaseModel):
     game_points: int
     penalty_points: int
     total: int
+
+
+# --- Settings ---
+
+class ScoringConfig(BaseModel):
+    first: int = 4
+    second: int = 3
+    third: int = 2
+    fourth: int = 1
+
+
+class ScoringConfig2P(BaseModel):
+    first: int = 4
+    second: int = 1
+
+
+class SettingsResponse(BaseModel):
+    league_name: str = "Pro League"
+    season: str = "Season 4"
+    description: str = ""
+    scoring: ScoringConfig = Field(default_factory=ScoringConfig)
+    scoring_2p: ScoringConfig2P = Field(default_factory=ScoringConfig2P)
+
+
+class SettingsUpdate(BaseModel):
+    league_name: str | None = None
+    season: str | None = None
+    description: str | None = None
+    scoring: ScoringConfig | None = None
+    scoring_2p: ScoringConfig2P | None = None
