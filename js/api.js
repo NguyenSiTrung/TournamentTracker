@@ -73,6 +73,17 @@ const API = (() => {
         body: JSON.stringify(data),
     });
 
+    // --- Settings ---
+    const getSettings = () => request('/settings');
+    const updateSettings = (data) => request('/settings', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+    });
+    const resetData = (categories) => request('/data/reset', {
+        method: 'DELETE',
+        body: JSON.stringify(categories),
+    });
+
     return {
         getTeams, getTeam, createTeam, updateTeam, deleteTeam,
         getSessions, getSession, createSession, updateSession, deleteSession,
@@ -80,5 +91,6 @@ const API = (() => {
         addPenalty, removePenalty,
         getSessionScores, getLeaderboard,
         exportData, importData,
+        getSettings, updateSettings, resetData,
     };
 })();

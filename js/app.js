@@ -8,6 +8,7 @@ const App = (() => {
     async function init() {
         setupSidebarNavigation();
         setupEventListeners();
+        Settings.restoreReduceMotion();
         await checkLocalStorageMigration();
         await refreshAll();
     }
@@ -69,6 +70,7 @@ const App = (() => {
             case 'teams': await Teams.render(); break;
             case 'session': await Session.render(); break;
             case 'history': await History.render(); break;
+            case 'settings': await Settings.render(); break;
         }
     }
 
@@ -133,6 +135,15 @@ const App = (() => {
     }
 
     async function refreshAll() {
+        // Load sidebar brand from settings
+        try {
+            const settings = await API.getSettings();
+            const brandEl = document.querySelector('.sidebar-brand');
+            const seasonEl = document.querySelector('.sidebar-season');
+            if (brandEl) brandEl.textContent = settings.league_name || 'Pro League';
+            if (seasonEl) seasonEl.textContent = settings.season || 'Season 4';
+        } catch (e) { /* silent fallback to hardcoded defaults */ }
+
         await refreshDashboard();
         await Teams.render();
         await Session.render();

@@ -33,25 +33,25 @@
 <!-- execution: parallel -->
 <!-- depends: -->
 
-- [ ] Task 1: Create Settings CSS component styles
+- [x] Task 1: Create Settings CSS component styles
   <!-- files: css/style.css -->
-  - [ ] Add settings-specific CSS: `.settings-grid`, `.settings-card`, `.settings-card-header`, `.settings-card-icon`
-  - [ ] Glassmorphism card styles with backdrop-blur and green glow borders
-  - [ ] Scoring placement cards with gold/silver/bronze color coding
-  - [ ] Danger zone styling (red border, red button)
-  - [ ] Toggle switch component CSS
-  - [ ] Data stats panel styling
-  - [ ] Two-column responsive grid layout (7/5 split)
+  - [x] Add settings-specific CSS: `.settings-grid`, `.settings-card`, `.settings-card-header`, `.settings-card-icon`
+  - [x] Glassmorphism card styles with backdrop-blur and green glow borders
+  - [x] Scoring placement cards with gold/silver/bronze color coding
+  - [x] Danger zone styling (red border, red button)
+  - [x] Toggle switch component CSS
+  - [x] Data stats panel styling
+  - [x] Two-column responsive grid layout (7/5 split)
 
-- [ ] Task 2: Rebuild Settings HTML structure in index.html
+- [x] Task 2: Rebuild Settings HTML structure in index.html
   <!-- files: index.html -->
-  - [ ] Replace existing minimal settings section with 5-section card layout
-  - [ ] Tournament Profile card with form inputs
-  - [ ] Scoring Configuration card with placement cards and 2-player toggle
-  - [ ] Data Management card with export/import, stats display, reset button
-  - [ ] Appearance card with reduce motion toggle and theme indicator
-  - [ ] About card with app info
-  - [ ] All inputs with proper labels, IDs, and aria attributes
+  - [x] Replace existing minimal settings section with 5-section card layout
+  - [x] Tournament Profile card with form inputs
+  - [x] Scoring Configuration card with placement cards and 2-player toggle
+  - [x] Data Management card with export/import, stats display, reset button
+  - [x] Appearance card with reduce motion toggle and theme indicator
+  - [x] About card with app info
+  - [x] All inputs with proper labels, IDs, and aria attributes
 
 - [ ] Task 3: Implement Settings JavaScript module
   <!-- files: js/settings.js -->
