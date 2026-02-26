@@ -165,10 +165,12 @@ const Session = (() => {
             <th>
                 <div class="matrix-team-header">
                     <span class="matrix-team-badge">${String.fromCharCode(65 + idx)}</span>
-                    <span>${escapeHtml(team.name)}</span>
+                    <span class="matrix-team-name">${escapeHtml(team.name)}</span>
                 </div>
             </th>
         `).join('');
+
+        const matrixColumns = context.sessionTeams.map(() => '<col class="matrix-team-col">').join('');
 
         const gameRows = session.games.map((game, index) => {
             const cells = context.sessionTeams.map(team => renderMatrixTeamCell(team.id, game)).join('');
@@ -204,11 +206,15 @@ const Session = (() => {
         }).join('');
 
         container.innerHTML = `
-            <div class="session-matrix-wrap">
+            <div class="session-matrix-wrap" style="--matrix-team-count: ${Math.max(context.sessionTeams.length, 1)};">
                 <table class="session-matrix-table">
+                    <colgroup>
+                        <col class="matrix-game-col">
+                        ${matrixColumns}
+                    </colgroup>
                     <thead>
                         <tr>
-                            <th class="matrix-game-col">Game</th>
+                            <th>Game</th>
                             ${headerCells}
                         </tr>
                     </thead>

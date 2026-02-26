@@ -1734,6 +1734,8 @@ body {
 }
 
 .session-matrix-wrap {
+    --matrix-game-col-width: 140px;
+    --matrix-team-count: 2;
     border: 1px solid rgba(76, 175, 80, 0.2);
     border-radius: 12px;
     overflow: auto;
@@ -1742,7 +1744,16 @@ body {
 .session-matrix-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 760px;
+    min-width: max(560px, calc(var(--matrix-game-col-width) + (var(--matrix-team-count) * 190px)));
+    table-layout: fixed;
+}
+
+.session-matrix-table col.matrix-game-col {
+    width: var(--matrix-game-col-width);
+}
+
+.session-matrix-table col.matrix-team-col {
+    width: calc((100% - var(--matrix-game-col-width)) / var(--matrix-team-count));
 }
 
 .session-matrix-table thead th {
@@ -1768,6 +1779,14 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
+    min-width: 0;
+}
+
+.matrix-team-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .matrix-team-badge {
@@ -1784,7 +1803,7 @@ body {
 }
 
 .matrix-game-col {
-    width: 140px;
+    width: var(--matrix-game-col-width);
 }
 
 .matrix-game-label {
@@ -1803,6 +1822,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    min-width: 0;
 }
 
 .matrix-rank {
@@ -1839,6 +1859,7 @@ body {
     color: var(--text-muted);
     font-size: 0.74rem;
     line-height: 1.3;
+    overflow-wrap: anywhere;
 }
 
 .matrix-cell-empty {
@@ -3898,6 +3919,24 @@ body {
     .sessions-table td {
         display: table-cell;
     }
+
+    .session-matrix-wrap {
+        --matrix-game-col-width: 122px;
+    }
+
+    .session-matrix-table {
+        min-width: max(520px, calc(var(--matrix-game-col-width) + (var(--matrix-team-count) * 160px)));
+    }
+
+    .session-matrix-table thead th,
+    .session-matrix-table tbody th,
+    .session-matrix-table tbody td {
+        padding: 10px 9px;
+    }
+
+    .matrix-game-label {
+        font-size: 0.9rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -3995,7 +4034,32 @@ body {
     }
 
     .session-matrix-wrap {
+        --matrix-game-col-width: 96px;
         border-radius: 10px;
+    }
+
+    .session-matrix-table {
+        min-width: max(420px, calc(var(--matrix-game-col-width) + (var(--matrix-team-count) * 132px)));
+    }
+
+    .session-matrix-table thead th,
+    .session-matrix-table tbody th,
+    .session-matrix-table tbody td {
+        padding: 9px 8px;
+    }
+
+    .matrix-team-header {
+        gap: 6px;
+    }
+
+    .matrix-team-badge {
+        width: 20px;
+        height: 20px;
+        font-size: 0.68rem;
+    }
+
+    .matrix-player-breakdown {
+        font-size: 0.7rem;
     }
 }
 
