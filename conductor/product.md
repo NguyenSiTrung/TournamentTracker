@@ -1,4 +1,4 @@
-> **Last Refreshed:** 2026-02-24T17:41 — Context synced with codebase
+> **Last Refreshed:** 2026-02-26T15:10 — Context synced with codebase
 
 # Product Guide: Tournament Tracker
 
@@ -23,6 +23,7 @@ Tournament Tracker is a web application for friend groups to track casual game n
 10. **UI/UX Polish** — Tab crossfade transitions, navigation badges (pulsing active session dot, history count), section-specific color accents, responsive layout (768px/480px breakpoints), `prefers-reduced-motion` accessibility support
 11. **WCAG AA Contrast Compliance** — Design token-level contrast audit and fix; all text, form elements, and interactive components meet WCAG AA ratios on the dark green theme
 12. **Empty State Illustrations** — Inline SVG illustrated hero cards with glassmorphism for Teams, Dashboard (Leaderboard), and History views; BEM-scoped `.empty-state-hero-card` component; horizontal stepper onboarding guide for Teams
+13. **Settings Tab Redesign** — Premium 5-section settings dashboard (Tournament Profile, Scoring Configuration, Data Management, Appearance, About) with glassmorphism cards; editable league name/season with live sidebar sync; configurable scoring rules persisted to backend; selective data reset with confirmation modal; reduce-motion accessibility toggle; responsive two-column layout
 
 ## Platform & Architecture
 - **Frontend:** Web browser — vanilla HTML/CSS/JavaScript (single-page app)

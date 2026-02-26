@@ -88,10 +88,10 @@
   - [x] Test reduce motion toggle persistence
   - [x] Test responsive layout at 768px and 480px breakpoints
 
-- [ ] Task 2: Visual polish and animation
-  - [ ] Add entrance animations (fadeSlideUp) to settings cards
-  - [ ] Add hover effects on interactive cards
-  - [ ] Verify WCAG AA contrast on all new elements
-  - [ ] Ensure prefers-reduced-motion blanket covers new animations
+- [x] Task 2: Visual polish and animation
+  - [x] Add entrance animations (fadeSlideUp) to settings cards
+  - [x] Add hover effects on interactive cards
+  - [x] Verify WCAG AA contrast on all new elements
+  - [x] Ensure prefers-reduced-motion blanket covers new animations
 
-- [ ] Task 3: Conductor — User Manual Verification 'Integration & Polish' (Protocol in workflow.md)
+- [x] Task 3: Conductor — User Manual Verification 'Integration & Polish' (Protocol in workflow.md)

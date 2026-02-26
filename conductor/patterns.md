@@ -74,5 +74,11 @@ Reusable patterns discovered during development. Read this before starting new w
 - `aria-hidden="true"` on decorative SVGs prevents screen readers from announcing visual-only content (from: teams_empty_state_fix_20260224, archived 2026-02-24)
 - SVG `<text>` elements need explicit `font-family` attribute to render consistently across browsers (from: teams_empty_state_fix_20260224, archived 2026-02-24)
 
+- Key-value Setting model (key: str PK, value: str) is simpler than structured columns for flexible app settings — JSON serialization handles nested objects like scoring config (from: settings_tab_redesign_20260226, 2026-02-26)
+- `_get_scoring_config()` helper centralizes scoring lookup from DB — pass `db` session through to `_calculate_points()` to avoid creating new connections (from: settings_tab_redesign_20260226, 2026-02-26)
+- CSS-only toggle switch: checkbox `opacity:0` + label + `::before` pseudo-element — use `input:checked + .slider` selector for state, no JS needed (from: settings_tab_redesign_20260226, 2026-02-26)
+- Two-column settings grid with `7fr 5fr` split: heavier content (forms) left, lighter content (toggles/info) right (from: settings_tab_redesign_20260226, 2026-02-26)
+- Stagger card entrance animations with `animation-delay` on `:nth-child()` selectors for cascading reveal (from: settings_tab_redesign_20260226, 2026-02-26)
+
 ---
-Last refreshed: 2026-02-26T13:30
+Last refreshed: 2026-02-26T15:10
