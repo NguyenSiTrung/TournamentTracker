@@ -17,6 +17,18 @@ const Teams = (() => {
     // Player chip background colors
     const CHIP_COLORS = ['#455a64', '#546e7a', '#37474f', '#607d8b', '#78909c', '#263238'];
 
+    /**
+     * Darken a hex color by a given amount (0-255).
+     * Used to derive gradient endpoints from stored team color.
+     */
+    function _darkenHex(hex, amount) {
+        const num = parseInt(hex.replace('#', ''), 16);
+        const r = Math.max(0, (num >> 16) - amount);
+        const g = Math.max(0, ((num >> 8) & 0x00FF) - amount);
+        const b = Math.max(0, (num & 0x0000FF) - amount);
+        return `#${(r << 16 | g << 8 | b).toString(16).padStart(6, '0')}`;
+    }
+
     let _searchQuery = '';
 
     async function render() {
@@ -128,7 +140,13 @@ const Teams = (() => {
 
         grid.innerHTML = teams.map((team, idx) => {
             const initials = team.name.split(' ').map(w => w[0]).join('').toUpperCase().substr(0, 2);
-            const colorScheme = TEAM_ACCENT_COLORS[idx % TEAM_ACCENT_COLORS.length];
+
+            // Use stored color if available, otherwise fall back to palette cycling
+            const accentColor = team.color || TEAM_ACCENT_COLORS[idx % TEAM_ACCENT_COLORS.length].accent;
+            const avatarBg = team.color
+                ? `linear-gradient(135deg, ${team.color}, ${_darkenHex(team.color, 30)})`
+                : TEAM_ACCENT_COLORS[idx % TEAM_ACCENT_COLORS.length].bg;
+
             const stats = teamStats[team.id] || { wins: 0, points: 0, games: 0 };
             const winRate = stats.games > 0 ? Math.round((stats.wins / stats.games) * 100) : 0;
 
@@ -142,11 +160,16 @@ const Teams = (() => {
                 return `<div class="team-player-chip" style="background:${chipColor}" title="${escapeHtml(p)}">${chipInitial}</div>`;
             }).join('') + (extraCount > 0 ? `<div class="team-player-chip team-player-chip-more">+${extraCount}</div>` : '');
 
+            // Tag badge (only show if team has a tag)
+            const tagBadge = team.tag
+                ? `<span class="team-tag-badge" style="background:${accentColor}20; color:${accentColor}; border-color:${accentColor}40">${escapeHtml(team.tag)}</span>`
+                : '';
+
             return `
                 <div class="team-card" data-team-id="${team.id}" data-team-name="${escapeHtml(team.name).toLowerCase()}" data-team-players="${team.players.map(p => escapeHtml(p).toLowerCase()).join(',')}">
-                    <div class="team-card-accent" style="background:${colorScheme.accent}"></div>
+                    <div class="team-card-accent" style="background:${accentColor}"></div>
                     <div class="team-card-header">
-                        <div class="team-avatar" style="background:${colorScheme.bg}">${initials}</div>
+                        <div class="team-avatar" style="background:${avatarBg}">${initials}</div>
                         <div class="team-card-actions">
                             <button class="team-action-btn" onclick="Teams.editTeam('${team.id}')" title="Edit">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -156,7 +179,10 @@ const Teams = (() => {
                             </button>
                         </div>
                     </div>
-                    <div class="team-name">${escapeHtml(team.name)}</div>
+                    <div class="team-name-row">
+                        <div class="team-name">${escapeHtml(team.name)}</div>
+                        ${tagBadge}
+                    </div>
                     <div class="team-player-badge">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
                         ${team.players.length} player${team.players.length !== 1 ? 's' : ''}

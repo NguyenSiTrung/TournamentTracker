@@ -1125,8 +1125,31 @@ body {
     font-size: 1.15rem;
     font-weight: 700;
     color: var(--text-primary);
-    margin: 12px 0 2px 0;
     letter-spacing: -0.2px;
+}
+
+/* Team name + tag row */
+.team-name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 12px 0 2px 0;
+    flex-wrap: wrap;
+}
+
+/* Team tag badge */
+.team-tag-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border: 1px solid;
+    line-height: 1.4;
+    flex-shrink: 0;
 }
 
 /* Player count badge */
