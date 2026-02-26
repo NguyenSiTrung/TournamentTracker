@@ -29,14 +29,14 @@ const Store = (() => {
         return API.getTeam(id);
     }
 
-    async function createTeam(name, players) {
+    async function createTeam(name, players, color = null, tag = null) {
         invalidateTeamsCache();
-        return API.createTeam(name, players);
+        return API.createTeam(name, players, color, tag);
     }
 
-    async function updateTeam(id, name, players) {
+    async function updateTeam(id, name, players, color = null, tag = null) {
         invalidateTeamsCache();
-        return API.updateTeam(id, name, players);
+        return API.updateTeam(id, name, players, color, tag);
     }
 
     async function deleteTeam(id) {

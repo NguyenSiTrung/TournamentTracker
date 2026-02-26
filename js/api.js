@@ -22,13 +22,13 @@ const API = (() => {
     // --- Teams ---
     const getTeams = () => request('/teams');
     const getTeam = (id) => request(`/teams/${id}`);
-    const createTeam = (name, players) => request('/teams', {
+    const createTeam = (name, players, color = null, tag = null) => request('/teams', {
         method: 'POST',
-        body: JSON.stringify({ name, players }),
+        body: JSON.stringify({ name, players, color, tag }),
     });
-    const updateTeam = (id, name, players) => request(`/teams/${id}`, {
+    const updateTeam = (id, name, players, color = null, tag = null) => request(`/teams/${id}`, {
         method: 'PUT',
-        body: JSON.stringify({ name, players }),
+        body: JSON.stringify({ name, players, color, tag }),
     });
     const deleteTeam = (id) => request(`/teams/${id}`, { method: 'DELETE' });
 

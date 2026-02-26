@@ -2,31 +2,31 @@
 
 ## Phase 1: Backend — Team Identity Fields
 
-- [ ] Task 1: Add `color` and `tag` columns to Team ORM model
+- [x] Task 1: Add `color` and `tag` columns to Team ORM model
   - Add `color: Mapped[str | None]` and `tag: Mapped[str | None]` to `Team` class in `backend/database/orm_models.py`
   - `color` is String, nullable, default=None
   - `tag` is String(4), nullable, default=None
 
-- [ ] Task 2: Update Pydantic schemas for color/tag
+- [x] Task 2: Update Pydantic schemas for color/tag
   - Add `color: str | None = None` and `tag: str | None = None` to `TeamCreate`, `TeamUpdate`, and `TeamResponse` in `backend/models/schemas.py`
 
-- [ ] Task 3: Update team router to persist color/tag
+- [x] Task 3: Update team router to persist color/tag
   - In `create_team()`: pass `body.color` and `body.tag` to Team constructor
   - In `update_team()`: set `team.color` and `team.tag` from body
 
-- [ ] Task 4: Add migration logic for existing teams
+- [x] Task 4: Add migration logic for existing teams
   - On app startup, auto-assign defaults for teams with null color/tag
   - Color: cycle through 8-color palette by creation order
   - Tag: first 2-4 uppercase chars of team name
   - Add startup event in `main.py` or a migration helper
 
-- [ ] Task 5: Update backend tests
+- [x] Task 5: Update backend tests
   - Test create team with color/tag
   - Test update team with color/tag
   - Test default assignment for existing teams
   - Test response includes color/tag fields
 
-- [ ] Task: Conductor - User Manual Verification 'Backend — Team Identity Fields' (Protocol in workflow.md)
+- [~] Task: Conductor - User Manual Verification 'Backend — Team Identity Fields' (Protocol in workflow.md)
 
 ## Phase 2: Frontend — API & Store Layer
 
