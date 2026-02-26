@@ -82,7 +82,6 @@ const Session = (() => {
             sortedStandings,
             penaltiesByTeam,
             sessionNumber: sessionIndex >= 0 ? sessionIndex + 1 : null,
-            targetGames: Math.max(4, session.team_ids.length + 2),
             averagePoints,
         };
     }
@@ -94,15 +93,18 @@ const Session = (() => {
             year: 'numeric',
         });
         const leader = context.sortedStandings[0]?.team?.name || '-';
+        const totalGames = session.games.length;
 
         document.getElementById('session-name-display').textContent = session.name;
         document.getElementById('session-number-display').textContent = context.sessionNumber
             ? `Session #${context.sessionNumber}`
             : 'Session';
         document.getElementById('session-date-display').textContent = prettyDate;
-        document.getElementById('session-game-progress').textContent = `${session.games.length} of ${context.targetGames} games logged`;
+        document.getElementById('session-game-progress').textContent = totalGames === 0
+            ? 'No games recorded yet'
+            : `${totalGames} game${totalGames === 1 ? '' : 's'} recorded`;
 
-        document.getElementById('session-total-games-stat').textContent = `${session.games.length} / ${context.targetGames}`;
+        document.getElementById('session-total-games-stat').textContent = String(totalGames);
         document.getElementById('session-leading-team-stat').textContent = leader;
         document.getElementById('session-avg-points-stat').textContent = context.averagePoints;
         document.getElementById('session-active-penalties-stat').textContent = String(session.penalties.length);
