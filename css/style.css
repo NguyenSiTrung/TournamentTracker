@@ -1012,7 +1012,7 @@ body {
 .teams-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
+    gap: 24px;
 }
 
 /* Empty state must span full grid width and center */
@@ -1026,13 +1026,12 @@ body {
     justify-content: center;
 }
 
-/* --- Premium Team Card (Stitch-inspired) --- */
+/* --- Team Showcase Card --- */
 .team-card {
     position: relative;
     background: var(--bg-card);
     border: 1px solid var(--border-color-light);
-    border-radius: var(--radius-lg);
-    padding: 24px 24px 20px 24px;
+    border-radius: var(--radius-xl);
     overflow: hidden;
     transition: all var(--transition-med);
     animation: fadeSlideUp 0.4s ease;
@@ -1040,55 +1039,25 @@ body {
 
 .team-card:hover {
     border-color: var(--border-color-active);
-    box-shadow: 0 0 24px rgba(76, 175, 80, 0.12), 0 8px 32px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     transform: translateY(-4px);
 }
 
-/* Color accent strip on the left */
-.team-card-accent {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    border-radius: 4px 0 0 4px;
-    opacity: 0.7;
-    transition: opacity var(--transition-fast);
+/* Thin accent strip at top */
+.team-card-accent-top {
+    height: 4px;
 }
 
-.team-card:hover .team-card-accent {
-    opacity: 1;
-}
-
-/* Top row: avatar + name + actions */
-.team-card-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    margin-bottom: 6px;
-}
-
-.team-avatar {
-    width: 52px;
-    height: 52px;
-    border-radius: var(--radius-lg);
-    background: linear-gradient(135deg, var(--accent-green), var(--accent-emerald));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 900;
-    font-size: 1.2rem;
-    color: white;
-    flex-shrink: 0;
-    border: 1px solid var(--border-color-light);
-    letter-spacing: 1px;
-}
-
+/* Action buttons - absolute top right */
 .team-card-actions {
+    position: absolute;
+    top: 14px;
+    right: 14px;
     display: flex;
-    gap: 6px;
+    gap: 4px;
     opacity: 0;
     transition: opacity var(--transition-fast);
+    z-index: 2;
 }
 
 .team-card:hover .team-card-actions {
@@ -1096,8 +1065,8 @@ body {
 }
 
 .team-card-actions .team-action-btn {
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     border-radius: var(--radius-sm);
     background: rgba(46, 125, 50, 0.15);
     border: none;
@@ -1107,7 +1076,6 @@ body {
     align-items: center;
     justify-content: center;
     transition: all var(--transition-fast);
-    font-size: 0.85rem;
 }
 
 .team-card-actions .team-action-btn:hover {
@@ -1120,88 +1088,98 @@ body {
     background: var(--danger-bg);
 }
 
-/* Team name */
-.team-name {
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    letter-spacing: -0.2px;
+/* Card body */
+.team-card-body {
+    padding: 28px 24px 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-/* Team name + tag row */
-.team-name-row {
+/* Avatar - rounded square */
+.team-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin: 12px 0 2px 0;
-    flex-wrap: wrap;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 1.4rem;
+    color: white;
+    flex-shrink: 0;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* Team name - centered */
+.team-name {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+    margin-top: 14px;
+    font-family: var(--font-display);
 }
 
 /* Team tag badge */
 .team-tag-badge {
     display: inline-flex;
     align-items: center;
-    padding: 2px 8px;
-    border-radius: 6px;
-    font-size: 0.68rem;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.65rem;
     font-weight: 800;
-    letter-spacing: 1px;
+    letter-spacing: 1.2px;
     text-transform: uppercase;
     border: 1px solid;
     line-height: 1.4;
-    flex-shrink: 0;
+    margin-top: 6px;
 }
 
-/* Player count badge */
-.team-player-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--text-dim);
-    margin-bottom: 16px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+/* Players section */
+.team-players-section {
+    width: 100%;
+    margin-top: 16px;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
 }
 
-.team-player-badge svg {
-    opacity: 0.5;
-}
-
-/* Player avatar chips (overlapping circles) */
-.team-player-chips {
+.team-player-item {
     display: flex;
     align-items: center;
-    margin-bottom: 16px;
+    gap: 10px;
+    padding: 5px 0;
 }
 
-.team-player-chip {
-    width: 30px;
-    height: 30px;
+.team-player-dot {
+    width: 26px;
+    height: 26px;
     border-radius: var(--radius-full);
-    border: 2px solid var(--bg-card);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 0.6rem;
     font-weight: 700;
     color: white;
-    margin-left: -8px;
-    position: relative;
-    z-index: 1;
+    flex-shrink: 0;
     text-transform: uppercase;
 }
 
-.team-player-chips .team-player-chip:first-child {
-    margin-left: 0;
+.team-player-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
 }
 
-.team-player-chip-more {
-    background: rgba(76, 175, 80, 0.2);
-    color: var(--accent-green);
-    font-size: 0.62rem;
-    font-weight: 700;
+.team-player-more {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    padding: 5px 0;
+    padding-left: 36px;
 }
 
 /* Stats row at bottom of card */
@@ -1209,32 +1187,36 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
-    padding-top: 14px;
+    width: 100%;
+    margin-top: 16px;
+    padding-top: 16px;
     border-top: 1px solid var(--border-color-light);
 }
 
 .team-stat-item {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 2px;
 }
 
-.team-stat-label {
-    font-size: 0.62rem;
-    font-weight: 700;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-}
-
 .team-stat-value {
-    font-size: 0.92rem;
-    font-weight: 700;
+    font-size: 1.1rem;
+    font-weight: 800;
     color: var(--text-primary);
+    font-family: var(--font-display);
 }
 
 .team-stat-value.highlight {
     color: var(--accent-green);
+}
+
+.team-stat-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
 }
 
 /* Legacy support for player-tag (used in other contexts) */

@@ -150,15 +150,18 @@ const Teams = (() => {
             const stats = teamStats[team.id] || { wins: 0, points: 0, games: 0 };
             const winRate = stats.games > 0 ? Math.round((stats.wins / stats.games) * 100) : 0;
 
-            // Build player chips (show up to 4, then "+N")
-            const maxChips = 4;
-            const chipPlayers = team.players.slice(0, maxChips);
-            const extraCount = team.players.length - maxChips;
-            const chipsHtml = chipPlayers.map((p, i) => {
+            // Build player list (show up to 6, then "+N more")
+            const maxPlayers = 6;
+            const displayPlayers = team.players.slice(0, maxPlayers);
+            const extraPlayers = team.players.length - maxPlayers;
+            const playerListHtml = displayPlayers.map((p, i) => {
                 const chipColor = CHIP_COLORS[i % CHIP_COLORS.length];
                 const chipInitial = p.trim().charAt(0).toUpperCase();
-                return `<div class="team-player-chip" style="background:${chipColor}" title="${escapeHtml(p)}">${chipInitial}</div>`;
-            }).join('') + (extraCount > 0 ? `<div class="team-player-chip team-player-chip-more">+${extraCount}</div>` : '');
+                return `<div class="team-player-item">
+                    <span class="team-player-dot" style="background:${chipColor}">${chipInitial}</span>
+                    <span class="team-player-name">${escapeHtml(p)}</span>
+                </div>`;
+            }).join('') + (extraPlayers > 0 ? `<div class="team-player-item team-player-more">+${extraPlayers} more</div>` : '');
 
             // Tag badge (only show if team has a tag)
             const tagBadge = team.tag
@@ -167,39 +170,35 @@ const Teams = (() => {
 
             return `
                 <div class="team-card" data-team-id="${team.id}" data-team-name="${escapeHtml(team.name).toLowerCase()}" data-team-players="${team.players.map(p => escapeHtml(p).toLowerCase()).join(',')}">
-                    <div class="team-card-accent" style="background:${accentColor}"></div>
-                    <div class="team-card-header">
-                        <div class="team-avatar" style="background:${avatarBg}">${initials}</div>
-                        <div class="team-card-actions">
-                            <button class="team-action-btn" onclick="Teams.editTeam('${team.id}')" title="Edit">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                            </button>
-                            <button class="team-action-btn danger" onclick="Teams.deleteTeam('${team.id}')" title="Delete">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                            </button>
-                        </div>
+                    <div class="team-card-accent-top" style="background: linear-gradient(90deg, ${accentColor}, ${_darkenHex(accentColor, 40)})"></div>
+                    <div class="team-card-actions">
+                        <button class="team-action-btn" onclick="Teams.editTeam('${team.id}')" title="Edit">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                        <button class="team-action-btn danger" onclick="Teams.deleteTeam('${team.id}')" title="Delete">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
                     </div>
-                    <div class="team-name-row">
+                    <div class="team-card-body">
+                        <div class="team-avatar" style="background:${avatarBg}">${initials}</div>
                         <div class="team-name">${escapeHtml(team.name)}</div>
                         ${tagBadge}
-                    </div>
-                    <div class="team-player-badge">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-                        ${team.players.length} player${team.players.length !== 1 ? 's' : ''}
-                    </div>
-                    <div class="team-player-chips">${chipsHtml}</div>
-                    <div class="team-stats-row">
-                        <div class="team-stat-item">
-                            <span class="team-stat-label">Wins</span>
-                            <span class="team-stat-value highlight">${stats.wins}</span>
+                        <div class="team-players-section">
+                            ${playerListHtml}
                         </div>
-                        <div class="team-stat-item">
-                            <span class="team-stat-label">Points</span>
-                            <span class="team-stat-value">${stats.points}</span>
-                        </div>
-                        <div class="team-stat-item">
-                            <span class="team-stat-label">Win%</span>
-                            <span class="team-stat-value">${winRate}%</span>
+                        <div class="team-stats-row">
+                            <div class="team-stat-item">
+                                <span class="team-stat-value highlight">${stats.wins}</span>
+                                <span class="team-stat-label">Wins</span>
+                            </div>
+                            <div class="team-stat-item">
+                                <span class="team-stat-value">${stats.points}</span>
+                                <span class="team-stat-label">Points</span>
+                            </div>
+                            <div class="team-stat-item">
+                                <span class="team-stat-value">${winRate}%</span>
+                                <span class="team-stat-label">Win Rate</span>
+                            </div>
                         </div>
                     </div>
                 </div>
