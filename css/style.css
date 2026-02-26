@@ -2348,6 +2348,12 @@ body {
     position: relative;
     overflow: hidden;
     animation: settingsCardEntrance 0.45s ease-out both;
+    transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.settings-card:hover {
+    border-color: rgba(76, 175, 80, 0.32);
+    box-shadow: 0 0 24px rgba(76, 175, 80, 0.06);
 }
 
 .settings-card::before {

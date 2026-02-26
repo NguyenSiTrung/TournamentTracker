@@ -81,12 +81,12 @@
 <!-- execution: sequential -->
 <!-- depends: phase1, phase2 -->
 
-- [ ] Task 1: End-to-end testing and bug fixes
-  - [ ] Test full flow: edit profile → save → verify sidebar updates
-  - [ ] Test scoring config: change points → add game → verify new scoring applied
-  - [ ] Test reset: selective reset with confirmation → verify data cleared
-  - [ ] Test reduce motion toggle persistence
-  - [ ] Test responsive layout at 768px and 480px breakpoints
+- [x] Task 1: End-to-end testing and bug fixes
+  - [x] Test full flow: edit profile → save → verify sidebar updates
+  - [x] Test scoring config: change points → add game → verify new scoring applied
+  - [x] Test reset: selective reset with confirmation → verify data cleared
+  - [x] Test reduce motion toggle persistence
+  - [x] Test responsive layout at 768px and 480px breakpoints
 
 - [ ] Task 2: Visual polish and animation
   - [ ] Add entrance animations (fadeSlideUp) to settings cards
