@@ -208,7 +208,7 @@
                         <div class="panel">
                             <div class="panel-header">
                                 <h2 class="panel-title">Leaderboard</h2>
-                                <button class="panel-action-link" onclick="App.switchTab('history')">View all</button>
+                                <button class="panel-action-link" data-switch-tab="history">View all</button>
                             </div>
                             <div class="panel-body" id="leaderboard-content">
                                 <div class="empty-state-hero-card">
@@ -245,7 +245,7 @@
                                         <h3 class="empty-state-hero__title">No Rankings Yet</h3>
                                         <p class="empty-state-hero__subtitle">Complete your first session to see team
                                             rankings here.</p>
-                                        <button class="empty-state-hero__cta" onclick="App.switchTab('session')">Start a
+                                        <button class="empty-state-hero__cta" data-switch-tab="session">Start a
                                             Session</button>
                                     </div>
                                 </div>
@@ -289,7 +289,7 @@
                                     </table>
                                 </div>
                                 <div class="sessions-view-all" id="sessions-view-all" style="display:none;">
-                                    <button class="panel-action-link" onclick="App.switchTab('history')">View all
+                                    <button class="panel-action-link" data-switch-tab="history">View all
                                         sessions</button>
                                 </div>
                             </div>
@@ -538,7 +538,7 @@
                                 <p class="empty-state-hero__subtitle">Complete a session to see detailed results and
                                     game
                                     history here.</p>
-                                <button class="empty-state-hero__cta" onclick="App.switchTab('session')">Go to
+                                <button class="empty-state-hero__cta" data-switch-tab="session">Go to
                                     Sessions</button>
                             </div>
                         </div>
@@ -580,7 +580,7 @@
                                 <p class="empty-state-hero__subtitle">Complete sessions to build your tournament history
                                     and
                                     statistics.</p>
-                                <button class="empty-state-hero__cta" onclick="App.switchTab('session')">Go to
+                                <button class="empty-state-hero__cta" data-switch-tab="session">Go to
                                     Sessions</button>
                             </div>
                         </div>

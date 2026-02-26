@@ -41,7 +41,7 @@ const History = (() => {
                         </svg>
                         <h3 class="empty-state-hero__title">No History Yet</h3>
                         <p class="empty-state-hero__subtitle">Complete sessions to build your tournament history and statistics.</p>
-                        <button class="empty-state-hero__cta" onclick="App.switchTab('session')" id="cta-go-sessions-stats">Go to Sessions</button>
+                        <button class="empty-state-hero__cta" data-switch-tab="session" id="cta-go-sessions-stats">Go to Sessions</button>
                     </div>
                 </div>`;
             return;
@@ -120,7 +120,7 @@ const History = (() => {
                         </svg>
                         <h3 class="empty-state-hero__title">No Sessions Completed</h3>
                         <p class="empty-state-hero__subtitle">Complete a session to see detailed results and game history here.</p>
-                        <button class="empty-state-hero__cta" onclick="App.switchTab('session')" id="cta-go-sessions-history">Go to Sessions</button>
+                        <button class="empty-state-hero__cta" data-switch-tab="session" id="cta-go-sessions-history">Go to Sessions</button>
                     </div>
                 </div>`;
             return;

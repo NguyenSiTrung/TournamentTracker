@@ -3,6 +3,7 @@
  */
 const Settings = (() => {
     const REDUCE_MOTION_KEY = 'tournament_tracker_reduce_motion';
+    let togglesBound = false;
 
     async function render() {
         await loadSettings();
@@ -254,41 +255,47 @@ const Settings = (() => {
         // 2-Player toggle
         const toggle2p = document.getElementById('settings-2p-toggle');
         const section2p = document.getElementById('settings-2p-section');
+        const sync2pVisibility = () => {
+            section2p.style.display = toggle2p.checked ? '' : 'none';
+        };
         if (toggle2p && section2p) {
-            toggle2p.addEventListener('change', () => {
-                section2p.style.display = toggle2p.checked ? '' : 'none';
-            });
+            sync2pVisibility();
+            if (!togglesBound) {
+                toggle2p.addEventListener('change', sync2pVisibility);
+            }
         }
 
         // Reduce motion toggle
         const reduceMotion = document.getElementById('settings-reduce-motion');
-        if (reduceMotion) {
+        if (reduceMotion && !togglesBound) {
             reduceMotion.addEventListener('change', toggleReduceMotion);
         }
 
         // Save Profile
         const saveProfileBtn = document.getElementById('settings-save-profile');
-        if (saveProfileBtn) {
+        if (saveProfileBtn && !togglesBound) {
             saveProfileBtn.addEventListener('click', saveProfile);
         }
 
         // Save Scoring
         const saveScoringBtn = document.getElementById('settings-save-scoring');
-        if (saveScoringBtn) {
+        if (saveScoringBtn && !togglesBound) {
             saveScoringBtn.addEventListener('click', saveScoring);
         }
 
         // Restore Defaults
         const restoreBtn = document.getElementById('settings-restore-defaults');
-        if (restoreBtn) {
+        if (restoreBtn && !togglesBound) {
             restoreBtn.addEventListener('click', restoreDefaultScoring);
         }
 
         // Reset button
         const resetBtn = document.getElementById('settings-reset-btn');
-        if (resetBtn) {
+        if (resetBtn && !togglesBound) {
             resetBtn.addEventListener('click', showResetModal);
         }
+
+        togglesBound = true;
     }
 
     // --- Sidebar Brand Update ---

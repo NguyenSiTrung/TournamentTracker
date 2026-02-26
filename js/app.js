@@ -4,6 +4,20 @@
 const App = (() => {
     let activeModalClass = '';
     let recentSessionsFilter = 'all';
+    const TAB = Object.freeze({
+        DASHBOARD: 'dashboard',
+        TEAMS: 'teams',
+        SESSION: 'session',
+        HISTORY: 'history',
+        SETTINGS: 'settings',
+    });
+    const TAB_RENDERERS = Object.freeze({
+        [TAB.DASHBOARD]: () => refreshDashboard(),
+        [TAB.TEAMS]: () => Teams.render(),
+        [TAB.SESSION]: () => Session.render(),
+        [TAB.HISTORY]: () => History.render(),
+        [TAB.SETTINGS]: () => Settings.render(),
+    });
 
     async function init() {
         setupSidebarNavigation();
@@ -11,6 +25,40 @@ const App = (() => {
         Settings.restoreReduceMotion();
         await checkLocalStorageMigration();
         await refreshAll();
+    }
+
+    function getAvailableTabs() {
+        const tabs = Array.from(document.querySelectorAll('.sidebar-nav-item[data-tab]'))
+            .map((btn) => btn.getAttribute('data-tab'))
+            .filter(Boolean);
+        return Array.from(new Set(tabs));
+    }
+
+    function getCurrentActiveTab() {
+        const active = document.querySelector('.sidebar-nav-item.active[data-tab]');
+        return active ? active.getAttribute('data-tab') : null;
+    }
+
+    function resolveTabName(tabName) {
+        const availableTabs = getAvailableTabs();
+        if (availableTabs.length === 0) {
+            return null;
+        }
+
+        if (tabName && availableTabs.includes(tabName) && document.getElementById(`view-${tabName}`)) {
+            return tabName;
+        }
+
+        const activeTab = getCurrentActiveTab();
+        if (activeTab && availableTabs.includes(activeTab) && document.getElementById(`view-${activeTab}`)) {
+            return activeTab;
+        }
+
+        if (availableTabs.includes(TAB.DASHBOARD) && document.getElementById(`view-${TAB.DASHBOARD}`)) {
+            return TAB.DASHBOARD;
+        }
+
+        return availableTabs.find((tab) => document.getElementById(`view-${tab}`)) || null;
     }
 
     function setupSidebarNavigation() {
@@ -41,13 +89,24 @@ const App = (() => {
     }
 
     async function switchTab(tabName) {
+        const resolvedTab = resolveTabName(tabName);
+        if (!resolvedTab) {
+            console.warn(`Unable to switch tab for target "${tabName}"`);
+            return;
+        }
+
+        const target = document.getElementById(`view-${resolvedTab}`);
+        if (!target) {
+            console.warn(`Missing view for tab "${resolvedTab}"`);
+            return;
+        }
+
         // Update sidebar active state
         document.querySelectorAll('.sidebar-nav-item').forEach(btn => {
-            btn.classList.toggle('active', btn.getAttribute('data-tab') === tabName);
+            btn.classList.toggle('active', btn.getAttribute('data-tab') === resolvedTab);
         });
 
         // Show target view
-        const target = document.getElementById(`view-${tabName}`);
         document.querySelectorAll('.view-content').forEach(content => {
             if (content === target) {
                 content.classList.remove('active');
@@ -65,16 +124,56 @@ const App = (() => {
             sidebarToggle.setAttribute('aria-expanded', 'false');
         }
 
-        switch (tabName) {
-            case 'dashboard': await refreshDashboard(); break;
-            case 'teams': await Teams.render(); break;
-            case 'session': await Session.render(); break;
-            case 'history': await History.render(); break;
-            case 'settings': await Settings.render(); break;
+        const renderTab = TAB_RENDERERS[resolvedTab];
+        if (renderTab) {
+            await renderTab();
         }
     }
 
+    function setupDelegatedTabSwitching() {
+        document.addEventListener('click', (event) => {
+            const trigger = event.target.closest('[data-switch-tab]');
+            if (!trigger) {
+                return;
+            }
+
+            const tabName = trigger.getAttribute('data-switch-tab');
+            if (!tabName) {
+                return;
+            }
+
+            event.preventDefault();
+            switchTab(tabName);
+        });
+    }
+
+    function setTabSwitchTarget(el, tabName) {
+        if (!el) {
+            return;
+        }
+        el.setAttribute('data-switch-tab', tabName);
+        el.removeAttribute('onclick');
+    }
+
+    function setTabSwitchTargets(root = document) {
+        if (!root) {
+            return;
+        }
+
+        root.querySelectorAll('[onclick]').forEach((el) => {
+            const handler = (el.getAttribute('onclick') || '').trim();
+            const match = handler.match(/^App\.switchTab\('([^']+)'\)$/);
+            if (!match) {
+                return;
+            }
+            setTabSwitchTarget(el, match[1]);
+        });
+    }
+
     function setupEventListeners() {
+        setupDelegatedTabSwitching();
+        setTabSwitchTargets();
+
         document.getElementById('btn-create-team').addEventListener('click', () => {
             Teams.showCreateModal();
         });
@@ -228,7 +327,7 @@ const App = (() => {
         const teams = await Store.getTeams();
         if (teams.length < 2) {
             toast('Create at least 2 teams first to start a session.', 'info');
-            await switchTab('teams');
+            await switchTab(TAB.TEAMS);
             return;
         }
         Session.showNewSessionModal();
@@ -264,7 +363,7 @@ const App = (() => {
                 </svg>
                 <h3 class="empty-state-hero__title">No Rankings Yet</h3>
                 <p class="empty-state-hero__subtitle">Complete your first session to see team rankings here.</p>
-                <button class="empty-state-hero__cta" onclick="App.switchTab('session')" id="cta-start-session-lb">Start a Session</button>
+                <button class="empty-state-hero__cta" data-switch-tab="${TAB.SESSION}" id="cta-start-session-lb">Start a Session</button>
             </div>
         </div>`;
             return;
@@ -475,11 +574,9 @@ const App = (() => {
                     ? 'finalized sessions'
                     : 'sessions';
             viewAllBtn.textContent = `View all ${filteredSessions.length} ${suffix}`;
-            viewAllBtn.setAttribute(
-                'onclick',
-                recentSessionsFilter === 'active'
-                    ? "App.switchTab('session')"
-                    : "App.switchTab('history')"
+            setTabSwitchTarget(
+                viewAllBtn,
+                recentSessionsFilter === 'active' ? TAB.SESSION : TAB.HISTORY
             );
         }
     }

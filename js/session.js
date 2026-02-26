@@ -3,20 +3,19 @@
  */
 const Session = (() => {
     let currentSessionId = null;
+    let renderVersion = 0;
 
-    async function render() {
-        const activeSessions = await Store.getActiveSessions();
-
-        if (currentSessionId) {
-            const session = await Store.getSession(currentSessionId);
-            if (session && session.status === 'active') {
-                await showActiveSession(session);
-                return;
-            } else {
-                currentSessionId = null;
-            }
+    function isRenderCurrent(renderToken, sessionIdSnapshot = currentSessionId) {
+        if (renderToken !== renderVersion) {
+            return false;
         }
+        if (sessionIdSnapshot && sessionIdSnapshot !== currentSessionId) {
+            return false;
+        }
+        return true;
+    }
 
+    function showNoActiveSession(activeSessions) {
         // Show "no active session" view
         document.getElementById('no-active-session').style.display = 'block';
         document.getElementById('active-session-panel').style.display = 'none';
@@ -36,22 +35,62 @@ const Session = (() => {
         }
     }
 
-    async function showActiveSession(session) {
-        document.getElementById('no-active-session').style.display = 'none';
-        document.getElementById('active-session-panel').style.display = 'block';
+    async function render() {
+        const renderToken = ++renderVersion;
+        const activeSessions = await Store.getActiveSessions();
+        if (!isRenderCurrent(renderToken)) {
+            return;
+        }
 
-        const [teams, scores, allSessions] = await Promise.all([
-            Store.getTeams(),
-            Store.getSessionScores(session.id),
-            Store.getSessions(),
-        ]);
+        const sessionIdSnapshot = currentSessionId;
+        if (sessionIdSnapshot) {
+            const session = await Store.getSession(sessionIdSnapshot);
+            if (!isRenderCurrent(renderToken, sessionIdSnapshot)) {
+                return;
+            }
+            if (session && session.status === 'active') {
+                await showActiveSession(session, renderToken, sessionIdSnapshot, activeSessions);
+                return;
+            } else if (currentSessionId === sessionIdSnapshot) {
+                currentSessionId = null;
+            }
+        }
 
-        const context = buildSessionContext(session, teams, scores, allSessions);
+        if (!isRenderCurrent(renderToken)) {
+            return;
+        }
+        showNoActiveSession(activeSessions);
+    }
 
-        renderSessionHeader(session, context);
-        renderScoreboard(session, context);
-        renderGamesList(session, context);
-        renderPenalties(session);
+    async function showActiveSession(session, renderToken, sessionIdSnapshot, activeSessions) {
+        try {
+            const [teams, scores, allSessions] = await Promise.all([
+                Store.getTeams(),
+                Store.getSessionScores(session.id),
+                Store.getSessions(),
+            ]);
+
+            if (!isRenderCurrent(renderToken, sessionIdSnapshot)) {
+                return;
+            }
+
+            const context = buildSessionContext(session, teams, scores, allSessions);
+
+            document.getElementById('no-active-session').style.display = 'none';
+            document.getElementById('active-session-panel').style.display = 'block';
+
+            renderSessionHeader(session, context);
+            renderScoreboard(session, context);
+            renderGamesList(session, context);
+            renderPenalties(session);
+        } catch (err) {
+            if (!isRenderCurrent(renderToken, sessionIdSnapshot)) {
+                return;
+            }
+            currentSessionId = null;
+            showNoActiveSession(activeSessions);
+            App.toast('Failed to load active session. Please retry.', 'error');
+        }
     }
 
     function buildSessionContext(session, teams, scores, allSessions) {
