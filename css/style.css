@@ -22,6 +22,8 @@
     --text-secondary: #81c784;
     --text-muted: #6b9b72;
     --text-dim: #5a8a60;
+    --text-on-accent: #0b1a0f;
+    --focus-ring: #9be7a0;
 
     /* Accent Colors */
     --accent-green: #4caf50;
@@ -101,6 +103,11 @@ body {
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+:where(button, [role="button"], a, input, select, textarea):focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
 }
 
 /* --- App Layout: Sidebar + Main --- */
@@ -189,6 +196,7 @@ body {
     width: 100%;
     text-align: left;
     position: relative;
+    min-height: 44px;
 }
 
 .sidebar-nav-item:hover {
@@ -197,13 +205,13 @@ body {
 }
 
 .sidebar-nav-item.active {
-    color: var(--text-primary);
+    color: var(--text-on-accent);
     background: var(--accent-green);
     font-weight: 600;
 }
 
 .sidebar-nav-item.active svg {
-    stroke: white;
+    stroke: var(--text-on-accent);
 }
 
 .sidebar-nav-item svg {
@@ -285,8 +293,8 @@ body {
 }
 
 .sidebar-logout-btn {
-    width: 32px;
-    height: 32px;
+    width: 44px;
+    height: 44px;
     border: none;
     background: transparent;
     color: var(--text-muted);
@@ -311,8 +319,8 @@ body {
     top: 16px;
     left: 16px;
     z-index: 200;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border: 1px solid var(--border-color);
     background: var(--bg-card);
     color: var(--text-primary);
@@ -398,11 +406,12 @@ body {
     cursor: pointer;
     transition: all var(--transition-fast);
     white-space: nowrap;
+    min-height: 42px;
 }
 
 .btn-primary {
     background: var(--accent-green);
-    color: white;
+    color: var(--text-on-accent);
     box-shadow: 0 2px 12px rgba(76, 175, 80, 0.3);
 }
 
@@ -451,8 +460,9 @@ body {
 }
 
 .btn-sm {
-    padding: 6px 14px;
+    padding: 8px 14px;
     font-size: 0.8rem;
+    min-height: 40px;
 }
 
 .btn-lg {
@@ -468,7 +478,7 @@ body {
 /* Accent button (for modals, backward compat) */
 .btn-accent {
     background: var(--accent-green);
-    color: white;
+    color: var(--text-on-accent);
     box-shadow: 0 2px 12px rgba(76, 175, 80, 0.3);
 }
 
@@ -510,11 +520,11 @@ body {
 }
 
 .stat-card-label {
-    font-size: 0.72rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.8px;
+    letter-spacing: 0.5px;
 }
 
 .stat-card-icon {
@@ -606,17 +616,46 @@ body {
     border: none;
     color: var(--text-muted);
     font-family: var(--font-family);
-    font-size: 0.82rem;
+    font-size: 0.86rem;
     font-weight: 500;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 6px;
     transition: color var(--transition-fast);
+    min-height: 40px;
+    padding: 0 4px;
 }
 
 .panel-action-link:hover {
     color: var(--accent-green);
+}
+
+.recent-session-filter-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.recent-session-filter-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.recent-session-filter {
+    min-height: 38px;
+    padding: 6px 30px 6px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    font-size: 0.84rem;
+    font-family: var(--font-family);
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b9b72' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
 }
 
 /* ================================
@@ -780,16 +819,17 @@ body {
 .sessions-table {
     width: 100%;
     border-collapse: collapse;
+    min-width: 640px;
 }
 
 .sessions-table th {
     text-align: left;
     padding: 10px 14px;
-    font-size: 0.68rem;
+    font-size: 0.78rem;
     font-weight: 600;
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.8px;
+    letter-spacing: 0.5px;
     border-bottom: 1px solid var(--border-color-light);
     white-space: nowrap;
 }
@@ -827,7 +867,7 @@ body {
 }
 
 .session-cell-date {
-    font-size: 0.72rem;
+    font-size: 0.8rem;
     color: var(--text-muted);
 }
 
@@ -878,7 +918,7 @@ body {
     align-items: center;
     padding: 4px 12px;
     border-radius: 20px;
-    font-size: 0.7rem;
+    font-size: 0.78rem;
     font-weight: 600;
     white-space: nowrap;
 }
@@ -980,12 +1020,15 @@ body {
 
 .team-card-actions {
     display: flex;
-    gap: 4px;
+    gap: 8px;
 }
 
 .team-card-actions .btn {
-    padding: 6px 10px;
-    font-size: 0.75rem;
+    padding: 8px 12px;
+    font-size: 0.78rem;
+    min-width: 44px;
+    min-height: 44px;
+    justify-content: center;
 }
 
 .team-players {
@@ -1121,7 +1164,7 @@ body {
     max-width: 340px;
     padding: 14px 24px;
     background: linear-gradient(135deg, var(--accent-green), var(--accent-emerald));
-    color: #fff;
+    color: var(--text-on-accent);
     font-weight: 700;
     font-size: 0.95rem;
     border: none;
@@ -2099,7 +2142,7 @@ body {
     z-index: 1000;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: clamp(12px, 3vw, 20px);
 }
 
 .modal-overlay.active {
@@ -2652,7 +2695,7 @@ body {
 
 .form-label {
     display: block;
-    font-size: 0.8rem;
+    font-size: 0.84rem;
     font-weight: 600;
     color: var(--text-secondary);
     margin-bottom: 6px;
@@ -2678,6 +2721,12 @@ body {
 .form-select:focus {
     border-color: var(--accent-green);
     box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
+}
+
+.form-input:focus-visible,
+.form-select:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 1px;
 }
 
 .form-input::placeholder {
@@ -2743,8 +2792,8 @@ body {
 }
 
 .btn-remove-player {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     border: 1px solid rgba(239, 83, 80, 0.3);
     background: var(--danger-bg);
     color: var(--danger);
@@ -2878,16 +2927,23 @@ body {
    DELETE INLINE BUTTON
    ================================ */
 .btn-delete-inline {
-    background: none;
-    border: none;
+    background: rgba(239, 83, 80, 0.1);
+    border: 1px solid rgba(239, 83, 80, 0.25);
     color: var(--text-muted);
     cursor: pointer;
-    font-size: 0.85rem;
-    padding: 4px;
-    transition: color var(--transition-fast);
+    font-size: 0.9rem;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    transition: color var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-delete-inline:hover {
+    background: rgba(239, 83, 80, 0.2);
+    border-color: rgba(239, 83, 80, 0.4);
     color: var(--danger);
 }
 
@@ -3059,7 +3115,7 @@ body {
 
 @media (max-width: 768px) {
     .modal.modal-game-result {
-        width: min(100%, calc(100vw - 20px));
+        width: min(100%, calc(100vw - 24px));
         padding: 20px 18px;
         border-radius: var(--radius-lg);
     }
@@ -3174,15 +3230,15 @@ body {
         justify-content: center;
     }
 
-    .sessions-table th:nth-child(4),
-    .sessions-table td:nth-child(4) {
-        display: none;
+    .sessions-table th,
+    .sessions-table td {
+        display: table-cell;
     }
 }
 
 @media (max-width: 480px) {
     .modal.modal-game-result {
-        width: calc(100vw - 14px);
+        width: min(100%, calc(100vw - 16px));
         max-height: 92vh;
         padding: 16px 12px 14px;
         border-radius: var(--radius-md);
@@ -3260,11 +3316,9 @@ body {
         font-size: 1.5rem;
     }
 
-    .sessions-table th:nth-child(3),
-    .sessions-table td:nth-child(3),
-    .sessions-table th:nth-child(4),
-    .sessions-table td:nth-child(4) {
-        display: none;
+    .sessions-table th,
+    .sessions-table td {
+        display: table-cell;
     }
 
     .lb-first-score {
@@ -3385,11 +3439,11 @@ body {
 }
 
 .ct-section-label {
-    font-size: 0.7rem;
+    font-size: 0.78rem;
     font-weight: 700;
     color: var(--text-secondary);
     text-transform: uppercase;
-    letter-spacing: 1.2px;
+    letter-spacing: 0.8px;
     margin-bottom: 8px;
     display: flex;
     align-items: center;
@@ -3397,7 +3451,7 @@ body {
 }
 
 .ct-section-label .ct-badge {
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     font-weight: 700;
     font-family: 'Space Grotesk', monospace;
     padding: 2px 7px;
@@ -3435,11 +3489,11 @@ body {
 .ct-input-group label {
     display: flex;
     justify-content: space-between;
-    font-size: 0.7rem;
+    font-size: 0.78rem;
     font-weight: 700;
     color: var(--text-secondary);
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.7px;
     margin-bottom: 6px;
 }
 
@@ -3503,8 +3557,8 @@ body {
 }
 
 .ct-color-swatch {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     border: 2px solid transparent;
     cursor: pointer;
@@ -3515,6 +3569,11 @@ body {
 
 .ct-color-swatch:hover {
     transform: scale(1.15);
+}
+
+.ct-color-swatch:focus-visible {
+    box-shadow: 0 0 0 3px rgba(155, 231, 160, 0.28);
+    transform: scale(1.1);
 }
 
 .ct-color-swatch.active {
@@ -3594,7 +3653,7 @@ body {
 }
 
 .ct-preview-label {
-    font-size: 0.7rem;
+    font-size: 0.76rem;
     font-weight: 700;
     color: var(--text-secondary);
     text-transform: uppercase;
@@ -3631,14 +3690,14 @@ body {
 }
 
 .ct-player-avatar {
-    width: 34px;
-    height: 34px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.7rem;
+    font-size: 0.76rem;
     font-weight: 800;
     color: var(--text-primary);
     background: rgba(76, 175, 80, 0.18);
@@ -3661,8 +3720,8 @@ body {
 }
 
 .ct-player-remove {
-    width: 28px;
-    height: 28px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     border: none;
     background: transparent;
@@ -3673,11 +3732,16 @@ body {
     align-items: center;
     justify-content: center;
     transition: all var(--transition-fast);
-    opacity: 0;
+    opacity: 0.45;
     flex-shrink: 0;
 }
 
 .ct-player-row:hover .ct-player-remove {
+    opacity: 1;
+}
+
+.ct-player-row:focus-within .ct-player-remove,
+.ct-player-remove:focus-visible {
     opacity: 1;
 }
 

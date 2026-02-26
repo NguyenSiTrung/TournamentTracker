@@ -3,6 +3,7 @@
  */
 const App = (() => {
     let activeModalClass = '';
+    let recentSessionsFilter = 'all';
 
     async function init() {
         setupSidebarNavigation();
@@ -21,15 +22,20 @@ const App = (() => {
 
         // Mobile sidebar toggle
         const toggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.getElementById('sidebar');
         if (toggle) {
             toggle.addEventListener('click', () => {
-                document.getElementById('sidebar').classList.toggle('open');
+                const isOpen = sidebar.classList.toggle('open');
+                toggle.setAttribute('aria-expanded', String(isOpen));
             });
         }
 
         // Close sidebar on main area click (mobile)
         document.querySelector('.main-area').addEventListener('click', () => {
-            document.getElementById('sidebar').classList.remove('open');
+            sidebar.classList.remove('open');
+            if (toggle) {
+                toggle.setAttribute('aria-expanded', 'false');
+            }
         });
     }
 
@@ -53,6 +59,10 @@ const App = (() => {
 
         // Close mobile sidebar
         document.getElementById('sidebar').classList.remove('open');
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        if (sidebarToggle) {
+            sidebarToggle.setAttribute('aria-expanded', 'false');
+        }
 
         switch (tabName) {
             case 'dashboard': await refreshDashboard(); break;
@@ -67,13 +77,8 @@ const App = (() => {
             Teams.showCreateModal();
         });
 
-        document.getElementById('btn-new-session').addEventListener('click', () => {
-            Session.showNewSessionModal();
-        });
-
-        document.getElementById('btn-start-session-hero').addEventListener('click', () => {
-            Session.showNewSessionModal();
-        });
+        document.getElementById('btn-new-session').addEventListener('click', handleSessionStartIntent);
+        document.getElementById('btn-start-session-hero').addEventListener('click', handleSessionStartIntent);
 
         document.getElementById('btn-add-game').addEventListener('click', () => {
             Session.showAddGameModal();
@@ -111,6 +116,14 @@ const App = (() => {
             });
         }
         document.getElementById('import-file').addEventListener('change', importData);
+
+        const recentFilter = document.getElementById('recent-session-filter');
+        if (recentFilter) {
+            recentFilter.addEventListener('change', async (e) => {
+                recentSessionsFilter = e.target.value;
+                await renderRecentSessions();
+            });
+        }
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
@@ -169,6 +182,7 @@ const App = (() => {
         animateCounter(document.getElementById('total-teams'), totalTeams);
         animateCounter(document.getElementById('total-sessions'), totalSessions);
         animateCounter(document.getElementById('avg-points'), avgPoints);
+        updateSessionEntryCtas(totalTeams);
 
         // Update nav badges
         updateNavBadges(activeSessions);
@@ -184,6 +198,29 @@ const App = (() => {
         } else {
             sessionBadge.style.display = 'none';
         }
+    }
+
+    function updateSessionEntryCtas(totalTeams) {
+        const needsTeams = totalTeams < 2;
+        const heroLabel = document.getElementById('btn-start-session-hero-label');
+        const sessionLabel = document.getElementById('btn-new-session-label');
+
+        if (heroLabel) {
+            heroLabel.textContent = needsTeams ? 'Create Teams First' : 'Start New Session';
+        }
+        if (sessionLabel) {
+            sessionLabel.textContent = needsTeams ? 'Create Teams First' : 'New Session';
+        }
+    }
+
+    async function handleSessionStartIntent() {
+        const teams = await Store.getTeams();
+        if (teams.length < 2) {
+            toast('Create at least 2 teams first to start a session.', 'info');
+            await switchTab('teams');
+            return;
+        }
+        Session.showNewSessionModal();
     }
 
     async function renderLeaderboard() {
@@ -283,12 +320,32 @@ const App = (() => {
     async function renderRecentSessions() {
         const allSessions = await Store.getSessions();
         allSessions.sort((a, b) => new Date(b.date) - new Date(a.date));
-        const recent = allSessions.slice(0, 6);
+        const filterSelect = document.getElementById('recent-session-filter');
+        if (filterSelect && !['all', 'active', 'completed'].includes(recentSessionsFilter)) {
+            recentSessionsFilter = 'all';
+        }
+        if (filterSelect) {
+            filterSelect.value = recentSessionsFilter;
+        }
+
+        const filteredSessions = allSessions.filter((session) => {
+            if (recentSessionsFilter === 'active') return session.status === 'active';
+            if (recentSessionsFilter === 'completed') return session.status === 'completed';
+            return true;
+        });
+        const recent = filteredSessions.slice(0, 6);
 
         const tbody = document.getElementById('recent-sessions-body');
         const viewAll = document.getElementById('sessions-view-all');
 
         if (recent.length === 0) {
+            if (allSessions.length > 0) {
+                const label = recentSessionsFilter === 'active' ? 'active sessions' : 'finalized sessions';
+                tbody.innerHTML = `<tr><td colspan="5" class="empty-state">No ${label} found yet.</td></tr>`;
+                viewAll.style.display = 'none';
+                return;
+            }
+
             tbody.innerHTML = `<tr><td colspan="5">
                 <div class="empty-state-hero">
                     <svg class="empty-state-hero__svg-illustration" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -303,7 +360,7 @@ const App = (() => {
                     </svg>
                     <h3 class="empty-state-hero__title">No Sessions Recorded</h3>
                     <p class="empty-state-hero__subtitle">Start a new session to track games and scores.</p>
-                    <button class="empty-state-hero__cta" onclick="Session.showNewSessionModal()" id="cta-start-new-session">Start New Session</button>
+                    <button class="empty-state-hero__cta" onclick="App.handleSessionStartIntent()" id="cta-start-new-session">Start New Session</button>
                 </div>
             </td></tr>`;
             viewAll.style.display = 'none';
@@ -314,7 +371,7 @@ const App = (() => {
         for (let i = 0; i < recent.length; i++) {
             const session = recent[i];
             const full = await Store.getSession(session.id);
-            const sessionNum = allSessions.length - allSessions.indexOf(session);
+            const sessionNum = allSessions.length - allSessions.findIndex(item => item.id === session.id);
             const dateObj = new Date(full.date);
 
             // Determine if today/yesterday/other
@@ -392,16 +449,27 @@ const App = (() => {
 
         tbody.innerHTML = rows.join('');
 
-        if (allSessions.length > 6) {
+        if (filteredSessions.length > 0) {
             viewAll.style.display = 'block';
         } else {
-            viewAll.style.display = allSessions.length > 0 ? 'block' : 'none';
+            viewAll.style.display = 'none';
         }
 
         // Update "View all X sessions" text
         const viewAllBtn = viewAll.querySelector('.panel-action-link');
         if (viewAllBtn) {
-            viewAllBtn.textContent = `View all ${allSessions.length} sessions`;
+            const suffix = recentSessionsFilter === 'active'
+                ? 'active sessions'
+                : recentSessionsFilter === 'completed'
+                    ? 'finalized sessions'
+                    : 'sessions';
+            viewAllBtn.textContent = `View all ${filteredSessions.length} ${suffix}`;
+            viewAllBtn.setAttribute(
+                'onclick',
+                recentSessionsFilter === 'active'
+                    ? "App.switchTab('session')"
+                    : "App.switchTab('history')"
+            );
         }
     }
 
@@ -430,7 +498,33 @@ const App = (() => {
         }, 100);
     }
 
-    function closeModal() {
+    function isModalDirty() {
+        const overlay = document.getElementById('modal-overlay');
+        if (!overlay.classList.contains('active')) return false;
+
+        const fields = document.querySelectorAll('#modal-body input, #modal-body textarea, #modal-body select');
+        for (const field of fields) {
+            if (field.disabled) continue;
+            const type = (field.getAttribute('type') || '').toLowerCase();
+            if (type === 'hidden') continue;
+
+            if (type === 'checkbox' || type === 'radio') {
+                if (field.checked !== field.defaultChecked) return true;
+                continue;
+            }
+
+            if (field.value !== field.defaultValue) return true;
+        }
+
+        return false;
+    }
+
+    function closeModal(force = false) {
+        if (!force && isModalDirty()) {
+            const confirmDiscard = window.confirm('Discard unsaved changes?');
+            if (!confirmDiscard) return false;
+        }
+
         document.getElementById('modal-overlay').classList.remove('active');
 
         if (activeModalClass) {
@@ -445,6 +539,8 @@ const App = (() => {
             const title = header.querySelector('#modal-title');
             if (title) title.style.display = '';
         }
+
+        return true;
     }
 
     // --- Toast ---
@@ -537,7 +633,7 @@ const App = (() => {
             await Store.importData(raw);
             localStorage.removeItem(STORAGE_KEY);
             Store.invalidateTeamsCache();
-            closeModal();
+            closeModal(true);
             toast('Data migrated successfully!', 'success');
             await refreshAll();
         } catch (err) {
@@ -546,10 +642,14 @@ const App = (() => {
     }
 
     function skipMigration() {
-        closeModal();
+        closeModal(true);
     }
 
-    return { init, switchTab, refreshDashboard, openModal, closeModal, toast, runMigration, skipMigration };
+    return {
+        init, switchTab, refreshDashboard,
+        openModal, closeModal, toast,
+        runMigration, skipMigration, handleSessionStartIntent
+    };
 })();
 
 // Initialize on DOM ready

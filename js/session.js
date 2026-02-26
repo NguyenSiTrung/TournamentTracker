@@ -176,7 +176,7 @@ const Session = (() => {
                 <tr>
                     <th scope="row" class="matrix-game-label">
                         <span>Game ${index + 1}</span>
-                        <button class="btn-delete-inline" onclick="Session.removeGame('${game.id}')" title="Remove game">🗑️</button>
+                        <button class="btn-delete-inline" onclick="Session.removeGame('${game.id}')" title="Remove game ${index + 1}" aria-label="Remove game ${index + 1}">🗑️</button>
                     </th>
                     ${cells}
                 </tr>
@@ -343,7 +343,7 @@ const Session = (() => {
             <div class="game-card">
                 <div class="game-card-header">
                     <span class="game-card-title">🎯 Game ${index + 1}: ${escapeHtml(game.name)}</span>
-                    ${showDelete ? `<button class="btn-delete-inline" onclick="Session.removeGame('${game.id}')" title="Remove game">🗑️</button>` : ''}
+                    ${showDelete ? `<button class="btn-delete-inline" onclick="Session.removeGame('${game.id}')" title="Remove game ${index + 1}" aria-label="Remove game ${index + 1}">🗑️</button>` : ''}
                 </div>
                 <div class="game-placements">
                     ${placementsHtml}
@@ -371,7 +371,7 @@ const Session = (() => {
                     </div>
                     <div class="penalty-item-actions">
                         <span class="penalty-value">${p.value} pts</span>
-                        <button class="btn-delete-inline" onclick="Session.removePenalty('${p.id}')" title="Remove penalty">🗑️</button>
+                        <button class="btn-delete-inline" onclick="Session.removePenalty('${p.id}')" title="Remove penalty" aria-label="Remove penalty">🗑️</button>
                     </div>
                 </div>
             `;
@@ -592,7 +592,7 @@ const Session = (() => {
 
         const session = await Store.createSession(name, teamIds);
         currentSessionId = session.id;
-        App.closeModal();
+        App.closeModal(true);
         await render();
         await App.refreshDashboard();
         App.toast('Session started!', 'success');
@@ -629,7 +629,7 @@ const Session = (() => {
         }
 
         await Store.updateSession(currentSessionId, { name });
-        App.closeModal();
+        App.closeModal(true);
         await render();
         await App.refreshDashboard();
         App.toast('Session details updated', 'success');
@@ -822,17 +822,24 @@ const Session = (() => {
             await Store.addPenalty(currentSessionId, penaltyTeamId, penaltyValue, penaltyReason);
         }
 
-        App.closeModal();
+        App.closeModal(true);
         await render();
         await App.refreshDashboard();
         App.toast('Game added!', 'success');
     }
 
     async function removeGame(gameId) {
-        await Store.removeGame(currentSessionId, gameId);
-        await render();
-        await App.refreshDashboard();
-        App.toast('Game removed', 'info');
+        const confirmed = window.confirm('Remove this game result? Session totals will be recalculated.');
+        if (!confirmed) return;
+
+        try {
+            await Store.removeGame(currentSessionId, gameId);
+            await render();
+            await App.refreshDashboard();
+            App.toast('Game removed', 'info');
+        } catch (err) {
+            App.toast('Failed to remove game: ' + err.message, 'error');
+        }
     }
 
     async function showAddPenaltyModal() {
@@ -896,17 +903,24 @@ const Session = (() => {
         const reason = document.getElementById('penalty-reason-input').value.trim();
 
         await Store.addPenalty(currentSessionId, teamId, penaltyValue, reason);
-        App.closeModal();
+        App.closeModal(true);
         await render();
         await App.refreshDashboard();
         App.toast('Penalty applied!', 'info');
     }
 
     async function removePenalty(penaltyId) {
-        await Store.removePenalty(currentSessionId, penaltyId);
-        await render();
-        await App.refreshDashboard();
-        App.toast('Penalty removed', 'info');
+        const confirmed = window.confirm('Remove this penalty entry?');
+        if (!confirmed) return;
+
+        try {
+            await Store.removePenalty(currentSessionId, penaltyId);
+            await render();
+            await App.refreshDashboard();
+            App.toast('Penalty removed', 'info');
+        } catch (err) {
+            App.toast('Failed to remove penalty: ' + err.message, 'error');
+        }
     }
 
     async function completeSession() {
@@ -933,7 +947,7 @@ const Session = (() => {
     async function confirmComplete() {
         await Store.updateSession(currentSessionId, { status: 'completed' });
         currentSessionId = null;
-        App.closeModal();
+        App.closeModal(true);
         await render();
         await App.refreshDashboard();
         await History.render();

@@ -117,7 +117,7 @@ const Teams = (() => {
                     </div>
                 </div>
                 <div class="ct-input-group ct-input-group-tag">
-                    <label>Tag <span class="ct-char-count" id="tag-char-count">0/4</span></label>
+                    <label>Tag <span class="ct-char-count" id="tag-char-count">0/4 · preview</span></label>
                     <input class="form-input ct-input-tag" id="team-tag-input" placeholder="TAG" maxlength="4" oninput="Teams.updateTagCount(); Teams.updatePreview()">
                 </div>
             </div>
@@ -126,7 +126,7 @@ const Teams = (() => {
             <div class="ct-color-preview-row">
                 <div class="ct-color-picker-wrap">
                     <div class="ct-input-group" style="margin-bottom:0">
-                        <label>Team Color</label>
+                        <label>Team Color <span class="ct-char-count">preview only</span></label>
                         <div class="ct-color-picker">${colorSwatches}</div>
                     </div>
                 </div>
@@ -171,7 +171,7 @@ const Teams = (() => {
 
         const footer = `
             <div class="ct-footer">
-                <span class="ct-footer-hint">Teams can be edited later</span>
+                <span class="ct-footer-hint">Teams can be edited later. Tag and color are currently preview-only.</span>
                 <div class="ct-footer-actions">
                     <button class="ct-btn-cancel" onclick="App.closeModal()">Cancel</button>
                     <button class="ct-btn-create" onclick="Teams.saveNewTeam()">
@@ -226,7 +226,7 @@ const Teams = (() => {
         const tag = document.getElementById('team-tag-input');
         const counter = document.getElementById('tag-char-count');
         if (tag && counter) {
-            counter.textContent = `${tag.value.length}/4`;
+            counter.textContent = `${tag.value.length}/4 · preview`;
         }
     }
 
@@ -320,7 +320,7 @@ const Teams = (() => {
 
         try {
             await Store.createTeam(name, players);
-            App.closeModal();
+            App.closeModal(true);
             await render();
             await App.refreshDashboard();
             App.toast('Team created!', 'success');
@@ -374,7 +374,7 @@ const Teams = (() => {
         }
 
         await Store.updateTeam(id, name, players);
-        App.closeModal();
+        App.closeModal(true);
         await render();
         await App.refreshDashboard();
         App.toast('Team updated!', 'success');
@@ -397,7 +397,7 @@ const Teams = (() => {
 
     async function confirmDelete(id) {
         await Store.deleteTeam(id);
-        App.closeModal();
+        App.closeModal(true);
         await render();
         await App.refreshDashboard();
         App.toast('Team deleted', 'info');

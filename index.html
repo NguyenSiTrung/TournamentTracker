@@ -76,7 +76,7 @@
                         <line x1="3" y1="12" x2="3.01" y2="12" />
                         <line x1="3" y1="18" x2="3.01" y2="18" />
                     </svg>
-                    <span>Rules</span>
+                    <span>History</span>
                 </button>
                 <button class="sidebar-nav-item" data-tab="settings">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -115,7 +115,8 @@
         </aside>
 
         <!-- Mobile sidebar toggle -->
-        <button class="sidebar-toggle" id="sidebar-toggle">
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle navigation menu" aria-controls="sidebar"
+            aria-expanded="false">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
                 <line x1="3" y1="12" x2="21" y2="12" />
@@ -142,7 +143,7 @@
                                 <line x1="12" y1="8" x2="12" y2="16" />
                                 <line x1="8" y1="12" x2="16" y2="12" />
                             </svg>
-                            Start New Session
+                            <span id="btn-start-session-hero-label">Start New Session</span>
                         </button>
                     </div>
                 </div>
@@ -257,13 +258,15 @@
                         <div class="panel">
                             <div class="panel-header">
                                 <h2 class="panel-title">Recent Sessions</h2>
-                                <button class="panel-action-link panel-filter-btn">
-                                    Filter
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-                                    </svg>
-                                </button>
+                                <div class="recent-session-filter-wrap">
+                                    <label class="recent-session-filter-label" for="recent-session-filter">Show</label>
+                                    <select class="recent-session-filter" id="recent-session-filter"
+                                        aria-label="Filter recent sessions">
+                                        <option value="all">All Sessions</option>
+                                        <option value="active">Active Sessions</option>
+                                        <option value="completed">Finalized Sessions</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="panel-body">
                                 <!-- Sessions Table -->
@@ -286,7 +289,7 @@
                                     </table>
                                 </div>
                                 <div class="sessions-view-all" id="sessions-view-all" style="display:none;">
-                                    <button class="panel-action-link" onclick="App.switchTab('session')">View all
+                                    <button class="panel-action-link" onclick="App.switchTab('history')">View all
                                         sessions</button>
                                 </div>
                             </div>
@@ -401,7 +404,8 @@
                             <p class="empty-state-hero__subtitle">Launch a new session to open the live matrix and
                                 standings board.</p>
                             <button class="empty-state-hero__cta" id="btn-new-session">
-                                <span>+</span> New Session
+                                <span>+</span>
+                                <span id="btn-new-session-label">New Session</span>
                             </button>
                         </div>
                         <div class="past-sessions-link" id="resume-session-area" style="display:none;">
@@ -495,7 +499,49 @@
                 <div class="page-header">
                     <div class="page-header-text">
                         <h1 class="page-title">History</h1>
-                        <p class="page-subtitle">Browse past sessions and statistics</p>
+                        <p class="page-subtitle">Review completed sessions first, then compare overall team stats.</p>
+                    </div>
+                </div>
+
+                <!-- Session History List -->
+                <div class="panel" id="session-history-card">
+                    <div class="panel-header">
+                        <h2 class="panel-title">📋 Session History</h2>
+                    </div>
+                    <div id="history-list">
+                        <div class="empty-state-hero-card">
+                            <div class="empty-state-hero">
+                                <svg class="empty-state-hero__svg-illustration" viewBox="0 0 180 180" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                    <circle cx="90" cy="80" r="45" fill="#132218" stroke="#4caf50" stroke-width="2" />
+                                    <circle cx="90" cy="80" r="40" fill="none" stroke="#2e7d32" stroke-width="1"
+                                        opacity="0.3" />
+                                    <line x1="90" y1="80" x2="90" y2="52" stroke="#4caf50" stroke-width="2.5"
+                                        stroke-linecap="round" />
+                                    <line x1="90" y1="80" x2="110" y2="75" stroke="#00c853" stroke-width="2"
+                                        stroke-linecap="round" />
+                                    <circle cx="90" cy="80" r="3" fill="#ffd700" opacity="0.8" />
+                                    <circle cx="90" cy="42" r="2" fill="#4caf50" opacity="0.5" />
+                                    <circle cx="128" cy="80" r="2" fill="#4caf50" opacity="0.5" />
+                                    <circle cx="90" cy="118" r="2" fill="#4caf50" opacity="0.5" />
+                                    <circle cx="52" cy="80" r="2" fill="#4caf50" opacity="0.5" />
+                                    <rect x="40" y="140" width="16" height="28" rx="3" fill="#2e7d32" opacity="0.4" />
+                                    <rect x="62" y="148" width="16" height="20" rx="3" fill="#4caf50" opacity="0.35" />
+                                    <rect x="84" y="135" width="16" height="33" rx="3" fill="#00c853" opacity="0.45" />
+                                    <rect x="106" y="142" width="16" height="26" rx="3" fill="#4caf50" opacity="0.35" />
+                                    <rect x="128" y="150" width="16" height="18" rx="3" fill="#2e7d32" opacity="0.3" />
+                                    <circle cx="35" cy="45" r="2" fill="#ffd700" opacity="0.5" />
+                                    <circle cx="148" cy="50" r="2.5" fill="#ffd700" opacity="0.4" />
+                                    <circle cx="155" cy="135" r="1.8" fill="#4caf50" opacity="0.3" />
+                                </svg>
+                                <h3 class="empty-state-hero__title">No Sessions Completed</h3>
+                                <p class="empty-state-hero__subtitle">Complete a session to see detailed results and
+                                    game
+                                    history here.</p>
+                                <button class="empty-state-hero__cta" onclick="App.switchTab('session')">Go to
+                                    Sessions</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -534,48 +580,6 @@
                                 <p class="empty-state-hero__subtitle">Complete sessions to build your tournament history
                                     and
                                     statistics.</p>
-                                <button class="empty-state-hero__cta" onclick="App.switchTab('session')">Go to
-                                    Sessions</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Session History List -->
-                <div class="panel">
-                    <div class="panel-header">
-                        <h2 class="panel-title">📋 Session History</h2>
-                    </div>
-                    <div id="history-list">
-                        <div class="empty-state-hero-card">
-                            <div class="empty-state-hero">
-                                <svg class="empty-state-hero__svg-illustration" viewBox="0 0 180 180" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                    <circle cx="90" cy="80" r="45" fill="#132218" stroke="#4caf50" stroke-width="2" />
-                                    <circle cx="90" cy="80" r="40" fill="none" stroke="#2e7d32" stroke-width="1"
-                                        opacity="0.3" />
-                                    <line x1="90" y1="80" x2="90" y2="52" stroke="#4caf50" stroke-width="2.5"
-                                        stroke-linecap="round" />
-                                    <line x1="90" y1="80" x2="110" y2="75" stroke="#00c853" stroke-width="2"
-                                        stroke-linecap="round" />
-                                    <circle cx="90" cy="80" r="3" fill="#ffd700" opacity="0.8" />
-                                    <circle cx="90" cy="42" r="2" fill="#4caf50" opacity="0.5" />
-                                    <circle cx="128" cy="80" r="2" fill="#4caf50" opacity="0.5" />
-                                    <circle cx="90" cy="118" r="2" fill="#4caf50" opacity="0.5" />
-                                    <circle cx="52" cy="80" r="2" fill="#4caf50" opacity="0.5" />
-                                    <rect x="40" y="140" width="16" height="28" rx="3" fill="#2e7d32" opacity="0.4" />
-                                    <rect x="62" y="148" width="16" height="20" rx="3" fill="#4caf50" opacity="0.35" />
-                                    <rect x="84" y="135" width="16" height="33" rx="3" fill="#00c853" opacity="0.45" />
-                                    <rect x="106" y="142" width="16" height="26" rx="3" fill="#4caf50" opacity="0.35" />
-                                    <rect x="128" y="150" width="16" height="18" rx="3" fill="#2e7d32" opacity="0.3" />
-                                    <circle cx="35" cy="45" r="2" fill="#ffd700" opacity="0.5" />
-                                    <circle cx="148" cy="50" r="2.5" fill="#ffd700" opacity="0.4" />
-                                    <circle cx="155" cy="135" r="1.8" fill="#4caf50" opacity="0.3" />
-                                </svg>
-                                <h3 class="empty-state-hero__title">No Sessions Completed</h3>
-                                <p class="empty-state-hero__subtitle">Complete a session to see detailed results and
-                                    game
-                                    history here.</p>
                                 <button class="empty-state-hero__cta" onclick="App.switchTab('session')">Go to
                                     Sessions</button>
                             </div>
