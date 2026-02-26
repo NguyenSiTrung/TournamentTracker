@@ -11,8 +11,6 @@ This file tracks all major tracks for the project.
 - [x] Track: duplicate_player_name_bug_20260224 - "Duplicate Player Name Bug" (archived: 2026-02-24)
 - [x] Track: empty_state_redesign_20260224 - "Redesign Empty States" (archived: 2026-02-24)
 - [x] Track: teams_empty_state_fix_20260224 - "Teams Empty State UI/UX Redesign + Consistency Pass" (archived: 2026-02-24)
+- [x] Track: edit_team_modal_redesign_20260226 - "Edit Team Modal Redesign + Team Identity System" (archived: 2026-02-26)
 
 ---
-
-## [x] Track: Edit Team Modal Redesign + Team Identity System
-*Link: [./conductor/tracks/edit_team_modal_redesign_20260226/](./conductor/tracks/edit_team_modal_redesign_20260226/)*

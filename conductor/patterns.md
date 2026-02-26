@@ -18,6 +18,8 @@ Reusable patterns discovered during development. Read this before starting new w
 - For high-fidelity single-modal redesigns, use an optional `modalClass` in `App.openModal()` and scope styles to `.modal.<variant>` to avoid cross-modal regressions (from: session_game_result_modal_redesign_20260223, 2026-02-23)
 - For live modal previews (scores/winner state), derive render state directly from current form control values instead of duplicating transient state objects (from: session_game_result_modal_redesign_20260223, 2026-02-23)
 - Dashboard rendering order: showSkeletons → fetch data → animateCounters + renderQuickActions → renderLeaderboard → renderWinChart → renderRecentResults (from: ui_ux_redesign_20260223, 2026-02-23)
+- For DRY Create/Edit modals, use a shared builder like `buildFormBody(existingData?)` — pass `null` for create, object for edit; same HTML template handles both (from: edit_team_modal_redesign_20260226, archived 2026-02-26)
+- Backend color/identity palettes (e.g., `TEAM_COLOR_PALETTE` in `main.py`) must stay in sync with frontend palettes (`TEAM_COLORS` in JS) — any palette change must update both (from: edit_team_modal_redesign_20260226, archived 2026-02-26)
 
 ## CSS & Animation Patterns
 
@@ -32,6 +34,8 @@ Reusable patterns discovered during development. Read this before starting new w
 - Glassmorphism effect: combine `backdrop-filter: blur()` with `rgba()` background and radial gradient glow (from: teams_empty_state_fix_20260224, archived 2026-02-24)
 - Horizontal stepper connecting lines: use `::after` pseudo-elements with `border-top: dashed` positioned absolutely (from: teams_empty_state_fix_20260224, archived 2026-02-24)
 - `grid-column: 1 / -1` is the cleanest way to span an element across all CSS Grid columns (from: teams_empty_state_fix_20260224, archived 2026-02-24)
+- `_darkenHex(hex, amount)` derives darker gradient endpoints from a single stored color — no need for pre-computed gradient pairs (from: edit_team_modal_redesign_20260226, archived 2026-02-26)
+- Inline CSS hex + alpha suffix (`${color}20`) works for dynamic badge backgrounds without separate rgba conversion (from: edit_team_modal_redesign_20260226, archived 2026-02-26)
 
 ## Gotchas
 
@@ -49,6 +53,10 @@ Reusable patterns discovered during development. Read this before starting new w
 - When replacing empty states with inline SVGs, update both JS render functions AND static HTML in index.html to keep initial render consistent (from: teams_empty_state_fix_20260224, archived 2026-02-24)
 - Hardcoded color values in SVG data URIs (e.g., form-select chevron) won't update when CSS custom properties change — grep for old hex values after token changes (from: ui_contrast_color_audit_20260224, 2026-02-24)
 - `::placeholder` text doesn't require 4.5:1 contrast ratio since it's non-essential content — 3:1 is acceptable per WCAG (from: ui_contrast_color_audit_20260224, 2026-02-24)
+- SQLite `create_all()` won't ALTER existing tables — must manually add columns with `ALTER TABLE` via raw SQL for schema migrations on existing DBs (from: edit_team_modal_redesign_20260226, archived 2026-02-26)
+- Migration using `get_db()` generator fails in tests because test fixture dependency overrides happen after app startup; use `SessionLocal()` directly in startup handlers (from: edit_team_modal_redesign_20260226, archived 2026-02-26)
+- Check `inspector.has_table()` before `ALTER TABLE` — fresh DBs already have correct schema from `create_all()` and will error on duplicate column (from: edit_team_modal_redesign_20260226, archived 2026-02-26)
+- Color swatch active state must match on hex value equality, not array index — a team's stored color may not align with the default palette ordering (from: edit_team_modal_redesign_20260226, archived 2026-02-26)
 
 ## Testing
 
@@ -67,4 +75,4 @@ Reusable patterns discovered during development. Read this before starting new w
 - SVG `<text>` elements need explicit `font-family` attribute to render consistently across browsers (from: teams_empty_state_fix_20260224, archived 2026-02-24)
 
 ---
-Last refreshed: 2026-02-24T17:41
+Last refreshed: 2026-02-26T13:30
